@@ -18,11 +18,11 @@ const navigationConfig = [
     },
     {
         key: 'contentManagement',
-        path: '', // Path kosong karena ini adalah menu Collapse/Grup
+        path: '', 
         title: 'Content Management',
         translateKey: 'nav.contentManagement.content',
-        icon: 'content', // Icon untuk kategori "Content"
-        type: NAV_ITEM_TYPE_COLLAPSE, // Ini adalah menu yang bisa dilipat
+        icon: 'content', 
+        type: NAV_ITEM_TYPE_COLLAPSE,
         authority: ['admin', 'editor'],
         subMenu: [
             {
@@ -30,7 +30,7 @@ const navigationConfig = [
                 path: '/admin/posts',
                 title: 'Posts',
                 translateKey: 'nav.contentManagement.posts',
-                icon: 'post', // Icon untuk Posts
+                icon: 'post',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: ['admin', 'editor'],
                 subMenu: [],
@@ -40,7 +40,7 @@ const navigationConfig = [
                 path: '/admin/pages',
                 title: 'Pages',
                 translateKey: 'nav.contentManagement.pages',
-                icon: 'page', // Icon untuk Pages
+                icon: 'page', 
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: ['admin', 'editor'],
                 subMenu: [],
@@ -50,7 +50,7 @@ const navigationConfig = [
                 path: '/admin/categories',
                 title: 'Categories',
                 translateKey: 'nav.contentManagement.categories',
-                icon: 'category', // Icon untuk Categories
+                icon: 'category', 
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: ['admin', 'editor'],
                 subMenu: [],
@@ -60,7 +60,7 @@ const navigationConfig = [
                 path: '/admin/tags',
                 title: 'Tags',
                 translateKey: 'nav.contentManagement.tags',
-                icon: 'tag', // Icon untuk Tags
+                icon: 'tag',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: ['admin', 'editor'],
                 subMenu: [],
@@ -70,7 +70,7 @@ const navigationConfig = [
                 path: '/admin/comments',
                 title: 'Comments',
                 translateKey: 'nav.contentManagement.comments',
-                icon: 'comment', // Icon untuk Comments
+                icon: 'comment',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: ['admin', 'editor'],
                 subMenu: [],
@@ -80,7 +80,7 @@ const navigationConfig = [
                 path: '/admin/media',
                 title: 'Media',
                 translateKey: 'nav.contentManagement.media',
-                icon: 'media', // Icon untuk Media
+                icon: 'media',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: ['admin', 'editor'],
                 subMenu: [],
@@ -88,20 +88,61 @@ const navigationConfig = [
         ],
     },
     {
+        key: 'appearance',
+        path: '',
+        title: 'Appearance',
+        translateKey: 'nav.appearance.appearance',
+        icon: 'appearance', 
+        type: NAV_ITEM_TYPE_COLLAPSE,
+        authority: ['admin'], 
+        subMenu: [
+            {
+                key: 'appearance.menus',
+                path: '/admin/menus',
+                title: 'Menus',
+                translateKey: 'nav.appearance.menus',
+                icon: 'menu',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin'],
+                subMenu: [],
+            },
+            {
+                key: 'appearance.socialLinks',
+                path: '/admin/social-links',
+                title: 'Social Links',
+                translateKey: 'nav.appearance.socialLinks',
+                icon: 'social', 
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin'],
+                subMenu: [],
+            },
+            {
+                key: 'appearance.settings',
+                path: '/admin/settings',
+                title: 'Settings',
+                translateKey: 'nav.appearance.settings',
+                icon: 'settings', 
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin'],
+                subMenu: [],
+            },
+        ],
+    },
+        {
         key: 'userManagement',
         path: '',
         title: 'Users & Roles',
         translateKey: 'nav.userManagement.users',
-        icon: 'users', // Icon untuk Users & Roles
+        icon: 'users',
         type: NAV_ITEM_TYPE_COLLAPSE,
-        authority: ['admin'], // Hanya admin yang bisa mengelola pengguna dan peran
+        authority: ['admin'], 
         subMenu: [
             {
                 key: 'userManagement.list',
                 path: '/admin/users',
                 title: 'Manage Users',
                 translateKey: 'nav.userManagement.list',
-                icon: 'user', // Icon untuk Manage Users
+                icon: 'user', 
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: ['admin'],
                 subMenu: [],
@@ -119,49 +160,6 @@ const navigationConfig = [
             // },
         ],
     },
-    {
-        key: 'appearance',
-        path: '',
-        title: 'Appearance',
-        translateKey: 'nav.appearance.appearance',
-        icon: 'appearance', // Icon untuk Appearance
-        type: NAV_ITEM_TYPE_COLLAPSE,
-        authority: ['admin'], // Biasanya hanya admin
-        subMenu: [
-            {
-                key: 'appearance.menus',
-                path: '/admin/menus',
-                title: 'Menus',
-                translateKey: 'nav.appearance.menus',
-                icon: 'menu', // Icon untuk Menus
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: ['admin'],
-                subMenu: [],
-            },
-            {
-                key: 'appearance.socialLinks',
-                path: '/admin/social-links',
-                title: 'Social Links',
-                translateKey: 'nav.appearance.socialLinks',
-                icon: 'social', // Icon untuk Social Links
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: ['admin'],
-                subMenu: [],
-            },
-            {
-                key: 'appearance.settings',
-                path: '/admin/settings',
-                title: 'Settings',
-                translateKey: 'nav.appearance.settings',
-                icon: 'settings', // Icon untuk Settings
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: ['admin'],
-                subMenu: [],
-            },
-        ],
-    },
-    // Anda bisa menambahkan item navigasi lain di sini jika diperlukan,
-    // seperti Analytics, Reports, dll.
 ]
 
 export default navigationConfig
