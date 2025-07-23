@@ -1,12 +1,12 @@
 // src/configs/endpoint.config.js
 const endpointConfig = {
     // Auth
-    signIn: '/auth/login',
-    signUp: '/auth/register',
-    signOut: '/auth/logout',
-    forgotPassword: '/auth/forgot-password',
-    resetPassword: '/auth/reset-password',
-    refreshToken: '/auth/refresh-token',
+    signIn: '/login',
+    signUp: '/register',
+    signOut: '/logout',
+    forgotPassword: '/forgot-password',
+    resetPassword: '/reset-password',
+    refreshToken: '/refresh-token',
 
     // Media
     getAllMedia: '/media',
@@ -81,13 +81,6 @@ const endpointConfig = {
     createTag: '/tags',
     updateTag: (id) => `/tags/id/${id}`,
     deleteTag: (id) => `/tags/${id}`,
-
-    // Users
-    getAllUsers: '/users',
-    getUserById: (id) => `/users/${id}`,
-    createUser: '/users',
-    updateUser: (id) => `/users/${id}`,
-    deleteUser: (id) => `/users/${id}`,
 
     // Dashboard
     getDashboardSummary: '/dashboard/summary', // Endpoint untuk ringkasan
