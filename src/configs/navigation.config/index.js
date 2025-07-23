@@ -1,114 +1,167 @@
+// src/configs/navigation.config.js
+
 import {
-    NAV_ITEM_TYPE_TITLE,
     NAV_ITEM_TYPE_ITEM,
     NAV_ITEM_TYPE_COLLAPSE,
 } from '@/constants/navigation.constant'
 
 const navigationConfig = [
     {
-        key: 'home',
-        path: '/home',
-        title: 'Home',
-        translateKey: 'nav.home',
-        icon: 'home',
+        key: 'dashboard',
+        path: '/dashboard',
+        title: 'Dashboard',
+        translateKey: 'nav.dashboard',
+        icon: 'dashboard', 
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
-        subMenu: [],
-    },
-    /** Example purpose only, please remove */
-    {
-        key: 'singleMenuItem',
-        path: '/single-menu-view',
-        title: 'Single menu item',
-        translateKey: 'nav.singleMenuItem',
-        icon: 'singleMenu',
-        type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: ['admin', 'editor'], 
         subMenu: [],
     },
     {
-        key: 'collapseMenu',
+        key: 'contentManagement',
+        path: '', // Path kosong karena ini adalah menu Collapse/Grup
+        title: 'Content Management',
+        translateKey: 'nav.contentManagement.content',
+        icon: 'content', // Icon untuk kategori "Content"
+        type: NAV_ITEM_TYPE_COLLAPSE, // Ini adalah menu yang bisa dilipat
+        authority: ['admin', 'editor'],
+        subMenu: [
+            {
+                key: 'contentManagement.posts',
+                path: '/admin/posts',
+                title: 'Posts',
+                translateKey: 'nav.contentManagement.posts',
+                icon: 'post', // Icon untuk Posts
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin', 'editor'],
+                subMenu: [],
+            },
+            {
+                key: 'contentManagement.pages',
+                path: '/admin/pages',
+                title: 'Pages',
+                translateKey: 'nav.contentManagement.pages',
+                icon: 'page', // Icon untuk Pages
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin', 'editor'],
+                subMenu: [],
+            },
+            {
+                key: 'contentManagement.categories',
+                path: '/admin/categories',
+                title: 'Categories',
+                translateKey: 'nav.contentManagement.categories',
+                icon: 'category', // Icon untuk Categories
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin', 'editor'],
+                subMenu: [],
+            },
+            {
+                key: 'contentManagement.tags',
+                path: '/admin/tags',
+                title: 'Tags',
+                translateKey: 'nav.contentManagement.tags',
+                icon: 'tag', // Icon untuk Tags
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin', 'editor'],
+                subMenu: [],
+            },
+            {
+                key: 'contentManagement.comments',
+                path: '/admin/comments',
+                title: 'Comments',
+                translateKey: 'nav.contentManagement.comments',
+                icon: 'comment', // Icon untuk Comments
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin', 'editor'],
+                subMenu: [],
+            },
+            {
+                key: 'contentManagement.media',
+                path: '/admin/media',
+                title: 'Media',
+                translateKey: 'nav.contentManagement.media',
+                icon: 'media', // Icon untuk Media
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin', 'editor'],
+                subMenu: [],
+            },
+        ],
+    },
+    {
+        key: 'userManagement',
         path: '',
-        title: 'Collapse Menu',
-        translateKey: 'nav.collapseMenu.collapseMenu',
-        icon: 'collapseMenu',
+        title: 'Users & Roles',
+        translateKey: 'nav.userManagement.users',
+        icon: 'users', // Icon untuk Users & Roles
         type: NAV_ITEM_TYPE_COLLAPSE,
-        authority: [],
+        authority: ['admin'], // Hanya admin yang bisa mengelola pengguna dan peran
         subMenu: [
             {
-                key: 'collapseMenu.item1',
-                path: '/collapse-menu-item-view-1',
-                title: 'Collapse menu item 1',
-                translateKey: 'nav.collapseMenu.item1',
-                icon: '',
+                key: 'userManagement.list',
+                path: '/admin/users',
+                title: 'Manage Users',
+                translateKey: 'nav.userManagement.list',
+                icon: 'user', // Icon untuk Manage Users
                 type: NAV_ITEM_TYPE_ITEM,
-                authority: [],
+                authority: ['admin'],
                 subMenu: [],
             },
-            {
-                key: 'collapseMenu.item2',
-                path: '/collapse-menu-item-view-2',
-                title: 'Collapse menu item 2',
-                translateKey: 'nav.collapseMenu.item2',
-                icon: '',
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: [],
-                subMenu: [],
-            },
+            // Anda bisa menambahkan ini nanti jika ada fitur manajemen peran terpisah
+            // {
+            //     key: 'userManagement.roles',
+            //     path: '/admin/roles',
+            //     title: 'Roles & Permissions',
+            //     translateKey: 'nav.userManagement.roles',
+            //     icon: 'role',
+            //     type: NAV_ITEM_TYPE_ITEM,
+            //     authority: ['admin'],
+            //     subMenu: [],
+            // },
         ],
     },
     {
-        key: 'groupMenu',
+        key: 'appearance',
         path: '',
-        title: 'Group Menu',
-        translateKey: 'nav.groupMenu.groupMenu',
-        icon: 'groupMenu',
-        type: NAV_ITEM_TYPE_TITLE,
-        authority: [],
+        title: 'Appearance',
+        translateKey: 'nav.appearance.appearance',
+        icon: 'appearance', // Icon untuk Appearance
+        type: NAV_ITEM_TYPE_COLLAPSE,
+        authority: ['admin'], // Biasanya hanya admin
         subMenu: [
             {
-                key: 'groupMenu.single',
-                path: '/group-single-menu-item-view',
-                title: 'Group single menu item',
-                translateKey: 'nav.groupMenu.single',
-                icon: 'groupSingleMenu',
+                key: 'appearance.menus',
+                path: '/admin/menus',
+                title: 'Menus',
+                translateKey: 'nav.appearance.menus',
+                icon: 'menu', // Icon untuk Menus
                 type: NAV_ITEM_TYPE_ITEM,
-                authority: [],
+                authority: ['admin'],
                 subMenu: [],
             },
             {
-                key: 'groupMenu.collapse',
-                path: '',
-                title: 'Group collapse menu',
-                translateKey: 'nav.groupMenu.collapse.collapse',
-                icon: 'groupCollapseMenu',
-                type: NAV_ITEM_TYPE_COLLAPSE,
-                authority: [],
-                subMenu: [
-                    {
-                        key: 'groupMenu.collapse.item1',
-                        path: '/group-collapse-menu-item-view-1',
-                        title: 'Menu item 1',
-                        translateKey: 'nav.groupMenu.collapse.item1',
-                        icon: '',
-                        type: NAV_ITEM_TYPE_ITEM,
-                        authority: [],
-                        subMenu: [],
-                    },
-                    {
-                        key: 'groupMenu.collapse.item2',
-                        path: '/group-collapse-menu-item-view-2',
-                        title: 'Menu item 2',
-                        translateKey: 'nav.groupMenu.collapse.item2',
-                        icon: '',
-                        type: NAV_ITEM_TYPE_ITEM,
-                        authority: [],
-                        subMenu: [],
-                    },
-                ],
+                key: 'appearance.socialLinks',
+                path: '/admin/social-links',
+                title: 'Social Links',
+                translateKey: 'nav.appearance.socialLinks',
+                icon: 'social', // Icon untuk Social Links
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin'],
+                subMenu: [],
+            },
+            {
+                key: 'appearance.settings',
+                path: '/admin/settings',
+                title: 'Settings',
+                translateKey: 'nav.appearance.settings',
+                icon: 'settings', // Icon untuk Settings
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin'],
+                subMenu: [],
             },
         ],
     },
+    // Anda bisa menambahkan item navigasi lain di sini jika diperlukan,
+    // seperti Analytics, Reports, dll.
 ]
 
 export default navigationConfig

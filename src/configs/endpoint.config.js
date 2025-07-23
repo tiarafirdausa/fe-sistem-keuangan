@@ -90,8 +90,11 @@ const endpointConfig = {
     deleteUser: (id) => `/users/${id}`,
 
     // Dashboard
-    getDashboardSummary: '/dashboard',
-    getAnalyticsData: '/dashboard/analytics',
+    getDashboardSummary: '/dashboard/summary', // Endpoint untuk ringkasan
+    getRecentPosts: '/posts?limit=5&sort=desc', // Contoh: untuk postingan terbaru
+    getRecentComments: '/comments?limit=5&sort=desc', // Contoh: untuk komentar terbaru
+    getRecentUsers: '/users?limit=5&sort=desc', // Contoh: untuk pengguna terbaru
+    getAnalyticsData: '/dashboard/analytics', 
 
 };
 
