@@ -7,7 +7,7 @@ import usePostList from '../hooks/usePostList'
 import classNames from '@/utils/classNames'
 import cloneDeep from 'lodash/cloneDeep'
 import { useNavigate } from 'react-router'
-import { TbPencil, TbTrash } from 'react-icons/tb'
+import { TbPencil, TbTrash, TbEye } from 'react-icons/tb'
 import { FiFileText } from 'react-icons/fi'
 import { apiDeletePost } from '@/services/PostService'
 import { toast } from '@/components/ui/toast'
@@ -40,9 +40,18 @@ const PostColumn = ({ row }) => {
     )
 }
 
-const ActionColumn = ({ onEdit, onDelete }) => {
+const ActionColumn = ({ onViewDetail, onEdit, onDelete }) => {
     return (
         <div className="flex items-center justify-end gap-3">
+            <Tooltip title="View">
+                <div
+                    className={`text-xl cursor-pointer select-none font-semibold`}
+                    role="button"
+                    onClick={onViewDetail}
+                >
+                    <TbEye />
+                </div>
+            </Tooltip>
             <Tooltip title="Edit">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -82,6 +91,10 @@ const PostListTable = () => {
 
     const handleEdit = (post) => { 
         navigate(`/admin/posts/edit/${post.id}`) 
+    }
+
+    const handleViewDetails = (post) => { 
+        navigate(`/admin/posts/details/${post.slug}`) 
     }
 
     const handleConfirmDelete = async () => {
@@ -197,6 +210,7 @@ const PostListTable = () => {
                 id: 'action',
                 cell: (props) => (
                     <ActionColumn
+                        onViewDetail={() => handleViewDetails(props.row.original)}
                         onEdit={() => handleEdit(props.row.original)}
                         onDelete={() => handleDelete(props.row.original)}
                     />
