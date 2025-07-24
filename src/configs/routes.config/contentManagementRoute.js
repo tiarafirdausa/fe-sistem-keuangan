@@ -8,7 +8,7 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.posts',
         path: `${ADMIN_PREFIX_PATH}/posts`,
-        component: lazy(() => import('@/views/admin/content/Posts')), 
+        component: lazy(() => import('@/views/admin/content/Posts/PostList')), 
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
