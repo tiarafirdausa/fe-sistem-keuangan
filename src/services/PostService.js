@@ -1,36 +1,39 @@
 // src/services/PostService.js
-import ApiService from './ApiService';
-import endpointConfig from '@/configs/endpoint.config';
+import ApiService from './ApiService'
+import endpointConfig from '@/configs/endpoint.config'
 
 export async function apiGetAllPosts(params) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.getAllPosts,
         method: 'get',
         params,
-    });
+    })
 }
 
 export async function apiGetPostById(id) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.getPostById(id),
         method: 'get',
-    });
+    })
 }
 
 export async function apiGetPostBySlug(slug) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.getPostBySlug(slug),
         method: 'get',
-    });
+    })
 }
 
-export async function apiCreatePost(postData, thumbnailFile = null) {
-    const formData = new FormData();
-    for (const key in postData) {
-        formData.append(key, postData[key]);
-    }
-    if (thumbnailFile) {
-        formData.append('thumbnail', thumbnailFile); // 'thumbnail' adalah nama field di Multer single()
+export async function apiCreatePost(data) {
+    const formData = new FormData()
+    for (const [key, value] of Object.entries(data)) {
+        if (key === 'featured_image' && value instanceof File) {
+            formData.append(key, value, value.name)
+        } else if (Array.isArray(value)) {
+            value.forEach((item) => formData.append(`${key}[]`, item))
+        } else {
+            formData.append(key, value)
+        }
     }
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.createPost,
@@ -39,21 +42,21 @@ export async function apiCreatePost(postData, thumbnailFile = null) {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
-    });
+    })
 }
 
-export async function apiUpdatePost(id, postData, thumbnailFile = null) {
-    const formData = new FormData();
-    for (const key in postData) {
-        formData.append(key, postData[key]);
+export async function apiUpdatePost(id, data) {
+    const formData = new FormData()
+    for (const [key, value] of Object.entries(data)) {
+        if (key === 'featured_image' && value instanceof File) {
+            formData.append(key, value, value.name)
+        } else if (Array.isArray(value)) {
+            value.forEach((item) => formData.append(`${key}[]`, item))
+        } else {
+            formData.append(key, value)
+        }
     }
-    if (thumbnailFile) {
-        formData.append('thumbnail', thumbnailFile);
-    }
-    // Jika ada flag untuk menghapus thumbnail yang sudah ada tanpa mengganti
-    // if (postData.clear_thumbnail === true) {
-    //     formData.append('clear_thumbnail', 'true');
-    // }
+
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.updatePost(id),
         method: 'put',
@@ -61,12 +64,12 @@ export async function apiUpdatePost(id, postData, thumbnailFile = null) {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
-    });
+    })
 }
 
 export async function apiDeletePost(id) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.deletePost(id),
         method: 'delete',
-    });
+    })
 }

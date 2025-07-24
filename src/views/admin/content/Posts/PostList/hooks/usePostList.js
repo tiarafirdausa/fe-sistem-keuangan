@@ -1,5 +1,5 @@
 import { apiGetAllPosts } from "@/services/PostService";
-import { usePostListStore } from "../store/postListStore";
+import { usePostListStore } from "../store/PostListStore";
 import useSWR from "swr";
 
 const usePostList = () => {
@@ -15,6 +15,7 @@ const usePostList = () => {
 
     const { data, error, isLoading, mutate } = useSWR(
         ['/api/posts', { ...tableData, ...filterData }],
+        // eslint-disable-next-line no-unused-vars
         async ([_,params]) => {
             const response = await apiGetAllPosts(params);
             return response;
