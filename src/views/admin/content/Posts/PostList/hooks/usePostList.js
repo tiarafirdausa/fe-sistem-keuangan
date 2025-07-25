@@ -25,7 +25,6 @@ const usePostList = () => {
         },
     )
 
-    // Baris-baris ini sudah benar, karena 'data' dari SWR sekarang akan langsung berupa array
     const postList = Array.isArray(data) ? data : [];
     const postListTotal = Array.isArray(data) ? data.length : 0;
 

@@ -72,7 +72,7 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.tags',
         path: `${ADMIN_PREFIX_PATH}/tags`,
-        component: lazy(() => import('@/views/admin/content/Tags')), 
+        component: lazy(() => import('@/views/admin/content/Tags/TagList')), 
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
