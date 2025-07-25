@@ -33,18 +33,16 @@ const PostDetails = () => {
     return(
         <Loading loading={isLoading}>
             <>
-                {/* Bagian ini adalah layout utama untuk konten, meta, dan author */}
                 <div className="flex flex-col lg:flex-row gap-4">
-                    {/* Kolom kiri untuk konten utama post */}
                     <div className="gap-4 flex flex-col flex-auto">
                         <PostContent
                             title={data.title}
                             featuredImage={data.featured_image}
                             content={data.content}
+                            galleryImages={data.gallery_images}
                         />
                     </div>
 
-                    {/* Kolom kanan untuk informasi meta dan detail penulis */}
                     <div className="lg:w-[320px] xl:w-[420px] gap-4 flex flex-col">
                         <PostMeta
                             authorName={data.author_name}

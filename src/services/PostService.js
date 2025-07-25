@@ -24,48 +24,28 @@ export async function apiGetPostBySlug(slug) {
     })
 }
 
-export async function apiCreatePost(data) {
-    const formData = new FormData()
-    for (const [key, value] of Object.entries(data)) {
-        if (key === 'featured_image' && value instanceof File) {
-            formData.append(key, value, value.name)
-        } else if (Array.isArray(value)) {
-            value.forEach((item) => formData.append(`${key}[]`, item))
-        } else {
-            formData.append(key, value)
-        }
-    }
+export async function apiCreatePost(formData) { 
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.createPost,
         method: 'post',
-        data: formData,
+        data: formData, 
         headers: {
             'Content-Type': 'multipart/form-data',
         },
-    })
+    });
 }
 
-export async function apiUpdatePost(id, data) {
-    const formData = new FormData()
-    for (const [key, value] of Object.entries(data)) {
-        if (key === 'featured_image' && value instanceof File) {
-            formData.append(key, value, value.name)
-        } else if (Array.isArray(value)) {
-            value.forEach((item) => formData.append(`${key}[]`, item))
-        } else {
-            formData.append(key, value)
-        }
-    }
-
+export async function apiUpdatePost(id, formData) { 
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.updatePost(id),
         method: 'put',
-        data: formData,
+        data: formData, 
         headers: {
             'Content-Type': 'multipart/form-data',
         },
-    })
+    });
 }
+
 
 export async function apiDeletePost(id) {
     return ApiService.fetchDataWithAxios({

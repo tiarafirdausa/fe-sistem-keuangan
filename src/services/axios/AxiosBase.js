@@ -2,6 +2,7 @@ import axios from 'axios'
 import AxiosResponseIntrceptorErrorCallback from './AxiosResponseIntrceptorErrorCallback'
 import AxiosRequestIntrceptorConfigCallback from './AxiosRequestIntrceptorConfigCallback'
 import appConfig from '@/configs/app.config'
+import { addCsrfTokenToConfig } from './csrfService'
 
 const AxiosBase = axios.create({
     timeout: 60000,
@@ -10,7 +11,9 @@ const AxiosBase = axios.create({
 
 AxiosBase.interceptors.request.use(
     (config) => {
-        return AxiosRequestIntrceptorConfigCallback(config)
+        let updatedConfig = AxiosRequestIntrceptorConfigCallback(config);
+        updatedConfig = addCsrfTokenToConfig(updatedConfig); 
+        return updatedConfig;
     },
     (error) => {
         return Promise.reject(error)
