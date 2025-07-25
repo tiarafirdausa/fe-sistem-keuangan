@@ -12,7 +12,6 @@ export const fetchCsrfToken = async () => {
             withCredentials: true, 
         });
         csrfToken = response.data.csrfToken;
-        console.log('CSRF Token fetched:', csrfToken);
         return csrfToken;
     } catch (error) {
         console.error('Error fetching CSRF token:', error);

@@ -67,7 +67,7 @@ const TagListTable = () => {
     };
 
     const handleEdit = (tag) => {
-        navigate(`/tags/tag-edit/${tag.id}`);
+        navigate(`/admin/tags/edit/${tag.slug}`);
     };
 
     const handleConfirmDelete = async () => {

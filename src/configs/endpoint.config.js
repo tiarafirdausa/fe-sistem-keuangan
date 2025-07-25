@@ -79,7 +79,7 @@ const endpointConfig = {
     getTagById: (id) => `/tags/id/${id}`,
     getTagBySlug: (slug) => `/tags/${slug}`,
     createTag: '/tags',
-    updateTag: (id) => `/tags/id/${id}`,
+    updateTag: (id) => `/tags/${id}`,
     deleteTag: (id) => `/tags/${id}`,
 
     // Dashboard

@@ -79,6 +79,32 @@ const contentManagementRoute = [
         },
     },
     {
+        key: 'contentManagement.tags.new',
+        path: `${ADMIN_PREFIX_PATH}/tags/new`, 
+        component: lazy(() => import('@/views/admin/content/Tags/TagCreate')), 
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Tag',
+            },
+        },
+    },
+    {
+    key: 'contentManagement.tags.edit', 
+    path: `${ADMIN_PREFIX_PATH}/tags/edit/:slug`, 
+    component: lazy(() => import('@/views/admin/content/Tags/TagEdit/TagEdit')), 
+    authority: [ADMIN],
+    meta: {
+        pageContainerType: 'contained',
+        header: {
+            contained: true,
+            title: 'Edit Tag',
+        },
+    },
+},
+    {
         key: 'contentManagement.comments',
         path: `${ADMIN_PREFIX_PATH}/comments`,
         component: lazy(() => import('@/views/admin/content/Comments')), 
