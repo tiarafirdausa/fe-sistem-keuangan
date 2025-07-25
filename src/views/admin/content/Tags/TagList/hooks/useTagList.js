@@ -14,23 +14,20 @@ const useTagList = () => {
     } = useTagListStore((state) => state);
 
     const { data, error, isLoading, mutate } = useSWR(
-        // Kunci SWR ini memastikan re-fetch jika tagTableData (termasuk query) berubah
         ['/api/tags', { ...tagTableData, ...tagFilterData }], 
-        //
+        // eslint-disable-next-line no-unused-vars
         async ([_, params]) => {
-            const response = await apiGetAllTags(params); //
-            // Backend seharusnya mengembalikan object { tags: [...], total: N }
-            return response; // Mengembalikan seluruh objek respons dari backend
+            const response = await apiGetAllTags(params); 
+            return response; 
         },
         {
             revalidateOnFocus: false,
-            // revalidateIfStale: false, // Pertimbangkan untuk ini true untuk konsistensi data
+            revalidateIfStale: true, 
         },
     );
 
-    // MODIFIKASI: Pastikan untuk mengakses data.tags dan data.total
-    const tagList = data?.tags || []; // Mengambil array 'tags' dari respons backend
-    const tagListTotal = data?.total || 0; // Mengambil 'total' dari respons backend untuk paginasi
+    const tagList = data?.tags || []; 
+    const tagListTotal = data?.total || 0;
 
     return {
         error,

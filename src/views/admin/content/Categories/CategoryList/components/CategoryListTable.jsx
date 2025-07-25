@@ -1,23 +1,25 @@
+// src/views/category/CategoryList/CategoryListTable.jsx
 import { useMemo, useState } from 'react';
-import Avatar from '@/components/ui/Avatar'; 
+import Avatar from '@/components/ui/Avatar';
 import Tooltip from '@/components/ui/Tooltip';
 import DataTable from '@/components/shared/DataTable';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import useTagList from '../hooks/useTagList';
+import useCategoryList from '../hooks/useCategoryList';
 import cloneDeep from 'lodash/cloneDeep';
-import { useNavigate } from 'react-router'
-import { TbPencil, TbTrash } from 'react-icons/tb';
-import { FaTag } from 'react-icons/fa'; 
-import { apiDeleteTag } from '@/services/TagService';
+import { useNavigate } from 'react-router';
+import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi';
+import { FcAdvertising } from 'react-icons/fc'; 
+import { apiDeleteCategory } from '@/services/CategoryService';
+import { toast } from '@/components/ui/toast'; 
 import { Tag } from '@/components/ui'; 
 
-const TagColumn = ({ row }) => {
+const CategoryColumn = ({ row }) => {
     return (
         <div className="flex items-center gap-2">
             <Avatar
                 shape="round"
-                size={30} 
-                icon={<FaTag />} 
+                size={30}
+                icon={<FcAdvertising />} 
             />
             <div>
                 <div className="font-bold heading-text mb-1">{row.name}</div>
@@ -38,7 +40,7 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     role="button"
                     onClick={onEdit}
                 >
-                    <TbPencil />
+                    <HiOutlinePencil />
                 </div>
             </Tooltip>
             <Tooltip title="Delete">
@@ -47,14 +49,14 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     role="button"
                     onClick={onDelete}
                 >
-                    <TbTrash />
+                    <HiOutlineTrash />
                 </div>
             </Tooltip>
         </div>
     );
 };
 
-const TagListTable = () => {
+const CategoryListTable = () => {
     const navigate = useNavigate();
 
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
@@ -64,51 +66,70 @@ const TagListTable = () => {
         setDeleteConfirmationOpen(false);
     };
 
-    const handleDelete = (tag) => {
+    const handleDelete = (category) => {
         setDeleteConfirmationOpen(true);
-        setToDeleteId(tag.id);
+        setToDeleteId(category.id);
     };
 
-    const handleEdit = (tag) => {
-        navigate(`/admin/tags/edit/${tag.slug}`);
+    const handleEdit = (category) => {
+        navigate(`/admin/categories/edit/${category.slug}`); 
     };
 
     const handleConfirmDelete = async () => {
         try {
-            await apiDeleteTag(toDeleteId);
-
+            await apiDeleteCategory(toDeleteId);
             mutate();
-
-            setSelectAllTags([]); 
-
+            setSelectAllCategories([]);
             setDeleteConfirmationOpen(false);
             setToDeleteId('');
-            console.log(`Tag with ID ${toDeleteId} deleted successfully.`);
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<FcAdvertising />}
+                        className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
+                    />
+                    <span>Category deleted successfully!</span>
+                </div>,
+                { duration: 3000 }
+            );
         } catch (error) {
-            console.error("Failed to delete tag:", error);
-            setDeleteConfirmationOpen(false); 
+            console.error("Failed to delete category:", error);
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<FcAdvertising />}
+                        className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
+                    />
+                    <span>Failed to delete category. Please try again.</span>
+                </div>,
+                { duration: 5000 }
+            );
+            setDeleteConfirmationOpen(false);
         }
     };
+
     const {
-        tagList,
-        tagListTotal,
-        tagTableData,
+        categoryList,
+        categoryListTotal,
+        categoryTableData,
         isLoading,
-        setTagTableData,
-        setSelectAllTags,
-        setSelectedTags,
-        selectedTags,
+        setCategoryTableData,
+        setSelectAllCategories,
+        setSelectedCategories,
+        selectedCategories,
         mutate,
-    } = useTagList();
+    } = useCategoryList();
 
     const columns = useMemo(
         () => [
             {
-                header: 'Tag',
+                header: 'Category',
                 accessorKey: 'name',
                 cell: (props) => {
                     const row = props.row.original;
-                    return <TagColumn row={row} />;
+                    return <CategoryColumn row={row} />;
                 },
             },
             {
@@ -159,65 +180,65 @@ const TagListTable = () => {
             },
         ],
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [selectedTags], 
+        [selectedCategories],
     );
 
     const handleSetTableData = (data) => {
-        setTagTableData(data);
-        if (selectedTags.length > 0) {
-            setSelectAllTags([]);
+        setCategoryTableData(data);
+        if (selectedCategories.length > 0) {
+            setSelectAllCategories([]);
         }
     };
 
     const handlePaginationChange = (page) => {
-        const newTableData = cloneDeep(tagTableData);
+        const newTableData = cloneDeep(categoryTableData);
         newTableData.pageIndex = page;
         handleSetTableData(newTableData);
     };
 
     const handleSelectChange = (value) => {
-        const newTableData = cloneDeep(tagTableData);
+        const newTableData = cloneDeep(categoryTableData);
         newTableData.pageSize = Number(value);
-        newTableData.pageIndex = 1; 
+        newTableData.pageIndex = 1;
         handleSetTableData(newTableData);
     };
 
     const handleSort = (sort) => {
-        const newTableData = cloneDeep(tagTableData);
+        const newTableData = cloneDeep(categoryTableData);
         newTableData.sort = sort;
         handleSetTableData(newTableData);
     };
 
     const handleRowSelect = (checked, row) => {
-        setSelectedTags(checked, row);
+        setSelectedCategories(checked, row);
     };
 
     const handleAllRowSelect = (checked, rows) => {
         if (checked) {
             const originalRows = rows.map((row) => row.original);
-            setSelectAllTags(originalRows);
+            setSelectAllCategories(originalRows);
         } else {
-            setSelectAllTags([]);
+            setSelectAllCategories([]);
         }
     };
 
     return (
         <>
             <DataTable
-                selectable 
+                selectable
                 columns={columns}
-                data={tagList}
-                noData={!isLoading && tagList.length === 0}
+                data={categoryList}
+                noData={!isLoading && categoryList.length === 0}
                 skeletonAvatarColumns={[0]}
                 skeletonAvatarProps={{ width: 30, height: 30 }}
                 loading={isLoading}
                 pagingData={{
-                    total: tagListTotal,
-                    pageIndex: tagTableData.pageIndex,
-                    pageSize: tagTableData.pageSize,
+                    total: categoryListTotal,
+                    pageIndex: categoryTableData.pageIndex,
+                    pageSize: categoryTableData.pageSize,
                 }}
                 checkboxChecked={(row) =>
-                    selectedTags.some((selected) => selected.id === row.id)
+                    selectedCategories.some((selected) => selected.id === row.id)
                 }
                 onPaginationChange={handlePaginationChange}
                 onSelectChange={handleSelectChange}
@@ -228,14 +249,14 @@ const TagListTable = () => {
             <ConfirmDialog
                 isOpen={deleteConfirmationOpen}
                 type="danger"
-                title="Remove Tag" 
+                title="Remove Category"
                 onClose={handleCancel}
                 onRequestClose={handleCancel}
                 onCancel={handleCancel}
                 onConfirm={handleConfirmDelete}
             >
                 <p>
-                    Are you sure you want to remove this tag? This action
+                    Are you sure you want to remove this category? This action
                     can&apos;t be undone.
                 </p>
             </ConfirmDialog>
@@ -243,4 +264,4 @@ const TagListTable = () => {
     );
 };
 
-export default TagListTable;
+export default CategoryListTable;

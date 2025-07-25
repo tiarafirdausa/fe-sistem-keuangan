@@ -8,16 +8,16 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.posts',
         path: `${ADMIN_PREFIX_PATH}/posts`,
-        component: lazy(() => import('@/views/admin/content/Posts/PostList')), 
+        component: lazy(() => import('@/views/admin/content/Posts/PostList')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
         },
     },
-        {
+    {
         key: 'contentManagement.posts.new',
         path: `${ADMIN_PREFIX_PATH}/posts/new`,
-        component: lazy(() => import('@/views/admin/content/Posts/PostCreate')), 
+        component: lazy(() => import('@/views/admin/content/Posts/PostCreate')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
@@ -30,23 +30,25 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.posts.details',
         path: `${ADMIN_PREFIX_PATH}/posts/details/:slug`,
-        component: lazy(() => import('@/views/admin/content/Posts/PostDetails')), 
+        component: lazy(
+            () => import('@/views/admin/content/Posts/PostDetails'),
+        ),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
-        header: {
+            header: {
                 contained: true,
                 title: lazy(
                     () =>
                         import(
                             '@/views/admin/content/Posts/PostDetails/components/PostDetailHeader'
-                        )
+                        ),
                 ),
                 extraHeader: lazy(
                     () =>
                         import(
                             '@/views/admin/content/Posts/PostDetails/components/PostDetailHeaderExtra'
-                        )
+                        ),
                 ),
             },
         },
@@ -54,7 +56,7 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.pages',
         path: `${ADMIN_PREFIX_PATH}/pages`,
-        component: lazy(() => import('@/views/admin/content/Pages')), 
+        component: lazy(() => import('@/views/admin/content/Pages')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
@@ -63,16 +65,46 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.categories',
         path: `${ADMIN_PREFIX_PATH}/categories`,
-        component: lazy(() => import('@/views/admin/content/Categories')), 
+        component: lazy(
+            () => import('@/views/admin/content/Categories/CategoryList'),
+        ),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
         },
     },
     {
+        key: 'contentManagement.categories.new',
+        path: `${ADMIN_PREFIX_PATH}/categories/new`,
+        component: lazy(() => import('@/views/admin/content/Categories/CategoryCreate')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Category',
+            },
+        },
+    },
+    {
+        key: 'contentManagement.categories.edit',
+        path: `${ADMIN_PREFIX_PATH}/categories/edit/:slug`,
+        component: lazy(
+            () => import('@/views/admin/content/Categories/CategoryEdit'),
+        ),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Tag',
+            },
+        },
+    },
+    {
         key: 'contentManagement.tags',
         path: `${ADMIN_PREFIX_PATH}/tags`,
-        component: lazy(() => import('@/views/admin/content/Tags/TagList')), 
+        component: lazy(() => import('@/views/admin/content/Tags/TagList')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
@@ -80,8 +112,8 @@ const contentManagementRoute = [
     },
     {
         key: 'contentManagement.tags.new',
-        path: `${ADMIN_PREFIX_PATH}/tags/new`, 
-        component: lazy(() => import('@/views/admin/content/Tags/TagCreate')), 
+        path: `${ADMIN_PREFIX_PATH}/tags/new`,
+        component: lazy(() => import('@/views/admin/content/Tags/TagCreate')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
@@ -92,22 +124,24 @@ const contentManagementRoute = [
         },
     },
     {
-    key: 'contentManagement.tags.edit', 
-    path: `${ADMIN_PREFIX_PATH}/tags/edit/:slug`, 
-    component: lazy(() => import('@/views/admin/content/Tags/TagEdit/TagEdit')), 
-    authority: [ADMIN],
-    meta: {
-        pageContainerType: 'contained',
-        header: {
-            contained: true,
-            title: 'Edit Tag',
+        key: 'contentManagement.tags.edit',
+        path: `${ADMIN_PREFIX_PATH}/tags/edit/:slug`,
+        component: lazy(
+            () => import('@/views/admin/content/Tags/TagEdit'),
+        ),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Tag',
+            },
         },
     },
-},
     {
         key: 'contentManagement.comments',
         path: `${ADMIN_PREFIX_PATH}/comments`,
-        component: lazy(() => import('@/views/admin/content/Comments')), 
+        component: lazy(() => import('@/views/admin/content/Comments')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
@@ -116,7 +150,7 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.media',
         path: `${ADMIN_PREFIX_PATH}/media`,
-        component: lazy(() => import('@/views/admin/content/Media')), 
+        component: lazy(() => import('@/views/admin/content/Media')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
