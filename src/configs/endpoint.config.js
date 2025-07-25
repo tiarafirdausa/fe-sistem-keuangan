@@ -68,11 +68,11 @@ const endpointConfig = {
     updateSettings: '/settings',
 
     // Social Links
-    getAllSocialLinks: '/social',
-    getSocialLinkById: (id) => `/social/${id}`,
-    createSocialLink: '/social',
-    updateSocialLink: (id) => `/social/${id}`,
-    deleteSocialLink: (id) => `/social/${id}`,
+    getAllSocialLinks: '/socials',
+    getSocialLinkById: (id) => `/socials/${id}`,
+    createSocialLink: '/socials',
+    updateSocialLink: (id) => `/socials/${id}`,
+    deleteSocialLink: (id) => `/socials/${id}`,
 
     // Tags
     getAllTags: '/tags',

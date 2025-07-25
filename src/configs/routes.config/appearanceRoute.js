@@ -8,7 +8,7 @@ const appearanceRoute = [
     {
         key: 'appearance.menus',
         path: `${ADMIN_PREFIX_PATH}/menus`,
-        component: lazy(() => import('@/views/admin/appearance/Menus')), 
+        component: lazy(() => import('@/views/admin/appearance/Menus/MenuList')), 
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
@@ -17,10 +17,36 @@ const appearanceRoute = [
     {
         key: 'appearance.socialLinks',
         path: `${ADMIN_PREFIX_PATH}/social-links`,
-        component: lazy(() => import('@/views/admin/appearance/SocialLinks')), 
+        component: lazy(() => import('@/views/admin/appearance/SocialLinks/SocialLinkList')), 
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
+        },
+    },
+    {
+        key: 'appearance.socialLinks.new', 
+        path: `${ADMIN_PREFIX_PATH}/social-links/new`,
+        component: lazy(() => import('@/views/admin/appearance/SocialLinks/SocialLinkCreate')), 
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Social Link', 
+            },
+        },
+    },
+    {
+        key: 'appearance.socialLinks.edit', 
+        path: `${ADMIN_PREFIX_PATH}/social-links/edit/:id`, 
+        component: lazy(() => import('@/views/admin/appearance/SocialLinks/SocialLinkEdit')), 
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Social Link', 
+            },
         },
     },
     {

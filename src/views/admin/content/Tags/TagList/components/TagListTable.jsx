@@ -83,7 +83,6 @@ const TagListTable = () => {
 
             setDeleteConfirmationOpen(false);
             setToDeleteId('');
-            console.log(`Tag with ID ${toDeleteId} deleted successfully.`);
         } catch (error) {
             console.error("Failed to delete tag:", error);
             setDeleteConfirmationOpen(false); 
