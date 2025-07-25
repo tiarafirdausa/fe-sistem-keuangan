@@ -9,7 +9,7 @@ import { apiDeleteSocialLink } from '@/services/SocialLinkService';
 import { useNavigate } from 'react-router';
 import { TbPencil, TbTrash } from 'react-icons/tb';
 import { HiOutlineLink } from 'react-icons/hi';
-import cloneDeep from 'lodash/cloneDeep'; // Added this import
+import cloneDeep from 'lodash/cloneDeep';
 
 const SocialLinkColumn = ({ row }) => {
     return (
