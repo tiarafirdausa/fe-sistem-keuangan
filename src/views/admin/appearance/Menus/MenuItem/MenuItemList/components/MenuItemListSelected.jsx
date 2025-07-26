@@ -2,18 +2,18 @@ import { useState } from 'react';
 import StickyFooter from '@/components/shared/StickyFooter';
 import Button from '@/components/ui/Button';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import useMenuItemList from '../hooks/useMenuItemList'; // Import the menu item list hook
-import { TbChecks, TbLink } from 'react-icons/tb'; // Changed icon to TbLink for menu items
-import { apiDeleteMenuItem } from '@/services/MenuService'; // Assuming a bulk delete API for menu items
+import useMenuItemList from '../hooks/useMenuItemList'; 
+import { TbChecks, TbLink } from 'react-icons/tb'; 
+import { apiDeleteMenuItem } from '@/services/MenuService'; 
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
 
 const MenuItemListSelected = () => {
     const {
-        selectedMenuItems, // Use selectedMenuItems from the store
-        mutate, // To re-fetch menu items after deletion
-        setSelectAllMenuItems, // To clear selections after deletion
-    } = useMenuItemList(); // Use the menu item list hook
+        selectedMenuItems, 
+        mutate,
+        setSelectAllMenuItems, 
+    } = useMenuItemList(); 
 
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
@@ -29,16 +29,16 @@ const MenuItemListSelected = () => {
         setDeleteConfirmationOpen(false);
         try {
             await Promise.all(
-                selectedMenuItems.map((item) => apiDeleteMenuItem(item.id)) // Call individual delete for each selected item
+                selectedMenuItems.map((item) => apiDeleteMenuItem(item.id))
             );
-            mutate(); // Re-fetch the menu item list to update the UI
-            setSelectAllMenuItems([]); // Clear all selected menu items
+            mutate(); 
+            setSelectAllMenuItems([]);
 
             toast.push(
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<TbLink />} // Changed icon to TbLink
+                        icon={<TbLink />}
                         className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
                     />
                     <span>Successfully deleted {selectedMenuItems.length} menu item(s)!</span>
@@ -51,7 +51,7 @@ const MenuItemListSelected = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<TbLink />} // Changed icon to TbLink
+                        icon={<TbLink />} 
                         className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
                     />
                     <span>Failed to delete menu item(s). Please try again.</span>

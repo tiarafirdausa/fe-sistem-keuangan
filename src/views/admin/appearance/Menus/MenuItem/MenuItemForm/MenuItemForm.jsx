@@ -63,7 +63,7 @@ const MenuItemForm = (props) => {
         resolver: zodResolver(validationSchema),
     });
 
-    const watchedType = watch('type'); // Watch the 'type' field
+    const watchedType = watch('type'); 
 
     useEffect(() => {
         if (!isEmpty(defaultValues)) {
@@ -88,7 +88,7 @@ const MenuItemForm = (props) => {
                         <MenuItemGeneralSection
                             control={control}
                             errors={errors}
-                            watchedType={watchedType} // Pass watchedType to the section
+                            watchedType={watchedType} 
                         />
                     </div>
                 </div>

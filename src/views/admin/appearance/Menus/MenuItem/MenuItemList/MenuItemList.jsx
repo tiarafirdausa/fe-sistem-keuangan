@@ -29,7 +29,7 @@ const MenuItemList = () => {
                     </div>
                 </AdaptiveCard>
             </Container>
-            <MenuItemListSelected/> {/* UNCOMMENTED */}
+            <MenuItemListSelected/> 
         </>
     )
 }

@@ -1,7 +1,7 @@
 import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
-import { FormItem, FormContainer } from '@/components/ui/Form'; // Added FormContainer
+import { FormItem, FormContainer } from '@/components/ui/Form'; 
 import { Controller } from 'react-hook-form';
 
 const menuItemTypeOptions = [
@@ -20,29 +20,27 @@ const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
     return (
         <Card>
             <h4 className="mb-6">Menu Item Information</h4>
-            <FormContainer> {/* Use FormContainer to wrap form items */}
-                {/* Menu ID (hidden or read-only, usually set from parent context) */}
+            <FormContainer> 
                 <FormItem
                     label="Menu ID"
                     invalid={Boolean(errors.menu_id)}
                     errorMessage={errors.menu_id?.message}
-                    className="hidden" // Hidden as it's typically set by the parent route/context
+                    className="hidden"
                 >
                     <Controller
                         name="menu_id"
                         control={control}
                         render={({ field }) => (
                             <Input
-                                disabled // It's usually set by the parent
+                                disabled 
                                 type="number"
                                 {...field}
-                                value={field.value || ''} // Ensure it's not null for controlled input
+                                value={field.value || ''} 
                             />
                         )}
                     />
                 </FormItem>
 
-                {/* Parent ID (optional, for sub-menus) */}
                 <FormItem
                     label="Parent Menu Item (optional)"
                     invalid={Boolean(errors.parent_id)}
@@ -58,7 +56,6 @@ const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
                                 {...field}
                                 value={field.value || ''}
                                 onChange={(e) => {
-                                    // Convert to number or null if empty
                                     const val = e.target.value;
                                     field.onChange(val === '' ? null : Number(val));
                                 }}
@@ -106,7 +103,6 @@ const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
                     />
                 </FormItem>
 
-                {/* Reference ID (conditionally rendered based on type) */}
                 {watchedType !== 'custom' && (
                     <FormItem
                         label={`Reference ID (${watchedType})`}
