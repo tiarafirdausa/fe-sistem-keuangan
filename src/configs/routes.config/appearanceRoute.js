@@ -12,68 +12,67 @@ const appearanceRoute = [
             pageContainerType: 'contained',
         },
     },
-    // Jika Anda akan mengaktifkan route edit/new menu item, mereka juga harus di atas
-    // {
-    //     key: 'appearance.menus.items.new',
-    //     path: `${ADMIN_PREFIX_PATH}/menus/:menuId/items/new`,
-    //     component: lazy(() => import('@/views/admin/appearance/Menus/MenuItems/MenuItemCreate')),
-    //     authority: [ADMIN],
-    //     meta: {
-    //         pageContainerType: 'contained',
-    //         header: {
-    //             contained: true,
-    //             title: 'Create New Menu Item',
-    //         },
-    //     },
-    // },
-    // {
-    //     key: 'appearance.menus.items.edit',
-    //     path: `${ADMIN_PREFIX_PATH}/menus/:menuId/items/edit/:id`,
-    //     component: lazy(() => import('@/views/admin/appearance/Menus/MenuItems/MenuItemEdit')),
-    //     authority: [ADMIN],
-    //     meta: {
-    //         pageContainerType: 'contained',
-    //         header: {
-    //             contained: true,
-    //             title: 'Edit Menu Item',
-    //         },
-    //     },
-    // },
+    {
+        key: 'appearance.menus.items.new',
+        path: `${ADMIN_PREFIX_PATH}/menus/:menuId/items/new`,
+        component: lazy(() => import('@/views/admin/appearance/Menus/MenuItem/MenuItemCreate')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Menu Item',
+            },
+        },
+    },
+    {
+        key: 'appearance.menus.items.edit',
+        path: `${ADMIN_PREFIX_PATH}/menus/:menuId/items/edit/:id`,
+        component: lazy(() => import('@/views/admin/appearance/Menus/MenuItem/MenuItemEdit')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Menu Item',
+            },
+        },
+    },
     {
         key: 'appearance.menus',
-        path: `${ADMIN_PREFIX_PATH}/menus`, // <--- BIARKAN DI BAWAH ROUTE YANG LEBIH SPESIFIK
+        path: `${ADMIN_PREFIX_PATH}/menus`,
         component: lazy(() => import('@/views/admin/appearance/Menus/MenuList')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
         },
     },
-    // {
-    //     key: 'appearance.menus.new',
-    //     path: `${ADMIN_PREFIX_PATH}/menus/new`,
-    //     component: lazy(() => import('@/views/admin/appearance/Menus/MenuCreate')),
-    //     authority: [ADMIN],
-    //     meta: {
-    //         pageContainerType: 'contained',
-    //         header: {
-    //             contained: true,
-    //             title: 'Create New Menu',
-    //         },
-    //     },
-    // },
-    // {
-    //     key: 'appearance.menus.edit',
-    //     path: `${ADMIN_PREFIX_PATH}/menus/edit/:id`,
-    //     component: lazy(() => import('@/views/admin/appearance/Menus/MenuEdit')),
-    //     authority: [ADMIN],
-    //     meta: {
-    //         pageContainerType: 'contained',
-    //         header: {
-    //             contained: true,
-    //             title: 'Edit Menu',
-    //         },
-    //     },
-    // },
+    {
+        key: 'appearance.menus.new',
+        path: `${ADMIN_PREFIX_PATH}/menus/new`,
+        component: lazy(() => import('@/views/admin/appearance/Menus/MenuCreate')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Menu',
+            },
+        },
+    },
+    {
+        key: 'appearance.menus.edit',
+        path: `${ADMIN_PREFIX_PATH}/menus/edit/:id`,
+        component: lazy(() => import('@/views/admin/appearance/Menus/MenuEdit')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Menu',
+            },
+        },
+    },
 
     {
         key: 'appearance.socialLinks',

@@ -110,12 +110,6 @@ const MenuItemListTable = ( {menuId} ) => {
         selectedMenuItems,
         mutate,
     } = useMenuItemList(menuId);
-    
-    console.log("Debug from MenuItemListTable - menuId prop:", menuId);
-    console.log("Debug from MenuItemListTable - menuItemList from hook:", menuItemList);
-    console.log("Debug from MenuItemListTable - isLoading from hook:", isLoading);
-    console.log("Debug from MenuItemListTable - menuItemTableData from hook:", menuItemTableData);
-    
 
     const columns = useMemo(
         () => [
