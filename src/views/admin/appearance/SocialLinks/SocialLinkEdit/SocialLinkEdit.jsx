@@ -7,7 +7,7 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import SocialLinkForm from '../SocialLinkForm';
 import { apiGetSocialLinkById, apiUpdateSocialLink, apiDeleteSocialLink } from '@/services/SocialLinkService'; 
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 
 const SocialLinkEdit = () => {

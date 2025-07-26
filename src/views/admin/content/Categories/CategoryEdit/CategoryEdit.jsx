@@ -8,7 +8,7 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import CategoryForm from '../CategoryForm/CaregoryForm';
 import { apiGetCategoryBySlug, apiUpdateCategory, apiDeleteCategory } from '@/services/CategoryService';
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 
 const CategoryEdit = () => { 

@@ -1,5 +1,5 @@
 import authRoute from '@/configs/routes.config/authRoute'
-import { useLocation } from 'react-router'
+import { useLocation } from 'react-router-dom'
 import AuthLayout from './AuthLayout'
 
 const PreLoginLayout = ({ children }) => {

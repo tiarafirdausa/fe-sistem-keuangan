@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { apiGetPostBySlug } from '@/services/PostService'
 import Loading from '@/components/shared/Loading'
 

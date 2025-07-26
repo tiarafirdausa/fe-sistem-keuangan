@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react'
 import { useRouteKeyStore } from '@/store/routeKeyStore'
-import { useLocation } from 'react-router'
+import { useLocation } from 'react-router-dom'
 import { useThemeStore } from '@/store/themeStore'
 
 const AppRoute = ({ component: Component, routeKey, ...props }) => {

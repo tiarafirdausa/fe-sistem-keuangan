@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button'
 import ActionLink from '@/components/shared/ActionLink'
 import ForgotPasswordForm from './components/ForgotPasswordForm'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 export const ForgotPasswordBase = ({ signInUrl = '/sign-in' }) => {
     const [emailSent, setEmailSent] = useState(false)

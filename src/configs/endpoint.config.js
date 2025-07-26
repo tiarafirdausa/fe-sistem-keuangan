@@ -49,12 +49,12 @@ const endpointConfig = {
     unapproveComment: (id) => `/comments/${id}/unapprove`,
 
     // Menus
-    getAllMenus: '/menu-definitions',
-    getMenuById: (id) => `/menu-definitions/id/${id}`,
-    getMenuBySlug: (slug) => `/menu-definitions/${slug}`,
-    createMenu: '/menu-definitions',
-    updateMenu: (id) => `/menu-definitions/id/${id}`,
-    deleteMenu: (id) => `/menu-definitions/${id}`,
+    getAllMenus: '/menus',
+    getMenuById: (id) => `/menus/id/${id}`,
+    getMenuBySlug: (slug) => `/menus/${slug}`,
+    createMenu: '/menus',
+    updateMenu: (id) => `/menus/${id}`,
+    deleteMenu: (id) => `/menus/${id}`,
 
     // Menu Items
     getAllMenuItems: '/menu-items', 

@@ -7,7 +7,7 @@ import toast from '@/components/ui/toast';
 import CategoryForm from '../CategoryForm/CaregoryForm';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import { TbTrash } from 'react-icons/tb';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { apiCreateCategory } from '@/services/CategoryService';
 
 const CategoryCreate = () => { 

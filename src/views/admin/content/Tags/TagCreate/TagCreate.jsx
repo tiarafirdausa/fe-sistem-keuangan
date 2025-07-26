@@ -7,7 +7,7 @@ import toast from '@/components/ui/toast';
 import TagForm from '../TagForm';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import { TbTrash } from 'react-icons/tb';
-import { useNavigate } from 'react-router'; 
+import { useNavigate } from 'react-router-dom'; 
 import { apiCreateTag } from '@/services/TagService';
 
 const TagCreate = () => {

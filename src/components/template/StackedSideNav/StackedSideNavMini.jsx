@@ -12,7 +12,7 @@ import appConfig from '@/configs/app.config'
 import navigationIcon from '@/configs/navigation-icon.config'
 import useMenuActive from '@/utils/hooks/useMenuActive'
 import isEmpty from 'lodash/isEmpty'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 const StackedSideNavMini = (props) => {
     const {

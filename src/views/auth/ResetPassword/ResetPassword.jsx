@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button'
 import ActionLink from '@/components/shared/ActionLink'
 import ResetPasswordForm from './components/ResetPasswordForm'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 export const ResetPasswordBase = ({ signInUrl = '/sign-in' }) => {
     const [resetComplete, setResetComplete] = useState(false)

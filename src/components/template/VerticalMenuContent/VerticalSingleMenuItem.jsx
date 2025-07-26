@@ -2,7 +2,7 @@ import Tooltip from '@/components/ui/Tooltip'
 import Menu from '@/components/ui/Menu'
 import AuthorityCheck from '@/components/shared/AuthorityCheck'
 import VerticalMenuIcon from './VerticalMenuIcon'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import Dropdown from '@/components/ui/Dropdown'
 
 const { MenuItem } = Menu

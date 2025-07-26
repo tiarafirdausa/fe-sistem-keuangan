@@ -8,7 +8,7 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import TagForm from '../TagForm';
 import { apiGetTagBySlug, apiUpdateTag, apiDeleteTag } from '@/services/TagService'; 
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
-import { useParams, useNavigate } from 'react-router'; 
+import { useParams, useNavigate } from 'react-router-dom'; 
 import useSWR from 'swr';
 
 const TagEdit = () => {

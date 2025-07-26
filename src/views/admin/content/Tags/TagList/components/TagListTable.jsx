@@ -5,7 +5,7 @@ import DataTable from '@/components/shared/DataTable';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useTagList from '../hooks/useTagList';
 import cloneDeep from 'lodash/cloneDeep';
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { TbPencil, TbTrash } from 'react-icons/tb';
 import { FaTag } from 'react-icons/fa'; 
 import { apiDeleteTag } from '@/services/TagService';

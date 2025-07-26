@@ -1,4 +1,4 @@
-import { BrowserRouter } from 'react-router'
+import { BrowserRouter } from 'react-router-dom'
 import Theme from '@/components/template/Theme'
 import Layout from '@/components/layouts'
 import { AuthProvider } from '@/auth'

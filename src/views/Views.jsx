@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import Loading from '@/components/shared/Loading'
-import { useLocation } from 'react-router'
+import { useLocation } from 'react-router-dom'
 import AllRoutes from '@/components/route/AllRoutes'
 
 const Views = (props) => {

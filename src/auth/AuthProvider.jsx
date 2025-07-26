@@ -4,7 +4,7 @@ import appConfig from '@/configs/app.config'
 import { useSessionUser, useToken } from '@/store/authStore'
 import { apiSignIn, apiSignOut, apiSignUp } from '@/services/AuthService'
 import { REDIRECT_URL_KEY } from '@/constants/app.constant'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 const IsolatedNavigator = ({ ref }) => {
     const navigate = useNavigate()

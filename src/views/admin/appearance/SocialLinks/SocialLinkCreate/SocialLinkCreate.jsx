@@ -6,7 +6,7 @@ import toast from '@/components/ui/toast';
 import SocialLinkForm from '../SocialLinkForm'; 
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import { TbTrash } from 'react-icons/tb';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { apiCreateSocialLink } from '@/services/SocialLinkService'; 
 
 const SocialLinkCreate = () => {

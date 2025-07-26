@@ -1,6 +1,6 @@
 import Button from '@/components/ui/Button'
 import { TbPlus } from 'react-icons/tb' 
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 const PostListActionTools = () => {
     const navigate = useNavigate()

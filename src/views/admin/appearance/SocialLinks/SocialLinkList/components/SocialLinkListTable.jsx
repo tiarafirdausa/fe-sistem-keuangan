@@ -6,7 +6,7 @@ import Notification from '@/components/ui/Notification';
 import toast from '@/components/ui/toast';
 import useSocialLinkList from '../hooks/useSocialLinkList';
 import { apiDeleteSocialLink } from '@/services/SocialLinkService';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { TbPencil, TbTrash } from 'react-icons/tb';
 import { HiOutlineLink } from 'react-icons/hi';
 import cloneDeep from 'lodash/cloneDeep';
@@ -113,10 +113,9 @@ const SocialLinkListTable = () => {
         setSelectedSocialLinks,
         setSelectAllSocialLinks,
         selectedSocialLinks,
-        setSocialLinkTableData, // Added this
+        setSocialLinkTableData, 
     } = useSocialLinkList();
 
-    // Defined these functions to manage table data changes
     const handleSetTableData = (data) => {
         setSocialLinkTableData(data);
         if (selectedSocialLinks.length > 0) {

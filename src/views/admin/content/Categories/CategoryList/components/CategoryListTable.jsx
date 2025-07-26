@@ -6,7 +6,7 @@ import DataTable from '@/components/shared/DataTable';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useCategoryList from '../hooks/useCategoryList';
 import cloneDeep from 'lodash/cloneDeep';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi';
 import { FcAdvertising } from 'react-icons/fc'; 
 import { apiDeleteCategory } from '@/services/CategoryService';

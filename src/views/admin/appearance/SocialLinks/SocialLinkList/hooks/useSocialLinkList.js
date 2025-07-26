@@ -10,25 +10,22 @@ const useSocialLinkList = () => {
         socialLinkTableData,
         socialLinkFilterData,
         setSocialLinkTableData,
-        setSocialLinkFilterData, // Untuk filter tambahan jika ada
+        setSocialLinkFilterData, 
         selectedSocialLinks,
         setSelectedSocialLinks,
         setSelectAllSocialLinks,
     } = useSocialLinkListStore((state) => state);
 
-    // Gabungkan data tabel dan filter untuk parameter API
     const queryParams = {
         pageIndex: socialLinkTableData.pageIndex,
         pageSize: socialLinkTableData.pageSize,
-        query: socialLinkTableData.query, // Untuk pencarian 'platform'
+        query: socialLinkTableData.query, 
         sort: socialLinkTableData.sort,
-        ...socialLinkFilterData, // Gabungkan filter tambahan
+        ...socialLinkFilterData, 
     };
 
-    // Fungsi fetcher untuk SWR
     const fetcher = useCallback(async (params) => {
         const response = await apiGetAllSocialLinks(params);
-        // Respons backend diharapkan { data: [], total: 0, pageIndex: 1, pageSize: 10 }
         return response;
     }, []);
 

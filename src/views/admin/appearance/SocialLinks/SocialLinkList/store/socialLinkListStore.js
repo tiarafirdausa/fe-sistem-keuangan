@@ -4,7 +4,7 @@ import { create } from 'zustand'
 export const initialSocialLinkTableData = {
     pageIndex: 1,
     pageSize: 10,
-    query: '', // Untuk search input
+    query: '', 
     sort: {
         order: '',
         key: '',
@@ -12,14 +12,13 @@ export const initialSocialLinkTableData = {
 }
 
 export const initialSocialLinkFilterData = {
-    // Jika ada filter tambahan selain 'query' dari tableData, tambahkan di sini.
-    // Contoh: type: '', status: ''
+
 }
 
 const initialSocialLinkState = {
     socialLinkTableData: initialSocialLinkTableData,
     socialLinkFilterData: initialSocialLinkFilterData,
-    selectedSocialLinks: [], // Untuk multi-selection di tabel
+    selectedSocialLinks: [], 
 }
 
 export const useSocialLinkListStore = create((set) => ({
@@ -30,19 +29,17 @@ export const useSocialLinkListStore = create((set) => ({
         set((state) => {
             const prevSelectedSocialLinks = state.selectedSocialLinks
             if (checked) {
-                // Tambahkan jika belum ada
                 if (!prevSelectedSocialLinks.some((prevLink) => socialLink.id === prevLink.id)) {
                     return { selectedSocialLinks: [...prevSelectedSocialLinks, socialLink] }
                 }
             } else {
-                // Hapus jika ada
                 return {
                     selectedSocialLinks: prevSelectedSocialLinks.filter(
                         (prevLink) => prevLink.id !== socialLink.id,
                     ),
                 }
             }
-            return { selectedSocialLinks: prevSelectedSocialLinks }; // Jika tidak ada perubahan
+            return { selectedSocialLinks: prevSelectedSocialLinks }; 
         }),
     setSelectAllSocialLinks: (socialLinks) => set(() => ({ selectedSocialLinks: socialLinks })),
     resetSocialLinkListStore: () => set(initialSocialLinkState),
