@@ -1,44 +1,51 @@
+// stores/postListStore.js
 import { create } from 'zustand'
 
-export const initialTableData = {
+export const initialPostTableData = {
     pageIndex: 1,
     pageSize: 10,
     query: '',
     sort: {
         order: '',
-        key: '',
+        key: '',  
     },
 }
 
-export const initialFilterData = {
-    authorId: null,      
-    categoryId: null,    
-    tagId: null,         
-    status: 'published', 
+export const initialPostFilterData = {
+    search: '',     
+    categoryId: '', 
+    tagId: '',      
+    status: '',     
+    authorId: '',   
 }
 
-const initialState = {
-    tableData: initialTableData,
-    filterData: initialFilterData,
-    selectedPost: [], 
+const initialPostState = {
+    postTableData: initialPostTableData,
+    postFilterData: initialPostFilterData,
+    selectedPosts: [],
 }
 
 export const usePostListStore = create((set) => ({
-    ...initialState,
-    setFilterData: (payload) => set(() => ({ filterData: payload })),
-    setTableData: (payload) => set(() => ({ tableData: payload })),
-    setSelectedPost: (checked, row) =>
+    ...initialPostState,
+    setPostFilterData: (payload) => set(() => ({ postFilterData: payload })),
+    setPostTableData: (payload) => set(() => ({ postTableData: payload })),
+    setSelectedPosts: (checked, post) =>
         set((state) => {
-            const prevData = state.selectedPost
+            const prevSelectedPosts = state.selectedPosts
             if (checked) {
-                return { selectedPost: [...prevData, row] }
+                if (!prevSelectedPosts.some((prevPost) => post.id === prevPost.id)) {
+                    return { selectedPosts: [...prevSelectedPosts, post] }
+                }
             } else {
                 return {
-                    selectedPost: prevData.filter(
-                        (prevPost) => prevPost.id !== row.id,
+                    selectedPosts: prevSelectedPosts.filter(
+                        (prevPost) => prevPost.id !== post.id,
                     ),
                 }
             }
+            return { selectedPosts: prevSelectedPosts }; 
         }),
-        setSelectAllPost: (payload) => set(() => ({ selectedPost: payload })),
-}));
+
+    setSelectAllPosts: (posts) => set(() => ({ selectedPosts: posts })),
+    resetPostListStore: () => set(initialPostState),
+}))

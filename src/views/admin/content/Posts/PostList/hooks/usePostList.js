@@ -1,47 +1,49 @@
-import { apiGetAllPosts } from "@/services/PostService";
-import { usePostListStore } from "../store/PostListStore";
-import useSWR from "swr";
+// hooks/usePostList.js
+import { apiGetAllPosts } from '@/services/PostService'; 
+import useSWR from 'swr';
+import { usePostListStore } from '../store/PostListStore';
 
 const usePostList = () => {
     const {
-        tableData,
-        filterData,
-        setTableData,
-        setFilterData,
-        selectedPost,
-        setSelectedPost,
-        setSelectAllPost,
-    } = usePostListStore((state) => state)
+        postTableData,
+        postFilterData,
+        setPostTableData,
+        setPostFilterData,
+        selectedPosts,
+        setSelectedPosts,
+        setSelectAllPosts,
+    } = usePostListStore((state) => state);
 
     const { data, error, isLoading, mutate } = useSWR(
-        ['/api/posts', { ...tableData, ...filterData }],
+        ['/api/posts', { ...postTableData, ...postFilterData }],
         // eslint-disable-next-line no-unused-vars
-        async ([_,params]) => {
+        async ([_, params]) => {
             const response = await apiGetAllPosts(params);
             return response;
         },
         {
             revalidateOnFocus: false,
+            revalidateIfStale: true, 
         },
-    )
+    );
 
-    const postList = Array.isArray(data) ? data : [];
-    const postListTotal = Array.isArray(data) ? data.length : 0;
+        const postList = Array.isArray(data) ? data : [];
+        const postListTotal = Array.isArray(data) ? data.length : 0;
 
     return {
         error,
         isLoading,
-        tableData,
-        filterData,
+        postTableData,
+        postFilterData,
         mutate,
         postList,
         postListTotal,
-        setTableData,
-        selectedPost,
-        setSelectedPost,
-        setSelectAllPost,
-        setFilterData,
-    }
-}
+        setPostTableData,
+        selectedPosts,
+        setSelectedPosts,
+        setSelectAllPosts,
+        setPostFilterData,
+    };
+};
 
-export default usePostList
+export default usePostList;

@@ -28,6 +28,19 @@ const contentManagementRoute = [
         },
     },
     {
+        key: 'contentManagement.posts.edit',
+        path: `${ADMIN_PREFIX_PATH}/posts/edit/:slug`,
+        component: lazy(() => import('@/views/admin/content/Posts/PostEdit')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Post',
+            },
+        },
+    },
+    {
         key: 'contentManagement.posts.details',
         path: `${ADMIN_PREFIX_PATH}/posts/details/:slug`,
         component: lazy(

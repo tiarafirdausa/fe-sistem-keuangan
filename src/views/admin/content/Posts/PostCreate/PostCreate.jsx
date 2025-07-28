@@ -1,105 +1,122 @@
 // src/views/admin/content/Posts/PostCreate/PostCreate.jsx
-import { useState } from 'react'
-import Container from '@/components/shared/Container'
-import Button from '@/components/ui/Button'
-import Notification from '@/components/ui/Notification'
-import toast from '@/components/ui/toast'
-import PostForm from '../PostForm'
-import ConfirmDialog from '@/components/shared/ConfirmDialog'
-import { TbTrash } from 'react-icons/tb'
-import { useNavigate } from 'react-router-dom'
-import { apiCreatePost } from '@/services/PostService'
+import { useState, useEffect } from 'react';
+import Container from '@/components/shared/Container';
+import Button from '@/components/ui/Button';
+import Notification from '@/components/ui/Notification';
+import toast from '@/components/ui/toast';
+import Spinner from '@/components/ui/Spinner';
+import PostForm from '../PostForm';
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
+import { TbTrash } from 'react-icons/tb';
+import { useNavigate } from 'react-router-dom';
+import { apiCreatePost } from '@/services/PostService';
+import { apiGetAllCategories } from '@/services/CategoryService';
+import { apiGetAllTags } from '@/services/TagService';
+import { POST_DEFAULT_VALUES } from '../PostForm/constants';
+
 
 const PostCreate = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const [discardConfirmationOpen, setDiscardConfirmationOpen] =
-        useState(false)
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [discardConfirmationOpen, setDiscardConfirmationOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
+    const [categories, setCategories] = useState([]);
+    const [tags, setTags] = useState([]);
 
-    const handleFormSubmit = async (values) => {
-        setIsSubmitting(true)
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoadingData(true);
+                const [categoriesRes, tagsRes] = await Promise.all([
+                    apiGetAllCategories(),
+                    apiGetAllTags(),
+                ]);
+                setCategories(categoriesRes.data);
+                setTags(tagsRes.tags);
+            } catch (error) {
+                console.error('Error fetching initial data for post form:', error);
+                toast.push(
+                    <Notification type="danger" title="Error">
+                        Failed to load form data: {error.message || 'Unknown error.'}
+                    </Notification>,
+                    { placement: 'top-center' },
+                );
+            } finally {
+                setLoadingData(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const handleFormSubmit = async (formData) => {
+        setIsSubmitting(true);
         try {
-            const responseData = await apiCreatePost(values)
+            formData.set('author_id', '1');
+            const responseData = await apiCreatePost(formData);
 
             if (responseData) {
                 toast.push(
                     <Notification type="success" title="Success">
-                        Post {responseData.title || 'Untitled Post'} created
-                        successfully!
+                        Post &quot;{responseData.title || 'Untitled Post'}&quot; created successfully!
                     </Notification>,
                     { placement: 'top-center' },
-                )
-                navigate('/admin/posts')
+                );
+                navigate('/admin/posts');
             } else {
                 toast.push(
                     <Notification type="warning" title="Unexpected Response">
-                        Post created but response was unexpected. Please check
-                        manually.
+                        Post created but response was unexpected. Please check manually.
                     </Notification>,
                     { placement: 'top-center' },
-                )
+                );
             }
         } catch (error) {
-            console.error(
-                'Error creating post in frontend:',
-                error.response?.data || error.message,
-            )
+            console.error('Error creating post in frontend:', error.response?.data || error.message);
             toast.push(
                 <Notification type="danger" title="Error">
-                    Failed to create post:{' '}
-                    {error.response?.data?.message || 'Unknown error occurred.'}
+                    Failed to create post: {error.response?.data?.error || 'Unknown error occurred.'}
                 </Notification>,
                 { placement: 'top-center' },
-            )
+            );
         } finally {
-            setIsSubmitting(false)
+            setIsSubmitting(false);
         }
-    }
+    };
 
     const handleConfirmDiscard = () => {
-        setDiscardConfirmationOpen(false)
+        setDiscardConfirmationOpen(false);
         toast.push(
             <Notification type="info" title="Discarded">
                 Post creation discarded.
             </Notification>,
             { placement: 'top-center' },
-        )
-        navigate('/admin/posts')
-    }
+        );
+        navigate('/admin/posts');
+    };
 
     const handleDiscard = () => {
-        setDiscardConfirmationOpen(true)
-    }
+        setDiscardConfirmationOpen(true);
+    };
 
     const handleCancel = () => {
-        setDiscardConfirmationOpen(false)
+        setDiscardConfirmationOpen(false);
+    };
+
+    if (loadingData) {
+        return (
+            <Container className="h-full flex items-center justify-center">
+                <Spinner size={40} />
+            </Container>
+        );
     }
 
     return (
         <>
             <PostForm
-                newPost
-                defaultValues={{
-                    title: '',
-                    slug: '',
-                    excerpt: '',
-                    content: '',
-                    author_id: 1,
-                    status: 'draft',
-                    published_at: null,
-                    featured_image_file: null,
-                    existing_featured_image_path: null,
-                    clear_featured_image: false,
-                    gallery_image_files: [],
-                    existing_gallery_images: [],
-                    delete_gallery_image_ids: [],
-                    clear_all_gallery_images: false,
-                    meta_title: '',
-                    meta_description: '',
-                    categories: [],
-                    tags: [],
-                }}
+                defaultValues={POST_DEFAULT_VALUES}
+                categories={categories}
+                tags={tags}
                 onFormSubmit={handleFormSubmit}
             >
                 <Container>
@@ -138,12 +155,12 @@ const PostCreate = () => {
                 onConfirm={handleConfirmDiscard}
             >
                 <p>
-                    Are you sure you want to discard this post? This action
-                    cannot be undone.
+                    Are you sure you want to discard this post? This action cannot
+                    be undone.
                 </p>
             </ConfirmDialog>
         </>
-    )
-}
+    );
+};
 
-export default PostCreate
+export default PostCreate;

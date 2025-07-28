@@ -1,49 +1,64 @@
-import { useMemo, useState } from 'react'
-import Avatar from '@/components/ui/Avatar'
-import Tooltip from '@/components/ui/Tooltip'
-import DataTable from '@/components/shared/DataTable'
-import ConfirmDialog from '@/components/shared/ConfirmDialog'
-import usePostList from '../hooks/usePostList'
-import classNames from '@/utils/classNames'
-import cloneDeep from 'lodash/cloneDeep'
-import { useNavigate } from 'react-router-dom'
-import { TbPencil, TbTrash, TbEye } from 'react-icons/tb'
-import { FiFileText } from 'react-icons/fi'
-import { apiDeletePost } from '@/services/PostService'
-import { toast } from '@/components/ui/toast'
-
-const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
+import { useMemo, useState } from 'react';
+import Avatar from '@/components/ui/Avatar';
+import Tooltip from '@/components/ui/Tooltip';
+import DataTable from '@/components/shared/DataTable';
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
+import usePostList from '../hooks/usePostList';
+import cloneDeep from 'lodash/cloneDeep';
+import { useNavigate } from 'react-router-dom';
+import { TbPencil, TbTrash, TbEye } from 'react-icons/tb';
+import { HiOutlineDocumentText } from 'react-icons/hi';
+import { apiDeletePost } from '@/services/PostService';
+import { Tag } from '@/components/ui';
 
 const PostColumn = ({ row }) => {
+    const { title, category, status, featuredImage } = row; 
+
     return (
         <div className="flex items-center gap-2">
-            <Avatar
-                shape="round"
-                size={60}
-                {...(row.featured_image ? { src: row.featured_image } : { icon: <FiFileText /> })}
-            />
+            {featuredImage ? (
+                <Avatar
+                    shape="round"
+                    size={60}
+                    src={featuredImage} 
+                    alt={title} 
+                />
+            ) : (
+                <Avatar
+                    shape="round"
+                    size={60}
+                    icon={<HiOutlineDocumentText />} 
+                />
+            )}
             <div>
-                <div className="font-bold heading-text mb-1">{row.title}</div>
-                {row.slug && <span className="text-sm text-gray-500">Slug: {row.slug}</span>}
+                <div className="font-bold heading-text mb-1">{title}</div>
+                <Tag className="bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100">
+                    Category: {category?.name || 'N/A'}
+                </Tag>
+                {status === 'published' && (
+                    <Tag className="bg-emerald-100 text-emerald-800 dark:bg-emerald-700 dark:text-emerald-100 ml-1">
+                        Published
+                    </Tag>
+                )}
+                {status === 'draft' && (
+                    <Tag className="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100 ml-1">
+                        Draft
+                    </Tag>
+                )}
+                {status === 'archived' && (
+                    <Tag className="bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100 ml-1">
+                        Archived
+                    </Tag>
+                )}
             </div>
         </div>
-    )
-}
+    );
+};
 
-const ActionColumn = ({ onViewDetail, onEdit, onDelete }) => {
+const ActionColumn = ({ onEdit, onDelete, onViewDetail }) => {
     return (
         <div className="flex items-center justify-end gap-3">
-            <Tooltip title="View">
+            <Tooltip title="View Detail">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
                     role="button"
@@ -71,138 +86,111 @@ const ActionColumn = ({ onViewDetail, onEdit, onDelete }) => {
                 </div>
             </Tooltip>
         </div>
-    )
-}
+    );
+};
 
 const PostListTable = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false)
-    const [toDeleteId, setToDeleteId] = useState('')
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+    const [toDeleteId, setToDeleteId] = useState('');
 
     const handleCancel = () => {
-        setDeleteConfirmationOpen(false)
-    }
+        setDeleteConfirmationOpen(false);
+    };
 
-    const handleDelete = (post) => { 
-        setDeleteConfirmationOpen(true)
-        setToDeleteId(post.id)
-    }
+    const handleDelete = (post) => {
+        setDeleteConfirmationOpen(true);
+        setToDeleteId(post.id);
+    };
 
-    const handleEdit = (post) => { 
-        navigate(`/admin/posts/edit/${post.id}`) 
-    }
+    const handleEdit = (post) => {
+        navigate(`/admin/posts/edit/${post.slug}`);
+    };
 
-    const handleViewDetails = (post) => { 
-        navigate(`/admin/posts/details/${post.slug}`) 
-    }
+    const handleViewDetail = (post) => {
+        navigate(`/admin/posts/details/${post.slug}`);
+    };
 
     const handleConfirmDelete = async () => {
-        setDeleteConfirmationOpen(false)
         try {
-            await apiDeletePost(toDeleteId) 
-            mutate() 
-            toast.push(
-                <div className="flex items-center">
-                    <Avatar shape="circle" icon={<FiFileText />} className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"/>
-                    <span>Post deleted successfully!</span>
-                </div>
-            )
-            setToDeleteId('')
-            setSelectAllPost([]) 
+            await apiDeletePost(toDeleteId);
+
+            mutate();
+            setSelectAllPosts([]);
+
+            setDeleteConfirmationOpen(false);
+            setToDeleteId('');
         } catch (error) {
-            console.error("Error deleting post:", error);
-            toast.push(
-                <div className="flex items-center">
-                    <Avatar shape="circle" icon={<FiFileText />} className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"/>
-                    <span>Failed to delete post. Please try again.</span>
-                </div>
-            )
+            console.error("Failed to delete post:", error);
+            setDeleteConfirmationOpen(false);
         }
-    }
+    };
 
     const {
-        postList, 
-        postListTotal, 
-        tableData,
+        postList,
+        postListTotal,
+        postTableData,
         isLoading,
-        setTableData,
-        setSelectAllPost, 
-        setSelectedPost, 
-        selectedPost, 
+        setPostTableData,
+        setSelectAllPosts,
+        setSelectedPosts,
+        selectedPosts,
         mutate,
-    } = usePostList() 
+    } = usePostList();
 
     const columns = useMemo(
         () => [
             {
-                header: 'Post',
+                header: 'Title',
                 accessorKey: 'title',
                 cell: (props) => {
-                    const row = props.row.original
-                    return <PostColumn row={row} />
+                    const row = props.row.original;
+                    return <PostColumn row={row} />;
                 },
             },
             {
                 header: 'Author',
-                accessorKey: 'author_name', 
+                accessorKey: 'author.name',
                 cell: (props) => {
-                    const { author_name } = props.row.original
-                    return (
-                        <span className="font-semibold heading-text">
-                            {author_name || 'N/A'}
-                        </span>
-                    )
-                },
-            },
-            {
-                header: 'Status',
-                accessorKey: 'status',
-                cell: (props) => {
-                    const { status } = props.row.original
-                    const statusColorClass = {
-                        published: 'bg-emerald-500',
-                        draft: 'bg-amber-400',
-                        archived: 'bg-red-500',
-                    }[status] || 'bg-gray-400';
-                    return (
-                        <span className={classNames(
-                            'capitalize font-semibold px-2 py-0.5 rounded-full text-white text-xs',
-                            statusColorClass
-                        )}>
-                            {status}
-                        </span>
-                    );
+                    const { author } = props.row.original;
+                    return <span>{author?.name || 'Unknown'}</span>;
                 },
             },
             {
                 header: 'Published At',
                 accessorKey: 'published_at',
                 cell: (props) => {
-                    const { published_at } = props.row.original
+                    const { published_at } = props.row.original;
                     return (
                         <span>
-                            {formatDate(published_at)}
+                            {published_at ? new Date(published_at).toLocaleString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            }) : 'N/A'}
                         </span>
-                    )
+                    );
                 },
             },
             {
-                header: 'Categories',
-                accessorKey: 'categories',
+                header: 'Last Modified',
+                accessorKey: 'updated_at',
                 cell: (props) => {
-                    const { categories } = props.row.original
+                    const { updated_at } = props.row.original;
                     return (
-                        <div>
-                            {categories && categories.length > 0
-                                ? categories.map((cat,) => (
-                                      <span key={cat.id} className="text-sm px-1 py-0.5 mr-1 rounded-md bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
-                                          {cat.name}
-                                      </span>
-                                  ))
-                                : 'N/A'}
-                        </div>
-                    )
+                        <span>
+                            {new Date(updated_at).toLocaleString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            })}
+                        </span>
+                    );
                 },
             },
             {
@@ -210,54 +198,55 @@ const PostListTable = () => {
                 id: 'action',
                 cell: (props) => (
                     <ActionColumn
-                        onViewDetail={() => handleViewDetails(props.row.original)}
+                        onViewDetail={() => handleViewDetail(props.row.original)}
                         onEdit={() => handleEdit(props.row.original)}
                         onDelete={() => handleDelete(props.row.original)}
                     />
                 ),
             },
-        ], // eslint-disable-next-line react-hooks/exhaustive-deps
-        [], 
-    )
+        ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [selectedPosts],
+    );
 
     const handleSetTableData = (data) => {
-        setTableData(data)
-        if (selectedPost.length > 0) {
-            setSelectAllPost([])
+        setPostTableData(data);
+        if (selectedPosts.length > 0) {
+            setSelectAllPosts([]);
         }
-    }
+    };
 
     const handlePaginationChange = (page) => {
-        const newTableData = cloneDeep(tableData)
-        newTableData.pageIndex = page
-        handleSetTableData(newTableData)
-    }
+        const newTableData = cloneDeep(postTableData);
+        newTableData.pageIndex = page;
+        handleSetTableData(newTableData);
+    };
 
     const handleSelectChange = (value) => {
-        const newTableData = cloneDeep(tableData)
-        newTableData.pageSize = Number(value)
-        newTableData.pageIndex = 1
-        handleSetTableData(newTableData)
-    }
+        const newTableData = cloneDeep(postTableData);
+        newTableData.pageSize = Number(value);
+        newTableData.pageIndex = 1;
+        handleSetTableData(newTableData);
+    };
 
     const handleSort = (sort) => {
-        const newTableData = cloneDeep(tableData)
-        newTableData.sort = sort
-        handleSetTableData(newTableData)
-    }
+        const newTableData = cloneDeep(postTableData);
+        newTableData.sort = sort;
+        handleSetTableData(newTableData);
+    };
 
     const handleRowSelect = (checked, row) => {
-        setSelectedPost(checked, row)
-    }
+        setSelectedPosts(checked, row);
+    };
 
     const handleAllRowSelect = (checked, rows) => {
         if (checked) {
-            const originalRows = rows.map((row) => row.original)
-            setSelectAllPost(originalRows)
+            const originalRows = rows.map((row) => row.original);
+            setSelectAllPosts(originalRows);
         } else {
-            setSelectAllPost([])
+            setSelectAllPosts([]);
         }
-    }
+    };
 
     return (
         <>
@@ -267,15 +256,15 @@ const PostListTable = () => {
                 data={postList}
                 noData={!isLoading && postList.length === 0}
                 skeletonAvatarColumns={[0]}
-                skeletonAvatarProps={{ width: 28, height: 28 }}
+                skeletonAvatarProps={{ width: 30, height: 30 }}
                 loading={isLoading}
                 pagingData={{
                     total: postListTotal,
-                    pageIndex: tableData.pageIndex,
-                    pageSize: tableData.pageSize,
+                    pageIndex: postTableData.pageIndex,
+                    pageSize: postTableData.pageSize,
                 }}
                 checkboxChecked={(row) =>
-                    selectedPost.some((selected) => selected.id === row.id)
+                    selectedPosts.some((selected) => selected.id === row.id)
                 }
                 onPaginationChange={handlePaginationChange}
                 onSelectChange={handleSelectChange}
@@ -298,7 +287,7 @@ const PostListTable = () => {
                 </p>
             </ConfirmDialog>
         </>
-    )
-}
+    );
+};
 
-export default PostListTable
+export default PostListTable;
