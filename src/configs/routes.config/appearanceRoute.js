@@ -116,6 +116,10 @@ const appearanceRoute = [
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'General Settings',
+            },
         },
     },
 ]
