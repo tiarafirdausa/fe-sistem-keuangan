@@ -9,9 +9,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import classNames from '@/utils/classNames';
-// import useSWR from 'swr'; // useSWR masih dipertahankan jika ada kebutuhan lain
-// import { apiGetAllUsers } from '@/services/UserService'; // Import API untuk users (penulis) - DIKOMENTARI
-import usePageList from '../hooks/usePageList'; // Menggunakan hook usePageList
+import usePageList from '../hooks/usePageList'; 
 
 const { Control } = components;
 
@@ -47,7 +45,6 @@ const CustomStatusControl = ({ children, ...props }) => {
     );
 };
 
-// Skema validasi untuk Page
 const validationSchema = z.object({
     status: z.string().optional(),
     // authorId: z.array(z.number()).optional(), // authorId DIHAPUS

@@ -27,7 +27,7 @@ const usePageList = () => {
         },
     );
 
-    const pageList = data?.data || []; // Ambil array halaman dari properti 'data'
+    const pageList = data?.data || [];
     const pageListTotal = data?.pagination?.totalItems || 0; 
 
     return {
