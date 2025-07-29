@@ -6,7 +6,7 @@ const userRoute = [
     {
         key: 'userManagement.list',
         path: `${ADMIN_PREFIX_PATH}/users`,
-        component: lazy(() => import('@/views/admin/users/usersList/')),
+        component: lazy(() => import('@/views/admin/users/UserList')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
