@@ -8,7 +8,7 @@ export const getCsrfToken = () => csrfToken;
 
 export const fetchCsrfToken = async () => {
     try {
-        const response = await axios.get(`${appConfig.backendBaseUrl}/auth/csrf-token`, {
+        const response = await axios.get(`${appConfig.backendBaseUrl}/csrf-token`, {
             withCredentials: true, 
         });
         csrfToken = response.data.csrfToken;
