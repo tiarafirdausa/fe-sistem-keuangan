@@ -24,14 +24,7 @@ export async function apiGetPageBySlug(slug) {
     });
 }
 
-export async function apiCreatePage(pageData, thumbnailFile = null) {
-    const formData = new FormData();
-    for (const key in pageData) {
-        formData.append(key, pageData[key]);
-    }
-    if (thumbnailFile) {
-        formData.append('thumbnail', thumbnailFile);
-    }
+export async function apiCreatePage(formData) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.createPage,
         method: 'post',
@@ -42,18 +35,7 @@ export async function apiCreatePage(pageData, thumbnailFile = null) {
     });
 }
 
-export async function apiUpdatePage(id, pageData, thumbnailFile = null) {
-    const formData = new FormData();
-    for (const key in pageData) {
-        formData.append(key, pageData[key]);
-    }
-    if (thumbnailFile) {
-        formData.append('thumbnail', thumbnailFile);
-    }
-    // Jika ada flag untuk menghapus thumbnail yang sudah ada tanpa mengganti
-    // if (pageData.clear_thumbnail === true) {
-    //     formData.append('clear_thumbnail', 'true');
-    // }
+export async function apiUpdatePage(id,formData) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.updatePage(id),
         method: 'put',

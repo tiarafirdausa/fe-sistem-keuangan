@@ -1,0 +1,165 @@
+// src/views/admin/content/Pages/PageCreate/PageCreate.jsx
+import { useState, useEffect } from 'react';
+import Container from '@/components/shared/Container';
+import Button from '@/components/ui/Button';
+import Notification from '@/components/ui/Notification';
+import toast from '@/components/ui/toast';
+import Spinner from '@/components/ui/Spinner';
+import PageForm from '../PageForm'; 
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
+import { TbTrash } from 'react-icons/tb';
+import { useNavigate } from 'react-router-dom';
+import { apiCreatePage } from '@/services/PageService';
+import { apiGetAllCategories } from '@/services/CategoryService'; 
+import { apiGetAllTags } from '@/services/TagService'; 
+import { PAGE_DEFAULT_VALUES } from '../PageForm/constants'; 
+
+const PageCreate = () => {
+    const navigate = useNavigate();
+
+    const [discardConfirmationOpen, setDiscardConfirmationOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
+    const [categories, setCategories] = useState([]);
+    const [tags, setTags] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoadingData(true);
+                const [categoriesRes, tagsRes] = await Promise.all([
+                    apiGetAllCategories(),
+                    apiGetAllTags(),
+                ]);
+                setCategories(categoriesRes.data);
+                setTags(tagsRes.tags);
+            } catch (error) {
+                console.error('Error fetching initial data for page form:', error);
+                toast.push(
+                    <Notification type="danger" title="Error">
+                        Failed to load form data: {error.message || 'Unknown error.'}
+                    </Notification>,
+                    { placement: 'top-center' },
+                );
+            } finally {
+                setLoadingData(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const handleFormSubmit = async (formData) => {
+        setIsSubmitting(true);
+        try {
+            formData.set('author_id', '1'); 
+            const responseData = await apiCreatePage(formData);
+
+            if (responseData) {
+                toast.push(
+                    <Notification type="success" title="Success">
+                        Page &quot;{responseData.title || 'Untitled Page'}&quot; created successfully!
+                    </Notification>,
+                    { placement: 'top-center' },
+                );
+                navigate('/admin/pages'); 
+            } else {
+                toast.push(
+                    <Notification type="warning" title="Unexpected Response">
+                        Page created but response was unexpected. Please check manually.
+                    </Notification>,
+                    { placement: 'top-center' },
+                );
+            }
+        } catch (error) {
+            console.error('Error creating page in frontend:', error.response?.data || error.message);
+            toast.push(
+                <Notification type="danger" title="Error">
+                    Failed to create page: {error.response?.data?.error || 'Unknown error occurred.'}
+                </Notification>,
+                { placement: 'top-center' },
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleConfirmDiscard = () => {
+        setDiscardConfirmationOpen(false);
+        toast.push(
+            <Notification type="info" title="Discarded">
+                Page creation discarded.
+            </Notification>,
+            { placement: 'top-center' },
+        );
+        navigate('/admin/pages');
+    };
+
+    const handleDiscard = () => {
+        setDiscardConfirmationOpen(true);
+    };
+
+    const handleCancel = () => {
+        setDiscardConfirmationOpen(false);
+    };
+
+    if (loadingData) {
+        return (
+            <Container className="h-full flex items-center justify-center">
+                <Spinner size={40} />
+            </Container>
+        );
+    }
+
+    return (
+        <>
+            <PageForm
+                defaultValues={PAGE_DEFAULT_VALUES}
+                categories={categories}
+                tags={tags}
+                onFormSubmit={handleFormSubmit}
+            >
+                <Container>
+                    <div className="flex items-center justify-between px-8">
+                        <span></span>
+                        <div className="flex items-center">
+                            <Button
+                                className="ltr:mr-3 rtl:ml-3"
+                                type="button"
+                                customColorClass={() =>
+                                    'border-error ring-1 ring-error text-error hover:border-error hover:ring-error hover:text-error bg-transparent'
+                                }
+                                icon={<TbTrash />}
+                                onClick={handleDiscard}
+                            >
+                                Discard
+                            </Button>
+                            <Button
+                                variant="solid"
+                                type="submit"
+                                loading={isSubmitting}
+                            >
+                                Create Page
+                            </Button>
+                        </div>
+                    </div>
+                </Container>
+            </PageForm>
+            <ConfirmDialog
+                isOpen={discardConfirmationOpen}
+                type="danger"
+                title="Discard changes"
+                onClose={handleCancel}
+                onRequestClose={handleCancel}
+                onCancel={handleCancel}
+                onConfirm={handleConfirmDiscard}
+            >
+                <p>
+                    Are you sure you want to discard this page? This action cannot
+                    be undone.
+                </p>
+            </ConfirmDialog>
+        </>
+    );
+};
+
+export default PageCreate;

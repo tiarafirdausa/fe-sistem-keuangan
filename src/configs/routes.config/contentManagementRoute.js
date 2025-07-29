@@ -69,10 +69,36 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.pages',
         path: `${ADMIN_PREFIX_PATH}/pages`,
-        component: lazy(() => import('@/views/admin/content/Pages')),
+        component: lazy(() => import('@/views/admin/content/Pages/PageList')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
+        },
+    },
+    {
+        key: 'contentManagement.pages.new',
+        path: `${ADMIN_PREFIX_PATH}/pages/new`,
+        component: lazy(() => import('@/views/admin/content/Pages/PageCreate')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Page',
+            },
+        },
+    },
+    {
+        key: 'contentManagement.pages.edit',
+        path: `${ADMIN_PREFIX_PATH}/pages/edit/:slug`,
+        component: lazy(() => import('@/views/admin/content/Pages/PageEdit')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Page',
+            },
         },
     },
     {

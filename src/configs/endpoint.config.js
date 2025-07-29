@@ -37,7 +37,7 @@ const endpointConfig = {
     getPageById: (id) => `/pages/id/${id}`,
     getPageBySlug: (slug) => `/pages/${slug}`,
     createPage: '/pages',
-    updatePage: (id) => `/pages/id/${id}`,
+    updatePage: (id) => `/pages/${id}`,
     deletePage: (id) => `/pages/${id}`,
 
     // Comments
