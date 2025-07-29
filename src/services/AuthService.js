@@ -39,3 +39,10 @@ export async function apiResetPassword(data) {
         data,
     })
 }
+
+export async function apiGetMe() {
+    return ApiService.fetchDataWithAxios({
+        url: endpointConfig.getMe,
+        method: 'get',
+    })
+}

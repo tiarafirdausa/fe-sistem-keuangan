@@ -2,11 +2,18 @@
 const endpointConfig = {
     // Auth
     signIn: '/login',
-    signUp: '/register',
     signOut: '/logout',
-    forgotPassword: '/forgot-password',
-    resetPassword: '/reset-password',
+    forgotPassword: '/forgotpassword',
+    resetPassword: '/resetpassword',
     refreshToken: '/refresh-token',
+    getMe: '/me',
+
+    // User Management
+    createUser: '/users', 
+    getAllUsers: '/users',
+    getUserById: (id) => `/users/${id}`,
+    updateUser: (id) => `/users/${id}`,
+    deleteUser: (id) => `/users/${id}`,
 
     // Media
     getAllMedia: '/media',

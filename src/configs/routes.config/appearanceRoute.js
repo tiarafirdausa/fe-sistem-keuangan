@@ -5,7 +5,7 @@ import { ADMIN } from '@/constants/roles.constant'
 const appearanceRoute = [
     {
         key: 'appearance.menus.items',
-        path: `${ADMIN_PREFIX_PATH}/menus/:menuId/items`, // <--- PINDAHKAN KE ATAS!
+        path: `${ADMIN_PREFIX_PATH}/menus/:menuId/items`,
         component: lazy(() => import('@/views/admin/appearance/Menus/MenuItem/MenuItemList')),
         authority: [ADMIN],
         meta: {
