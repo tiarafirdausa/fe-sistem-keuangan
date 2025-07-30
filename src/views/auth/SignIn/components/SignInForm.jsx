@@ -10,9 +10,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
 const validationSchema = z.object({
-    email: z
-        .string({ required_error: 'Please enter your email' })
-        .min(1, { message: 'Please enter your email' }),
+    username: z
+        .string({ required_error: 'Username wajib diisi' })
+        .min(1, { message: 'Username wajib diisi' }),
     password: z
         .string({ required_error: 'Please enter your password' })
         .min(1, { message: 'Please enter your password' }),
@@ -29,8 +29,8 @@ const SignInForm = (props) => {
         control,
     } = useForm({
         defaultValues: {
-            email: 'admin-01@ecme.com',
-            password: '123Qwe',
+            username: '',
+            password: '',
         },
         resolver: zodResolver(validationSchema),
     })
@@ -38,12 +38,12 @@ const SignInForm = (props) => {
     const { signIn } = useAuth()
 
     const onSignIn = async (values) => {
-        const { email, password } = values
+        const { username, password } = values
 
         if (!disableSubmit) {
             setSubmitting(true)
 
-            const result = await signIn({ email, password })
+            const result = await signIn({ username, password })
 
             if (result?.status === 'failed') {
                 setMessage?.(result.message)
@@ -57,18 +57,18 @@ const SignInForm = (props) => {
         <div className={className}>
             <Form onSubmit={handleSubmit(onSignIn)}>
                 <FormItem
-                    label="Email"
-                    invalid={Boolean(errors.email)}
-                    errorMessage={errors.email?.message}
+                    label="Username"
+                    invalid={Boolean(errors.username)} 
+                    errorMessage={errors.username?.message}
                 >
                     <Controller
-                        name="email"
+                        name="username"
                         control={control}
                         render={({ field }) => (
                             <Input
-                                type="email"
-                                placeholder="Email"
-                                autoComplete="off"
+                                type="text"
+                                placeholder="Username"
+                                autoComplete="username" 
                                 {...field}
                             />
                         )}

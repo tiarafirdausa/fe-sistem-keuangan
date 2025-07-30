@@ -9,14 +9,6 @@ export async function apiSignIn(data) {
     })
 }
 
-export async function apiSignUp(data) {
-    return ApiService.fetchDataWithAxios({
-        url: endpointConfig.signUp,
-        method: 'post',
-        data,
-    })
-}
-
 export async function apiSignOut() {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.signOut,

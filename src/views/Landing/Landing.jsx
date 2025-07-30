@@ -19,12 +19,6 @@ const Landing = () => {
                 >
                     Login
                 </Link>
-                <Link
-                    to="/sign-up" // Link to your sign-up page (if applicable)
-                    className="px-6 py-3 border border-blue-600 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900 font-semibold rounded-lg shadow-md transition duration-300 ease-in-out"
-                >
-                    Register
-                </Link>
             </div>
             <footer className="mt-12 text-sm text-gray-600 dark:text-gray-400">
                 © {new Date().getFullYear()} Your Company Name. All rights reserved.
