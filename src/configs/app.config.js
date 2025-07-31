@@ -2,7 +2,7 @@ const appConfig = {
     apiPrefix: '/api',
     backendBaseUrl: 'http://localhost:5000', 
     authenticatedEntryPath: '/dashboard',
-    unAuthenticatedEntryPath: '/',
+    unAuthenticatedEntryPath: '/sign-in',
     locale: 'en',
     accessTokenPersistStrategy: 'cookies',
     enableMock: true,
