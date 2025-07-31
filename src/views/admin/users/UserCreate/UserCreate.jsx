@@ -22,7 +22,6 @@ const UserCreate = () => {
         setIsSubmitting(true);
         try {
             const responseData = await apiCreateUser(formData);
-            console.log('User created successfully:', responseData);
 
             if (responseData) {
                 toast.push(

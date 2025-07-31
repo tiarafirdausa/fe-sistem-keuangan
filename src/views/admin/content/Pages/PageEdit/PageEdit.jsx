@@ -26,7 +26,6 @@ const PageEdit = () => {
         slug ? ['/pages/slug', slug] : null,
         // eslint-disable-next-line no-unused-vars
         async ([_, pageSlug]) => {
-            console.log("Fetching page for slug:", pageSlug);
             try {
                 const response = await apiGetPageBySlug(pageSlug);
                 return response;

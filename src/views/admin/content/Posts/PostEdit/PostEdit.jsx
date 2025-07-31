@@ -26,7 +26,6 @@ const { data: postData, isLoading: isLoadingPost, error: postError, mutate } = u
     slug ? ['/posts/slug', slug] : null,
     // eslint-disable-next-line no-unused-vars
     async ([_, postSlug]) => {
-        console.log("Fetching post for slug:", postSlug); 
         try {
             const response = await apiGetPostBySlug(postSlug);
             return response;
