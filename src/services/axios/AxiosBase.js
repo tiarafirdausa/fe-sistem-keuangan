@@ -6,7 +6,8 @@ import { addCsrfTokenToConfig } from './csrfService'
 
 const AxiosBase = axios.create({
     timeout: 60000,
-    baseURL: appConfig.apiPrefix,
+    baseURL: appConfig.backendBaseUrl + appConfig.apiPrefix,
+    withCredentials: true,
 })
 
 AxiosBase.interceptors.request.use(
