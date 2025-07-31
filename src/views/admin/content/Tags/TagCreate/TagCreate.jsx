@@ -38,10 +38,10 @@ const TagCreate = () => {
                 );
             }
         } catch (error) {
-            console.error('Error creating tag in frontend:', error.response?.data || error.message);
+            const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Unknown error occurred.';
             toast.push(
                 <Notification type="danger" title="Error">
-                    Failed to create tag: {error.response?.data?.message || 'Unknown error occurred.'}
+                    Failed to create tag: {errorMessage}
                 </Notification>,
                 { placement: 'top-center' },
             );
