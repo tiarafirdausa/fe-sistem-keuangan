@@ -3,6 +3,7 @@ import { Input } from '@/components/ui';
 import { FormItem } from '@/components/ui/Form';
 import AdaptiveCard from '@/components/shared/AdaptiveCard'; // Use AdaptiveCard
 import NumericInput from '@/components/shared/NumericInput'; // Use NumericInput
+import { PasswordInput } from '@/components/shared';
 
 const MailSettingsSection = ({ formData, handleChange, errors }) => {
     return (
@@ -48,7 +49,7 @@ const MailSettingsSection = ({ formData, handleChange, errors }) => {
                 />
             </FormItem>
             <FormItem label="SMTP Password" invalid={!!errors.smtp_password} errorMessage={errors.smtp_password}>
-                <Input
+                <PasswordInput
                     type="password"
                     name="smtp_password"
                     placeholder="SMTP Password"

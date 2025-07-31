@@ -12,7 +12,9 @@ import { apiDeletePost } from '@/services/PostService';
 import { Tag } from '@/components/ui';
 
 const PostColumn = ({ row }) => {
-    const { title, category, status, featuredImage } = row; 
+    const { title, status, categories, featuredImage } = row; 
+
+    const primaryCategory = categories && categories.length > 0 ? categories[0] : null;
 
     return (
         <div className="flex items-center gap-2">
@@ -33,7 +35,7 @@ const PostColumn = ({ row }) => {
             <div>
                 <div className="font-bold heading-text mb-1">{title}</div>
                 <Tag className="bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100">
-                    Category: {category?.name || 'N/A'}
+                    Category: {primaryCategory?.name || 'N/A'}
                 </Tag>
                 {status === 'published' && (
                     <Tag className="bg-emerald-100 text-emerald-800 dark:bg-emerald-700 dark:text-emerald-100 ml-1">
@@ -149,12 +151,12 @@ const PostListTable = () => {
                     return <PostColumn row={row} />;
                 },
             },
-            {
+             {
                 header: 'Author',
-                accessorKey: 'author.name',
+                accessorKey: 'author_name',
                 cell: (props) => {
-                    const { author } = props.row.original;
-                    return <span>{author?.name || 'Unknown'}</span>;
+                    const { author_name } = props.row.original;
+                    return <span>{author_name || 'Unknown'}</span>;
                 },
             },
             {

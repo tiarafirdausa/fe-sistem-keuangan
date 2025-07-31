@@ -18,11 +18,21 @@ const PostForm = (props) => {
     const {
         onFormSubmit,
         defaultValues = POST_DEFAULT_VALUES,
-        users = [],
+        currentUser,
         categories = [],
         tags = [],
         children,
     } = props;
+
+    const transformCategoriesTagsToIds = (data) => {
+        if (!data) return [];
+        if (data.length > 0 && typeof data[0] === 'object' && data[0] !== null && 'id' in data[0]) {
+            return data.map(item => item.id);
+        }
+        return data;
+    };
+
+    const postAuthorNameForDisplay = defaultValues.author_name || currentUser?.name;
 
     const {
         handleSubmit,
@@ -34,12 +44,13 @@ const PostForm = (props) => {
     } = useForm({
         defaultValues: {
             ...defaultValues,
+            author_id: defaultValues.author_id || currentUser?.id || POST_DEFAULT_VALUES.author_id,
             featured_image: (defaultValues.featured_image && defaultValues.featured_image !== '')
                 ? { id: 'existing-featured', img: defaultValues.featured_image, name: 'featured_image' }
-                : null, 
+                : null,
             gallery_images: defaultValues.gallery_images || [],
-            categories: defaultValues.categories || [],
-            tags: defaultValues.tags || [],
+            categories: transformCategoriesTagsToIds(defaultValues.categories),
+            tags: transformCategoriesTagsToIds(defaultValues.tags),
             clear_featured_image: false,
             delete_gallery_image_ids: [],
             clear_gallery_images: false,
@@ -53,14 +64,14 @@ const PostForm = (props) => {
                 ...defaultValues,
                 featured_image: (defaultValues.featured_image && typeof defaultValues.featured_image === 'string' && defaultValues.featured_image !== '')
                     ? { id: 'existing-featured', img: defaultValues.featured_image, name: 'featured_image' }
-                    : (defaultValues.featured_image || null), 
+                    : (defaultValues.featured_image || null),
                 gallery_images: defaultValues.gallery_images?.map(img => ({
                     id: img.id,
                     img: img.image_path,
                     name: img.alt_text || `gallery_image_${img.id}`
                 })) || [],
-                categories: defaultValues.categories?.map(cat => cat.id) || [],
-                tags: defaultValues.tags?.map(tag => tag.id) || [],
+                categories: transformCategoriesTagsToIds(defaultValues.categories),
+                tags: transformCategoriesTagsToIds(defaultValues.tags),
                 clear_featured_image: false,
                 delete_gallery_image_ids: [],
                 clear_gallery_images: false,
@@ -69,6 +80,7 @@ const PostForm = (props) => {
         } else if (JSON.stringify(defaultValues) === JSON.stringify(POST_DEFAULT_VALUES)) {
             reset({
                 ...POST_DEFAULT_VALUES,
+                author_id: currentUser?.id || POST_DEFAULT_VALUES.author_id,
                 featured_image: null,
                 gallery_images: [],
                 categories: [],
@@ -78,8 +90,7 @@ const PostForm = (props) => {
                 clear_gallery_images: false,
             });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(defaultValues), reset]);
+    }, [JSON.stringify(defaultValues), reset, currentUser]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onSubmit = (values) => {
         const formData = new FormData();
@@ -89,13 +100,6 @@ const PostForm = (props) => {
                 if (values.featured_image && values.featured_image.file instanceof File) {
                     formData.append('featured_image', values.featured_image.file);
                 }
-                // Jika ini adalah objek gambar yang sudah ada (tanpa 'file' baru),
-                // Anda mungkin perlu mengirimkan URL-nya atau ID-nya ke backend
-                // Tergantung API Anda, Anda mungkin perlu menambahkan logic di sini
-                // Contoh:
-                // else if (values.featured_image && values.featured_image.img && !values.featured_image.file) {
-                //     formData.append('featured_image_url', values.featured_image.img);
-                // }
             } else if (key === 'gallery_images') {
                 values.gallery_images.forEach((image) => {
                     if (image.file) {
@@ -104,7 +108,9 @@ const PostForm = (props) => {
                 });
             } else if (key === 'categories' || key === 'tags') {
                 if (Array.isArray(values[key]) && values[key].length > 0) {
-                    formData.append(key, JSON.stringify(values[key]));
+                    values[key].forEach(id => {
+                        formData.append(key, id);
+                    });
                 }
             } else if (values[key] !== undefined && values[key] !== null) {
                 if (typeof values[key] === 'boolean') {
@@ -144,7 +150,12 @@ const PostForm = (props) => {
                     </div>
                     <div className="xl:flex-col xl:w-[320px] lg:w-full">
                         <div className="flex flex-col gap-4">
-                            <PostDetailsSection control={control} errors={errors} users={users} />
+                            <PostDetailsSection
+                                control={control}
+                                errors={errors}
+                                currentUser={currentUser}
+                                postAuthorNameForDisplay={postAuthorNameForDisplay}
+                            />
                             <PostCategoryTagSection control={control} errors={errors} categories={categories} tags={tags} />
                             <PostSeoSection control={control} errors={errors} />
                         </div>

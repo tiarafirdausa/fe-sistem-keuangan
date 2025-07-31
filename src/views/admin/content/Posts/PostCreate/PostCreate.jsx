@@ -13,10 +13,11 @@ import { apiCreatePost } from '@/services/PostService';
 import { apiGetAllCategories } from '@/services/CategoryService';
 import { apiGetAllTags } from '@/services/TagService';
 import { POST_DEFAULT_VALUES } from '../PostForm/constants';
-
+import { useAuth } from '@/auth'; 
 
 const PostCreate = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [discardConfirmationOpen, setDiscardConfirmationOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,7 +33,7 @@ const PostCreate = () => {
                     apiGetAllCategories(),
                     apiGetAllTags(),
                 ]);
-                setCategories(categoriesRes.data);
+                setCategories(categoriesRes.categories);
                 setTags(tagsRes.tags);
             } catch (error) {
                 console.error('Error fetching initial data for post form:', error);
@@ -52,7 +53,6 @@ const PostCreate = () => {
     const handleFormSubmit = async (formData) => {
         setIsSubmitting(true);
         try {
-            formData.set('author_id', '1');
             const responseData = await apiCreatePost(formData);
 
             if (responseData) {
@@ -117,6 +117,7 @@ const PostCreate = () => {
                 defaultValues={POST_DEFAULT_VALUES}
                 categories={categories}
                 tags={tags}
+                currentUser={user}
                 onFormSubmit={handleFormSubmit}
             >
                 <Container>

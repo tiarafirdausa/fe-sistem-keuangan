@@ -17,29 +17,30 @@ import { apiGetAllTags } from '@/services/TagService';
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
+import { useAuth } from '@/auth';
 
 const PostEdit = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
+    const { user: currentUser } = useAuth();
 
-const { data: postData, isLoading: isLoadingPost, error: postError, mutate } = useSWR(
-    slug ? ['/posts/slug', slug] : null,
-    // eslint-disable-next-line no-unused-vars
-    async ([_, postSlug]) => {
-        try {
-            const response = await apiGetPostBySlug(postSlug);
-            return response;
-        } catch (err) {
-            console.error("Error fetching post by slug:", err);
-            throw err; 
-        }
-    },
-    {
-        revalidateOnFocus: false,
-        revalidateIfStale: false,
-    },
-);
-
+    const { data: postData, isLoading: isLoadingPost, error: postError, mutate } = useSWR(
+        slug ? ['/posts/slug', slug] : null,
+        // eslint-disable-next-line no-unused-vars
+        async ([_, postSlug]) => {
+            try {
+                const response = await apiGetPostBySlug(postSlug);
+                return response;
+            } catch (err) {
+                console.error("Error fetching post by slug:", err);
+                throw err;
+            }
+        },
+        {
+            revalidateOnFocus: false,
+            revalidateIfStale: false,
+        },
+    );
 
     const { data: categoriesData, isLoading: isLoadingCategories } = useSWR(
         '/api/categories',
@@ -79,7 +80,8 @@ const { data: postData, isLoading: isLoadingPost, error: postError, mutate } = u
                 })) || [],
                 meta_title: postData.meta_title || '',
                 meta_description: postData.meta_description || '',
-                author_id: 1, 
+                author_id: postData.author_id,
+                author_name: postData.author_name,
                 status: postData.status || 'draft',
                 published_at: postData.published_at ? new Date(postData.published_at) : null,
                 categories: postData.categories?.map(cat => cat.id) || [],
@@ -98,9 +100,6 @@ const { data: postData, isLoading: isLoadingPost, error: postError, mutate } = u
         try {
             if (!postData?.id) {
                 throw new Error("Post ID not available for update.");
-            }
-             if (!formData.has('author_id')) { 
-                formData.append('author_id', 1);
             }
 
             await apiUpdatePost(postData.id, formData);
@@ -189,9 +188,9 @@ const { data: postData, isLoading: isLoadingPost, error: postError, mutate } = u
         <>
             <PostForm
                 defaultValues={defaultFormValues}
-                users={[]} 
                 categories={categoriesData || []}
                 tags={tagsData || []}
+                currentUser={currentUser}
                 onFormSubmit={handleFormSubmit}
             >
                 <Container>

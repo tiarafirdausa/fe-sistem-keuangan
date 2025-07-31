@@ -6,33 +6,34 @@ import Input from '@/components/ui/Input';
 import { FormItem } from '@/components/ui/Form';
 import { Controller } from 'react-hook-form';
 
-const PostDetailsSection = ({ control, errors }) => {
+const PostDetailsSection = ({ control, errors, currentUser, postAuthorNameForDisplay }) => {
     const statusOptions = [
         { label: 'Draft', value: 'draft' },
         { label: 'Published', value: 'published' },
         { label: 'Archived', value: 'archived' },
     ];
 
+    const displayedAuthorName = postAuthorNameForDisplay || currentUser?.name || 'Memuat Penulis...';
+
     return (
         <Card>
-            <h4 className="mb-6">Post Details</h4>
+            <h4 className="mb-6">Detail Post</h4>
             <div className="flex flex-col gap-4">
                 <FormItem
-                    label="Author ID" 
+                    label="Penulis" 
                     invalid={Boolean(errors.author_id)}
                     errorMessage={errors.author_id?.message}
                 >
                     <Controller
                         name="author_id"
                         control={control}
-                        render={({ field }) => (
+                        render={() => (
                             <Input
-                                type="number"
+                                type="text"
                                 autoComplete="off"
-                                placeholder="Author ID"
-                                value={field.value || ''} 
+                                placeholder="Nama Penulis"
+                                value={displayedAuthorName} 
                                 disabled={true} 
-                                onChange={(e) => field.onChange(parseInt(e.target.value) || null)}
                             />
                         )}
                     />
@@ -50,7 +51,7 @@ const PostDetailsSection = ({ control, errors }) => {
                             <Select
                                 options={statusOptions}
                                 value={statusOptions.find(option => option.value === field.value)}
-                                placeholder="Select Status"
+                                placeholder="Pilih Status"
                                 onChange={(selectedOption) => field.onChange(selectedOption ? selectedOption.value : null)}
                             />
                         )}
@@ -58,7 +59,7 @@ const PostDetailsSection = ({ control, errors }) => {
                 </FormItem>
 
                 <FormItem
-                    label="Published At"
+                    label="Diterbitkan Pada"
                     invalid={Boolean(errors.published_at)}
                     errorMessage={errors.published_at?.message}
                 >
@@ -68,7 +69,7 @@ const PostDetailsSection = ({ control, errors }) => {
                         render={({ field }) => (
                             <DatePicker
                                 value={field.value ? new Date(field.value) : null}
-                                placeholder="Select Publish Date"
+                                placeholder="Pilih Tanggal Publikasi"
                                 enableCloseOnSelect={true}
                                 onChange={(date) => field.onChange(date)}
                             />
