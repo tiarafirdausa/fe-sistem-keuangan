@@ -7,6 +7,7 @@ import toast from '@/components/ui/toast';
 import Spinner from '@/components/ui/Spinner';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import PostForm from '../PostForm';
+import appConfig from '@/configs/app.config';
 import {
     apiGetPostBySlug,
     apiUpdatePost,
@@ -71,11 +72,14 @@ const PostEdit = () => {
                 excerpt: postData.excerpt || '',
                 content: postData.content || '',
                 featured_image: postData.featured_image
-                    ? { id: 'existing-featured', img: postData.featured_image, name: 'featured_image' }
+                    ? { 
+                        id: 'existing-featured', 
+                        img: `${appConfig.backendBaseUrl}${postData.featured_image}`, 
+                        name: 'featured_image' }
                     : null,
                 gallery_images: postData.gallery_images?.map(img => ({
                     id: img.id,
-                    img: img.image_path,
+                    img: `${appConfig.backendBaseUrl}${img.image_path}`,
                     name: img.alt_text || `gallery_image_${img.id}`
                 })) || [],
                 meta_title: postData.meta_title || '',

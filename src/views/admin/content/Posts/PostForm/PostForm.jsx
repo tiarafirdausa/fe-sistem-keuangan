@@ -8,7 +8,7 @@ import PostImageSection from './components/PostImageSection';
 import PostSeoSection from './components/PostSeoSection';
 import PostDetailsSection from './components/PostDetailsSection';
 import PostCategoryTagSection from './components/PostCategoryTagSection';
-
+import appConfig from '@/configs/app.config';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import isEmpty from 'lodash/isEmpty';
@@ -46,9 +46,15 @@ const PostForm = (props) => {
             ...defaultValues,
             author_id: defaultValues.author_id || currentUser?.id || POST_DEFAULT_VALUES.author_id,
             featured_image: (defaultValues.featured_image && defaultValues.featured_image !== '')
-                ? { id: 'existing-featured', img: defaultValues.featured_image, name: 'featured_image' }
-                : null,
-            gallery_images: defaultValues.gallery_images || [],
+                ? { id: 'existing-featured', 
+                    img: `${appConfig.backendBaseUrl}${defaultValues.featured_image}`, 
+                    name: 'featured_image' }
+                : (defaultValues.featured_image || null),
+            gallery_images: defaultValues.gallery_images?.map(img => ({
+                id: img.id,
+                img: `${appConfig.backendBaseUrl}${img.image_path}`, 
+                name: img.alt_text || `gallery_image_${img.id}`
+            })) || [],
             categories: transformCategoriesTagsToIds(defaultValues.categories),
             tags: transformCategoriesTagsToIds(defaultValues.tags),
             clear_featured_image: false,
@@ -63,11 +69,15 @@ const PostForm = (props) => {
             const transformedDefaultValues = {
                 ...defaultValues,
                 featured_image: (defaultValues.featured_image && typeof defaultValues.featured_image === 'string' && defaultValues.featured_image !== '')
-                    ? { id: 'existing-featured', img: defaultValues.featured_image, name: 'featured_image' }
+                    ? { 
+                        id: 'existing-featured', 
+                        img: `${appConfig.backendBaseUrl}${defaultValues.featured_image}`, 
+                        name: 'featured_image' 
+                    }
                     : (defaultValues.featured_image || null),
                 gallery_images: defaultValues.gallery_images?.map(img => ({
                     id: img.id,
-                    img: img.image_path,
+                    img: `${appConfig.backendBaseUrl}${img.image_path}`,
                     name: img.alt_text || `gallery_image_${img.id}`
                 })) || [],
                 categories: transformCategoriesTagsToIds(defaultValues.categories),

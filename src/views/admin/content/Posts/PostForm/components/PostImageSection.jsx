@@ -129,12 +129,12 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                 img: URL.createObjectURL(file),
                 file: file 
             };
-            onChange([newImage]);
+            onChange(newImage);
         }
     };
 
     const handleFeaturedImageDelete = (onChange) => {
-        onChange([]);
+        onChange(null);
         setValue('clear_featured_image', true);
     };
 
@@ -177,21 +177,13 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                         control={control}
                         render={({ field }) => (
                             <>
-                                {field.value && field.value.length > 0 ? (
+                                {field.value && field.value.img  ?(
                                     <div className="grid grid-cols-1 gap-2">
                                         <ImageList
-                                            imgList={field.value}
+                                            imgList={[field.value]}
                                             fieldName="featured_image"
                                             onImageDelete={() => handleFeaturedImageDelete(field.onChange)}
                                         />
-                                        <Button
-                                            className="w-full"
-                                            variant="solid"
-                                            type="button"
-                                            onClick={() => handleFeaturedImageDelete(field.onChange)}
-                                        >
-                                            <HiTrash className="mr-2" /> Clear Featured Image
-                                        </Button>
                                     </div>
                                 ) : (
                                     <Upload
@@ -247,6 +239,7 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                                         />
                                         <Upload
                                             draggable
+                                            multiple
                                             className="min-h-fit"
                                             beforeUpload={beforeUpload}
                                             showList={false}
@@ -272,6 +265,8 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                                 ) : (
                                     <Upload
                                         draggable
+                                        multiple
+                                        className="min-h-fit"
                                         beforeUpload={beforeUpload}
                                         showList={false}
                                         onChange={(files) =>
@@ -298,7 +293,7 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                     />
                 </FormItem>
                 {getValues('gallery_images')?.length > 0 && (
-                     <Button
+                    <Button
                         className="mt-4"
                         variant="twoTone"
                         color="red-600"
