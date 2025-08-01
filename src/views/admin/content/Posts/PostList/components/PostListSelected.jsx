@@ -54,7 +54,11 @@ const PostListSelected = () => {
                         className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
                     />
                     <span>Failed to delete post(s). Please try again.</span>
-                </div>
+                </div>,
+                {
+                    duration: 3000, 
+                    placement: 'bottom-end',
+                }
             );
         }
     };

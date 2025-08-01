@@ -1,3 +1,4 @@
+// ToastWrapper.jsx
 import {
     useState,
     useImperativeHandle,
@@ -15,6 +16,7 @@ import { createRoot } from 'react-dom/client'
 
 const useMessages = (msgKey) => {
     const [messages, setMessages] = useState([])
+    const timers = useRef({})
 
     const getKey = useCallback(
         (key) => {
@@ -27,25 +29,34 @@ const useMessages = (msgKey) => {
     )
 
     const push = useCallback(
-        (message) => {
+        (message, duration) => { // Perbaiki: Tambahkan parameter duration
             const key = msgKey || '_' + Math.random().toString(36).substr(2, 12)
-            setMessages([...messages, { key, visible: true, node: message }])
+            setMessages((prevMessages) => [...prevMessages, { key, visible: true, node: message }])
+
+            if (duration && duration > 0) {
+                timers.current[key] = setTimeout(() => {
+                    remove(key)
+                }, duration)
+            }
             return key
         },
-        [messages, msgKey],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [msgKey],
     )
 
     const removeAll = useCallback(() => {
-        setMessages(messages.map((msg) => ({ ...msg, visible: false })))
+        setMessages((prevMessages) => prevMessages.map((msg) => ({ ...msg, visible: false })))
         setTimeout(() => {
             setMessages([])
         }, 50)
-    }, [messages])
+        Object.values(timers.current).forEach(clearTimeout)
+        timers.current = {}
+    }, [])
 
     const remove = useCallback(
         (key) => {
-            setMessages(
-                messages.map((elm) => {
+            setMessages((prevMessages) =>
+                prevMessages.map((elm) => {
                     if (elm.key === getKey(key)) {
                         elm.visible = false
                     }
@@ -54,10 +65,13 @@ const useMessages = (msgKey) => {
             )
 
             setTimeout(() => {
-                setMessages(messages.filter((msg) => msg.visible))
+                setMessages((prevMessages) => prevMessages.filter((msg) => msg.visible))
             }, 50)
+
+            clearTimeout(timers.current[key])
+            delete timers.current[key]
         },
-        [messages, getKey],
+        [getKey],
     )
 
     return { messages, push, removeAll, remove }
@@ -75,10 +89,20 @@ const ToastWrapper = (props) => {
         block = false,
         ref,
         callback,
+        duration = 3000,
         ...rest
     } = props
 
-    const { push, removeAll, remove, messages } = useMessages(messageKey)
+    const { push: pushMessage, removeAll, remove, messages } = useMessages(messageKey)
+
+    const push = useCallback(
+        (message, customDuration) => { // Perbaiki: Tambahkan parameter customDuration
+            // Gunakan customDuration jika ada, jika tidak, gunakan durasi dari props
+            const effectiveDuration = customDuration ?? duration; 
+            return pushMessage(message, effectiveDuration)
+        },
+        [pushMessage, duration],
+    )
 
     useImperativeHandle(ref, () => {
         return { root: rootRef.current, push, removeAll, remove }
