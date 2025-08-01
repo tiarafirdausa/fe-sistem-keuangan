@@ -2,8 +2,8 @@ import useMenuItemList from '../hooks/useMenuItemList';
 import cloneDeep from 'lodash/cloneDeep';
 import MenuItemListSearch from './MenuItemListSearch'; 
 
-const MenuItemListTableTools = () => {
-    const { menuItemTableData, setMenuItemTableData } = useMenuItemList();
+const MenuItemListTableTools = ({menuId}) => {
+    const { menuItemTableData, setMenuItemTableData } = useMenuItemList(menuId);
 
     const handleInputChange = (val) => {
         const newTableData = cloneDeep(menuItemTableData);

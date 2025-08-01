@@ -47,14 +47,11 @@ export async function apiDeleteMenu(id) {
     });
 }
 
-// src/services/MenuItemService.js (Opsional, bisa terpisah untuk menu items)
-// Atau bisa ditempatkan di file MenuService.js ini jika dirasa lebih baik
-
 export async function apiGetAllMenuItems(params) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.getAllMenuItems,
         method: 'get',
-        params, // Bisa ada params menu_id
+        params, 
     });
 }
 

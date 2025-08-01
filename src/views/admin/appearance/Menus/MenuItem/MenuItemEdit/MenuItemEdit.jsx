@@ -32,11 +32,11 @@ const MenuItemEdit = () => {
             const { menu_id, parent_id, title, url, type, reference_id, target, order } = menuItemData;
             return {
                 menu_id,
-                parent_id: parent_id || null, 
+                parent_id: parent_id ? parent_id : null,
                 title,
                 url: url || '', 
                 type,
-                reference_id: reference_id || null,
+                reference_id: reference_id ? reference_id : null,
                 target,
                 order,
             };
@@ -133,6 +133,7 @@ const MenuItemEdit = () => {
     return (
         <>
             <MenuItemForm
+                menuId={Number(menuId)}
                 defaultValues={getDefaultValues()}
                 onFormSubmit={handleFormSubmit}
             >

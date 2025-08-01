@@ -1,26 +1,92 @@
-import Card from '@/components/ui/Card';
-import Input from '@/components/ui/Input';
-import Select from '@/components/ui/Select';
-import { FormItem, FormContainer } from '@/components/ui/Form'; 
-import { Controller } from 'react-hook-form';
+// src/views/admin/menus/components/MenuItemGeneralSection.jsx
+import Card from '@/components/ui/Card'
+import Input from '@/components/ui/Input'
+import Select from '@/components/ui/Select'
+import { FormItem, FormContainer } from '@/components/ui/Form'
+import { Controller } from 'react-hook-form'
+import useSWR from 'swr'
+import { apiGetAllMenuItems } from '@/services/MenuService'
+import { apiGetAllPosts } from '@/services/PostService'
+import { apiGetAllCategories } from '@/services/CategoryService'
+import { apiGetAllPages } from '@/services/PageService'
 
 const menuItemTypeOptions = [
     { label: 'Custom URL', value: 'custom' },
     { label: 'Post', value: 'post' },
     { label: 'Category', value: 'category' },
     { label: 'Page', value: 'page' },
-];
+]
 
 const menuItemTargetOptions = [
     { label: 'Same Window/Tab', value: '_self' },
     { label: 'New Window/Tab', value: '_blank' },
-];
+]
 
-const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
+const referenceIdFetchers = {
+    post: apiGetAllPosts,
+    category: apiGetAllCategories,
+    page: apiGetAllPages,
+}
+
+const MenuItemGeneralSection = ({ control, errors, watchedType, menuId }) => {
+    // eslint-disable-next-line no-unused-vars
+    const fetcher = async ([_, params]) => {
+        try {
+            const response = await apiGetAllMenuItems(params)
+            return response.data
+        } catch (error) {
+            console.error('Error in apiGetAllMenuItems:', error)
+            throw error
+        }
+    }
+
+    const { data: allMenuItems, isLoading: menuItemsLoading } = useSWR(
+        menuId
+            ? ['/menu-items', { menuId: parseInt(menuId), pageSize: 9999 }]
+            : null,
+        fetcher,
+        {
+            revalidateOnFocus: false,
+        },
+    )
+
+    // eslint-disable-next-line no-unused-vars
+    const referenceDataFetcher = async ([_, type]) => {
+        const fetcherFunction = referenceIdFetchers[type]
+        if (!fetcherFunction) {
+            return []
+        }
+        const params = { pageSize: 9999 }
+        const response = await fetcherFunction(params)
+        if (type === 'category') {
+            return response.categories
+        } else if (type === 'page' ) {
+            return response.data
+        }
+        return response
+    }
+
+    const { data: referenceOptionsData, isLoading: referenceOptionsLoading } =
+        useSWR(
+            watchedType !== 'custom' ? ['/reference-data', watchedType] : null,
+            referenceDataFetcher,
+            { revalidateOnFocus: false },
+        )
+
+    const parentOptions = (allMenuItems || []).map((item) => ({
+        label: item.title,
+        value: item.id,
+    }))
+
+    const referenceOptions = (referenceOptionsData || []).map((item) => ({
+        label: item.title || item.name,
+        value: item.id,
+    }))
+
     return (
         <Card>
             <h4 className="mb-6">Menu Item Information</h4>
-            <FormContainer> 
+            <FormContainer>
                 <FormItem
                     label="Menu ID"
                     invalid={Boolean(errors.menu_id)}
@@ -32,10 +98,10 @@ const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
                         control={control}
                         render={({ field }) => (
                             <Input
-                                disabled 
+                                disabled
                                 type="number"
                                 {...field}
-                                value={field.value || ''} 
+                                value={field.value || ''}
                             />
                         )}
                     />
@@ -50,15 +116,30 @@ const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
                         name="parent_id"
                         control={control}
                         render={({ field }) => (
-                            <Input
-                                type="number"
-                                placeholder="Enter parent item ID (optional)"
-                                {...field}
-                                value={field.value || ''}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    field.onChange(val === '' ? null : Number(val));
-                                }}
+                            <Select
+                                isClearable
+                                placeholder={
+                                    menuItemsLoading
+                                        ? 'Loading...'
+                                        : 'Select a parent item'
+                                }
+                                options={[
+                                    { label: 'No Parent', value: null },
+                                    ...parentOptions,
+                                ]}
+                                value={
+                                    parentOptions.find(
+                                        (option) =>
+                                            option.value === field.value,
+                                    ) ||
+                                    (field.value === null
+                                        ? { label: 'No Parent', value: null }
+                                        : null)
+                                }
+                                isLoading={menuItemsLoading}
+                                onChange={(selectedOption) =>
+                                    field.onChange(selectedOption?.value)
+                                }
                             />
                         )}
                     />
@@ -96,13 +177,18 @@ const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
                         render={({ field }) => (
                             <Select
                                 options={menuItemTypeOptions}
-                                value={menuItemTypeOptions.find((option) => option.value === field.value)}
-                                onChange={(selectedOption) => field.onChange(selectedOption?.value)}
+                                value={menuItemTypeOptions.find(
+                                    (option) => option.value === field.value,
+                                )}
+                                onChange={(selectedOption) =>
+                                    field.onChange(selectedOption?.value)
+                                }
                             />
                         )}
                     />
                 </FormItem>
 
+                
                 {watchedType !== 'custom' && (
                     <FormItem
                         label={`Reference ID (${watchedType})`}
@@ -113,16 +199,22 @@ const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
                             name="reference_id"
                             control={control}
                             render={({ field }) => (
-                                <Input
-                                    type="number"
-                                    autoComplete="off"
-                                    placeholder={`ID of the ${watchedType} (e.g., Post ID)`}
-                                    {...field}
-                                    value={field.value || ''}
-                                    onChange={(e) => {
-                                        const val = e.target.value;
-                                        field.onChange(val === '' ? null : Number(val));
-                                    }}
+                                <Select
+                                    isSearchable
+                                    placeholder={
+                                        referenceOptionsLoading
+                                            ? 'Loading...'
+                                            : 'Select a reference item'
+                                    }
+                                    options={referenceOptions}
+                                    value={referenceOptions.find(
+                                        (option) =>
+                                            option.value === field.value,
+                                    )}
+                                    isLoading={referenceOptionsLoading}
+                                    onChange={(selectedOption) =>
+                                        field.onChange(selectedOption?.value)
+                                    }
                                 />
                             )}
                         />
@@ -163,8 +255,12 @@ const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
                         render={({ field }) => (
                             <Select
                                 options={menuItemTargetOptions}
-                                value={menuItemTargetOptions.find((option) => option.value === field.value)}
-                                onChange={(selectedOption) => field.onChange(selectedOption?.value)}
+                                value={menuItemTargetOptions.find(
+                                    (option) => option.value === field.value,
+                                )}
+                                onChange={(selectedOption) =>
+                                    field.onChange(selectedOption?.value)
+                                }
                             />
                         )}
                     />
@@ -185,15 +281,17 @@ const MenuItemGeneralSection = ({ control, errors, watchedType }) => {
                                 autoComplete="off"
                                 placeholder="Order (e.g., 0)"
                                 {...field}
-                                value={field.value} // Maintain number type
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                value={field.value}
+                                onChange={(e) =>
+                                    field.onChange(Number(e.target.value))
+                                }
                             />
                         )}
                     />
                 </FormItem>
             </FormContainer>
         </Card>
-    );
-};
+    )
+}
 
-export default MenuItemGeneralSection;
+export default MenuItemGeneralSection

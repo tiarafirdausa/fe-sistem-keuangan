@@ -1,3 +1,5 @@
+// src/views/admin/menus/MenuItemForm.jsx
+
 import { useEffect } from 'react';
 import { Form } from '@/components/ui/Form';
 import Container from '@/components/shared/Container';
@@ -47,6 +49,7 @@ const MenuItemForm = (props) => {
             target: '_self',
             order: 0,
         },
+        menuId,
         children,
     } = props;
 
@@ -88,7 +91,8 @@ const MenuItemForm = (props) => {
                         <MenuItemGeneralSection
                             control={control}
                             errors={errors}
-                            watchedType={watchedType} 
+                            watchedType={watchedType}
+                            menuId={menuId} 
                         />
                     </div>
                 </div>

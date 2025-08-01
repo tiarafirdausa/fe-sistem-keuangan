@@ -13,7 +13,12 @@ import { apiDeleteMenuItem } from '@/services/MenuService';
 import { Tag } from '@/components/ui'; 
 import { toast } from '@/components/ui/toast';
 
-const MenuItemColumn = ({ row }) => {
+const MenuItemColumn = ({ row, allMenuItems }) => {
+    const parentItem = row.parent_id
+        ? allMenuItems.find((item) => item.id === row.parent_id)
+        : null;
+    const parentTitle = parentItem ? parentItem.title : '';
+
     return (
         <div className="flex items-center gap-2">
             <Avatar
@@ -33,9 +38,9 @@ const MenuItemColumn = ({ row }) => {
                         URL: {row.url}
                     </Tag>
                 )}
-                {row.parent_id && (
+                {parentTitle && (
                     <Tag className="bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100">
-                        Sub-item
+                        Sub-item: {parentTitle}
                     </Tag>
                 )}
             </div>
@@ -139,7 +144,7 @@ const MenuItemListTable = ( {menuId} ) => {
                 accessorKey: 'title',
                 cell: (props) => {
                     const row = props.row.original;
-                    return <MenuItemColumn row={row} />;
+                    return <MenuItemColumn row={row} allMenuItems={menuItemList} />;
                 },
             },
             {

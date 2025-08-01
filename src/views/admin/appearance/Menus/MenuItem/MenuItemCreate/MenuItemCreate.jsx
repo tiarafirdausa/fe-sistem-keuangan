@@ -1,3 +1,5 @@
+// src/views/admin/menus/MenuItemCreate.jsx
+
 import { useState } from 'react';
 import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
@@ -73,6 +75,7 @@ const MenuItemCreate = () => {
     return (
         <>
             <MenuItemForm
+                menuId={Number(menuId)}
                 defaultValues={{
                     menu_id: Number(menuId), 
                     parent_id: null,

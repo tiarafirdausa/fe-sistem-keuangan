@@ -22,14 +22,14 @@ const MenuItemList = () => {
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col md:flex-row md:items-center md:flex-wrap md:justify-between gap-2">
                             <h3>{menuTitle}</h3>
-                            <MenuItemListActionTools />
+                            <MenuItemListActionTools menuId={menuId}  />
                         </div>
-                        <MenuItemListTableTools />
+                        <MenuItemListTableTools menuId={menuId}  />
                         <MenuItemListTable menuId={menuId} />
                     </div>
                 </AdaptiveCard>
             </Container>
-            <MenuItemListSelected/> 
+            <MenuItemListSelected menuId={menuId} /> 
         </>
     )
 }

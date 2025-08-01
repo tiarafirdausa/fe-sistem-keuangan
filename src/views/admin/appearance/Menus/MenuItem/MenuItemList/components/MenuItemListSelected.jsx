@@ -8,12 +8,12 @@ import { apiDeleteMenuItem } from '@/services/MenuService';
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
 
-const MenuItemListSelected = () => {
+const MenuItemListSelected = ({menuId}) => {
     const {
         selectedMenuItems, 
         mutate,
         setSelectAllMenuItems, 
-    } = useMenuItemList(); 
+    } = useMenuItemList(menuId); 
 
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
