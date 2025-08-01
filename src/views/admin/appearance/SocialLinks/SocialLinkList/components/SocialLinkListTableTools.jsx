@@ -11,9 +11,8 @@ const SocialLinkListTableTools = () => {
         newTableData.query = val;
         newTableData.pageIndex = 1;
 
-        if (typeof val === 'string') {
-            setSocialLinkTableData(newTableData);
-        }
+        setSocialLinkTableData(newTableData);
+
     };
 
     return (

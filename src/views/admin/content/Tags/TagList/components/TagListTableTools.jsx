@@ -11,10 +11,7 @@ const TagListTableTools = () => {
         const newTableData = cloneDeep(tagTableData);
         newTableData.query = val;
         newTableData.pageIndex = 1;
-
-        if (typeof val === 'string') {
-            setTagTableData(newTableData);
-        }
+        setTagTableData(newTableData);
     };
 
     return (

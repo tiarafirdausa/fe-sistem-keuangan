@@ -12,9 +12,7 @@ const MenuListTableTools = () => {
         newTableData.query = val;
         newTableData.pageIndex = 1;
 
-        if (typeof val === 'string') {
-            setMenuTableData(newTableData);
-        }
+        setMenuTableData(newTableData);
     };
 
     return (

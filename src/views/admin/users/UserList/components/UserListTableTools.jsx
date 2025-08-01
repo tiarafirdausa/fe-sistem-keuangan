@@ -11,13 +11,8 @@ const UserListTableTools = () => {
         const newTableData = cloneDeep(userTableData);
         newTableData.query = val; 
         newTableData.pageIndex = 1; 
-        if (typeof val === 'string' && val.length > 1) {
-            setUserTableData(newTableData);
-        }
-
-        if (typeof val === 'string' && val.length === 0) {
-            setUserTableData(newTableData);
-        }
+        setUserTableData(newTableData);
+        
     };
 
     return (

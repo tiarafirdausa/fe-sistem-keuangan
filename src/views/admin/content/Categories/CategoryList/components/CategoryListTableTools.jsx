@@ -11,9 +11,8 @@ const CategoryListTableTools = () => {
         newTableData.query = val;
         newTableData.pageIndex = 1;
 
-        if (typeof val === 'string') {
-            setCategoryTableData(newTableData);
-        }
+        setCategoryTableData(newTableData);
+
     };
 
     return (

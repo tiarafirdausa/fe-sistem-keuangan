@@ -11,14 +11,7 @@ const PageListTableTools = () => {
         const newTableData = cloneDeep(pageTableData);
         newTableData.query = val;
         newTableData.pageIndex = 1;
-
-        if (typeof val === 'string' && val.length > 1) {
-            setPageTableData(newTableData); 
-        }
-
-        if (typeof val === 'string' && val.length === 0) {
-            setPageTableData(newTableData); 
-        }
+        setPageTableData(newTableData); 
     };
 
     return (
