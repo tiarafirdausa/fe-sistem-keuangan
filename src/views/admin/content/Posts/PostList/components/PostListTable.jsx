@@ -11,19 +11,21 @@ import { apiDeletePost } from '@/services/PostService';
 import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
 import { TbArticle } from 'react-icons/tb';
+import appConfig from '@/configs/app.config';
 
 const PostColumn = ({ row }) => {
-    const { title, status, categories, featuredImage } = row; 
+    const { title, status, categories, featured_image } = row; 
 
     const primaryCategory = categories && categories.length > 0 ? categories[0] : null;
+    const featuredImageUrl = featured_image ? `${appConfig.backendBaseUrl}${featured_image}` : null;
 
     return (
         <div className="flex items-center gap-2">
-            {featuredImage ? (
+            {featuredImageUrl ? (
                 <Avatar
                     shape="round"
                     size={60}
-                    src={featuredImage} 
+                    src={featuredImageUrl} 
                     alt={title} 
                 />
             ) : (

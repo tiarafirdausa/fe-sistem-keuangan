@@ -9,7 +9,7 @@ const PostContent = ({ title, featuredImage, content, galleryImages }) => {
                 <img
                     src={featuredImage}
                     alt={title || 'Featured Image'}
-                    className="w-full h-auto max-h-96 object-cover mb-6 rounded-lg shadow-md"
+                    className="w-full max-w-xl h-auto max-h-96 object-cover mb-6 rounded-lg shadow-md"
                 />
             )}
             {content && (
@@ -21,12 +21,17 @@ const PostContent = ({ title, featuredImage, content, galleryImages }) => {
             {galleryImages && galleryImages.length > 0 && (
                 <div className="mt-8"> 
                     <h2 className="text-2xl font-bold mb-4">Galeri Gambar</h2>
+                    {/* Ini adalah parent yang mengatur tata letak galeri */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {galleryImages.map((image, index) => (
-                            <div key={image.id || index} className="relative aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
+                            <div 
+                                key={image.id || index} 
+                                className="relative aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md"
+                            >
                                 <img
                                     src={image.image_path}
                                     alt={image.alt_text || `Gallery Image ${index + 1}`}
+                                    // w-full dan h-full sudah membuat gambar mengisi seluruh ruang div parent
                                     className="object-cover w-full h-full"
                                 />
                             </div>

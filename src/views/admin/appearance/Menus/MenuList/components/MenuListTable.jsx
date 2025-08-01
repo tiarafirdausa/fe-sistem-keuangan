@@ -11,7 +11,7 @@ import { TbPencil, TbTrash } from 'react-icons/tb';
 import { HiOutlineMenu } from 'react-icons/hi'; 
 import { apiDeleteMenu } from '@/services/MenuService'; 
 import { Tag } from '@/components/ui'; 
-import { GrCatalog } from 'react-icons/gr'; 
+import { Button } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
 
 const MenuColumn = ({ row }) => {
@@ -36,13 +36,13 @@ const ActionColumn = ({ onEdit, onDelete, onViewItems }) => {
     return (
         <div className="flex items-center justify-end gap-3">
             <Tooltip title="View Menu Items">
-                <div
-                    className={`text-xl cursor-pointer select-none font-semibold`}
-                    role="button"
+                <Button
+                    variant="twoTone"
+                    size="sm"
                     onClick={onViewItems}
                 >
-                    <GrCatalog />
-                </div>
+                    Menu Items
+                </Button>
             </Tooltip>
             <Tooltip title="Edit">
                 <div

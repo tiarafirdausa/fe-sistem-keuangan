@@ -5,6 +5,7 @@ import { useSessionUser } from '@/store/authStore'
 import { Link } from 'react-router-dom'
 import { PiUserDuotone, PiSignOutDuotone } from 'react-icons/pi'
 import { useAuth } from '@/auth'
+import appConfig from '@/configs/app.config'
 
 const dropdownItemList = []
 
@@ -17,8 +18,10 @@ const _UserDropdown = () => {
         signOut()
     }
 
+    const userPhotoUrl = foto ? `${appConfig.backendBaseUrl}${foto}` : null;
+
     const avatarProps = {
-        ...(foto ? { src: foto } : { icon: <PiUserDuotone /> }),
+        ...(userPhotoUrl ? { src: userPhotoUrl } : { icon: <PiUserDuotone /> }),
     }
 
     return (

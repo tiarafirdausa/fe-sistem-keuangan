@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import { useParams } from 'react-router-dom'
 import { apiGetPostBySlug } from '@/services/PostService'
 import Loading from '@/components/shared/Loading'
-
+import appConfig from '@/configs/app.config'
 import PostContent from './components/PostContent'
 import PostMeta from './components/PostMeta'
 
@@ -30,6 +30,19 @@ const PostDetails = () => {
         return <div className="p-4 text-center">Post with slug not found.</div>;
     }
 
+    const authorPhotoUrl = data.author_photo
+        ? `${appConfig.backendBaseUrl}${data.author_photo}`
+        : null; 
+
+    const featuredImageUrl = data.featured_image
+        ? `${appConfig.backendBaseUrl}${data.featured_image}`
+        : null;
+
+    const galleryImagesWithUrl = data.gallery_images?.map(image => ({
+        ...image,
+        image_path: `${appConfig.backendBaseUrl}${image.image_path}`
+    })) || [];
+
     return(
         <Loading loading={isLoading}>
             <>
@@ -37,16 +50,16 @@ const PostDetails = () => {
                     <div className="gap-4 flex flex-col flex-auto">
                         <PostContent
                             title={data.title}
-                            featuredImage={data.featured_image}
+                            featuredImage={featuredImageUrl}
                             content={data.content}
-                            galleryImages={data.gallery_images}
+                            galleryImages={galleryImagesWithUrl}
                         />
                     </div>
 
                     <div className="lg:w-[320px] xl:w-[420px] gap-4 flex flex-col">
                         <PostMeta
                             authorName={data.author_name}
-                            authorPhoto={data.author_photo}
+                            authorPhoto={authorPhotoUrl}
                             publishedAt={data.published_at}
                             categories={data.categories}
                             tags={data.tags}

@@ -11,17 +11,21 @@ import { HiOutlineDocumentText } from 'react-icons/hi';
 import { apiDeletePage } from '@/services/PageService';
 import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
+import appConfig from '@/configs/app.config';
 
 const PageColumn = ({ row }) => { 
-    const { title, status, featuredImage } = row; 
+    const { title, status, featured_image } = row; 
+
+        const featuredImageUrl = featured_image ? `${appConfig.backendBaseUrl}${featured_image}` : null;
+
 
     return (
         <div className="flex items-center gap-2">
-            {featuredImage ? (
+            {featuredImageUrl ? (
                 <Avatar
                     shape="round"
                     size={60}
-                    src={featuredImage}
+                    src={featuredImageUrl}
                     alt={title}
                 />
             ) : (
