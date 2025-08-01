@@ -1,4 +1,3 @@
-// src/views/admin/appearance/Settings/SettingsForm/components/GeneralSettingsSection.jsx
 import { Input, Switcher } from '@/components/ui'; // Use Switcher
 import { FormItem } from '@/components/ui/Form';
 import AdaptiveCard from '@/components/shared/AdaptiveCard'; // Use AdaptiveCard
@@ -25,23 +24,14 @@ const GeneralSettingsSection = ({ formData, handleChange, handleImageFileChange,
                 />
             </FormItem>
             <FormItem label="Maintenance Mode">
-                <Switcher // Use Switcher instead of Switch
+                <Switcher
                     checked={formData.maintenance_mode}
                     onChange={(checked) => handleChange({ target: { name: 'maintenance_mode', value: checked } })}
                 />
             </FormItem>
 
             <ImageUploadField
-                label="Website Ikon"
-                name="ikon"
-                currentImageUrl={formData.ikon}
-                error={errors.ikon}
-                onFileChange={handleImageFileChange}
-                onRemove={handleImageRemove}
-            />
-
-            <ImageUploadField
-                label="Website Logo"
+                label="Logo"
                 name="logo"
                 currentImageUrl={formData.logo}
                 error={errors.logo}

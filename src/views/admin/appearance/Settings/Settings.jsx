@@ -1,4 +1,3 @@
-// src/views/admin/appearance/Settings/Settings.jsx
 import { useState, useEffect, useCallback } from 'react';
 import useSettings from './hooks/useSettings';
 import { apiUpdateSettings } from '@/services/SettingService';
@@ -8,7 +7,7 @@ import SettingsForm from './SettingsForm';
 import Container from '@/components/shared/Container';
 import ConfirmDialog from '@/components/shared/ConfirmDialog'; // Import ConfirmDialog
 import * as Yup from 'yup';
-
+import appConfig from '@/configs/app.config';
 
 const Settings = () => {
     const { settings, isLoading, error, mutateSettings } = useSettings();
@@ -20,7 +19,6 @@ const Settings = () => {
         site_title: '',
         site_description: '',
         maintenance_mode: false,
-        ikon: null,
         logo: null,
         meta_keywords: '',
         meta_description: '',
@@ -30,18 +28,15 @@ const Settings = () => {
         smtp_port: null,
         smtp_username: '',
         smtp_password: '',
-        clear_ikon: false,
         clear_logo: false,
     });
 
-    const [newIkonFile, setNewIkonFile] = useState(null);
     const [newLogoFile, setNewLogoFile] = useState(null);
 
     const validationSchema = Yup.object().shape({
         site_title: Yup.string().required('Site title is required!'),
         site_description: Yup.string(),
         maintenance_mode: Yup.boolean(),
-        ikon: Yup.string().nullable(),
         logo: Yup.string().nullable(),
         meta_keywords: Yup.string(),
         meta_description: Yup.string(),
@@ -51,12 +46,10 @@ const Settings = () => {
         smtp_port: Yup.number().nullable(true).min(0, 'Port cannot be negative!').typeError('Port must be a number!'),
         smtp_username: Yup.string().nullable(),
         smtp_password: Yup.string().nullable(),
-        clear_ikon: Yup.boolean(),
         clear_logo: Yup.boolean(),
     });
 
     const [formErrors, setFormErrors] = useState({});
-
 
     useEffect(() => {
         if (settings) {
@@ -64,8 +57,9 @@ const Settings = () => {
                 site_title: settings.general?.site_title || '',
                 site_description: settings.general?.site_description || '',
                 maintenance_mode: settings.general?.maintenance_mode || false,
-                ikon: settings.image?.ikon || null,
-                logo: settings.image?.logo || null,
+                logo: settings.appearance?.logo 
+                ? `${appConfig.backendBaseUrl}${settings.appearance.logo}` 
+                : null,
                 meta_keywords: settings.seo?.meta_keywords || '',
                 meta_description: settings.seo?.meta_description || '',
                 mail_from_address: settings.email?.mail_from_address || '',
@@ -74,15 +68,12 @@ const Settings = () => {
                 smtp_port: settings.email?.smtp_port || null,
                 smtp_username: settings.email?.smtp_username || '',
                 smtp_password: settings.email?.smtp_password || '',
-                clear_ikon: false,
                 clear_logo: false,
             });
-            setNewIkonFile(null);
             setNewLogoFile(null);
             setFormErrors({});
         }
     }, [settings]);
-
 
     const validateForm = useCallback(async () => {
         try {
@@ -99,7 +90,6 @@ const Settings = () => {
             return false;
         }
     }, [formData, validationSchema]);
-
 
     const handleChange = useCallback((e) => {
         const { name, value, type, checked } = e.target;
@@ -118,15 +108,7 @@ const Settings = () => {
     }, []);
 
     const handleImageFileChange = useCallback((name, file) => {
-        if (name === 'ikon') {
-            setNewIkonFile(file);
-            setFormData((prevData) => ({
-                ...prevData,
-                ikon: URL.createObjectURL(file),
-                clear_ikon: false,
-            }));
-            setFormErrors(prevErrors => { const newErrors = { ...prevErrors }; delete newErrors.ikon; return newErrors; });
-        } else if (name === 'logo') {
+        if (name === 'logo') {
             setNewLogoFile(file);
             setFormData((prevData) => ({
                 ...prevData,
@@ -138,14 +120,7 @@ const Settings = () => {
     }, []);
 
     const handleImageRemove = useCallback((name) => {
-        if (name === 'ikon') {
-            setNewIkonFile(null);
-            setFormData((prevData) => ({
-                ...prevData,
-                ikon: null,
-                clear_ikon: true,
-            }));
-        } else if (name === 'logo') {
+        if (name === 'logo') {
             setNewLogoFile(null);
             setFormData((prevData) => ({
                 ...prevData,
@@ -154,7 +129,6 @@ const Settings = () => {
             }));
         }
     }, []);
-
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
@@ -175,7 +149,7 @@ const Settings = () => {
         const formDataToSend = new FormData();
 
         for (const key in formData) {
-            if (key !== 'ikon' && key !== 'logo' && formData[key] !== null && formData[key] !== undefined) {
+            if (key !== 'logo' && key !== 'clear_logo' && formData[key] !== null && formData[key] !== undefined) {
                 if (typeof formData[key] === 'boolean') {
                     formDataToSend.append(key, formData[key] ? 'true' : 'false');
                 } else if (typeof formData[key] === 'number') {
@@ -186,16 +160,10 @@ const Settings = () => {
             }
         }
 
-        if (newIkonFile) {
-            formDataToSend.append('ikon', newIkonFile);
-        }
         if (newLogoFile) {
             formDataToSend.append('logo', newLogoFile);
         }
 
-        if (formData.clear_ikon) {
-            formDataToSend.append('clear_ikon', 'true');
-        }
         if (formData.clear_logo) {
             formDataToSend.append('clear_logo', 'true');
         }
@@ -209,9 +177,8 @@ const Settings = () => {
                 { placement: 'top-center' },
             );
             mutateSettings();
-            setNewIkonFile(null);
             setNewLogoFile(null);
-            setFormData(prevData => ({ ...prevData, clear_ikon: false, clear_logo: false }));
+            setFormData(prevData => ({ ...prevData, clear_logo: false }));
 
         } catch (err) {
             console.error('Error updating settings:', err.response?.data || err.message);
@@ -226,26 +193,24 @@ const Settings = () => {
         }
     };
 
-    // Handler to open discard confirmation dialog
     const handleDiscard = useCallback(() => {
         setDiscardConfirmationOpen(true);
     }, []);
 
-    // Handler to close discard confirmation dialog
     const handleCancelDiscard = useCallback(() => {
         setDiscardConfirmationOpen(false);
     }, []);
 
-    // Handler to confirm discard and reset form
     const handleConfirmDiscard = useCallback(() => {
-        setDiscardConfirmationOpen(false); // Close the dialog first
+        setDiscardConfirmationOpen(false); 
         if (settings) {
             setFormData({
                 site_title: settings.general?.site_title || '',
                 site_description: settings.general?.site_description || '',
                 maintenance_mode: settings.general?.maintenance_mode || false,
-                ikon: settings.image?.ikon || null,
-                logo: settings.image?.logo || null,
+                logo:  settings.appearance?.logo 
+                ? `${appConfig.backendBaseUrl}${settings.appearance.logo}` 
+                : null,
                 meta_keywords: settings.seo?.meta_keywords || '',
                 meta_description: settings.seo?.meta_description || '',
                 mail_from_address: settings.email?.mail_from_address || '',
@@ -254,12 +219,10 @@ const Settings = () => {
                 smtp_port: settings.email?.smtp_port || null,
                 smtp_username: settings.email?.smtp_username || '',
                 smtp_password: settings.email?.smtp_password || '',
-                clear_ikon: false, // Reset clear flags
                 clear_logo: false,
             });
-            setNewIkonFile(null); // Clear any newly selected files
             setNewLogoFile(null);
-            setFormErrors({}); // Clear any validation errors
+            setFormErrors({});
             toast.push(
                 <Notification type="info" title="Changes Discarded">
                     Form changes have been discarded.
@@ -268,10 +231,6 @@ const Settings = () => {
             );
         }
     }, [settings]);
-
-
-    // Removed handleBack as it was not present in the provided context for SettingsForm.jsx
-    // If you need a "Back" button, you'd add it to SettingsForm.jsx and pass a handler.
 
     if (isLoading) {
         return (
@@ -299,16 +258,16 @@ const Settings = () => {
                 formErrors={formErrors}
                 isSubmitting={isSubmitting}
                 onFormSubmit={handleFormSubmit}
-                onDiscard={handleDiscard} // Now this opens the dialog
+                onDiscard={handleDiscard}
             />
             <ConfirmDialog
                 isOpen={discardConfirmationOpen}
-                type="warning" // Changed to warning as it's not a deletion, but discarding changes
+                type="warning"
                 title="Discard Changes"
                 onClose={handleCancelDiscard}
                 onRequestClose={handleCancelDiscard}
                 onCancel={handleCancelDiscard}
-                onConfirm={handleConfirmDiscard} // This is the function that performs the reset
+                onConfirm={handleConfirmDiscard}
             >
                 <p>
                     Are you sure you want to discard all unsaved changes? This action cannot be undone.
