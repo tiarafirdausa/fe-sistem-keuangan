@@ -176,21 +176,13 @@ const PageImageSection = ({ control, errors, setValue, getValues }) => {
                         control={control}
                         render={({ field }) => (
                             <>
-                                {field.value && Object.keys(field.value).length > 0 ? ( 
+                                {field.value && field.value.img ? ( 
                                     <div className="grid grid-cols-1 gap-2">
                                         <ImageList
                                             imgList={[field.value]} 
                                             fieldName="featured_image"
                                             onImageDelete={() => handleFeaturedImageDelete(field.onChange)}
                                         />
-                                        <Button
-                                            className="w-full"
-                                            variant="solid"
-                                            type="button"
-                                            onClick={() => handleFeaturedImageDelete(field.onChange)}
-                                        >
-                                            <HiTrash className="mr-2" /> Clear Featured Image
-                                        </Button>
                                     </div>
                                 ) : (
                                     <Upload
@@ -246,6 +238,7 @@ const PageImageSection = ({ control, errors, setValue, getValues }) => {
                                         />
                                         <Upload
                                             draggable
+                                            multiple
                                             className="min-h-fit"
                                             beforeUpload={beforeUpload}
                                             showList={false}
@@ -271,6 +264,8 @@ const PageImageSection = ({ control, errors, setValue, getValues }) => {
                                 ) : (
                                     <Upload
                                         draggable
+                                        multiple
+                                        className="min-h-fit"
                                         beforeUpload={beforeUpload}
                                         showList={false}
                                         onChange={(files) =>

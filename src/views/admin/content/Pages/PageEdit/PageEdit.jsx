@@ -15,6 +15,7 @@ import {
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
+import appConfig from '@/configs/app.config';
 
 const PageEdit = () => {
     const { slug } = useParams();
@@ -49,11 +50,14 @@ const PageEdit = () => {
                 excerpt: pageData.excerpt || '',
                 content: pageData.content || '',
                 featured_image: pageData.featured_image
-                    ? { id: 'existing-featured', img: pageData.featured_image, name: 'featured_image' }
+                    ? { 
+                        id: 'existing-featured', 
+                        img: `${appConfig.backendBaseUrl}${pageData.featured_image}`, 
+                        name: 'featured_image' }
                     : null,
                 gallery_images: pageData.gallery_images?.map(img => ({
                     id: img.id,
-                    img: img.image_path,
+                    img: `${appConfig.backendBaseUrl}${img.image_path}`,
                     name: img.alt_text || `gallery_image_${img.id}`
                 })) || [],
                 meta_title: pageData.meta_title || '',

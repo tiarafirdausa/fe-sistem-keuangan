@@ -6,7 +6,7 @@ import PageGeneralSection from './components/PageGeneralSection';
 import PageImageSection from './components/PageImageSection';
 import PageSeoSection from './components/PageSeoSection';
 import PageDetailsSection from './components/PageDetailsSection';
-
+import appConfig from '@/configs/app.config';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import isEmpty from 'lodash/isEmpty';
@@ -30,9 +30,16 @@ const PageForm = (props) => {
         defaultValues: {
             ...defaultValues,
             featured_image: (defaultValues.featured_image && defaultValues.featured_image !== '')
-                ? { id: 'existing-featured', img: defaultValues.featured_image, name: 'featured_image' }
+                ? { 
+                    id: 'existing-featured', 
+                    img: `${appConfig.backendBaseUrl}${defaultValues.featured_image}`,
+                    name: 'featured_image' }
                 : null,
-            gallery_images: defaultValues.gallery_images || [],
+            gallery_images: defaultValues.gallery_images?.map(img => ({
+                id: img.id,
+                img: `${appConfig.backendBaseUrl}${img.image_path}`, 
+                name: img.alt_text || `gallery_image_${img.id}`
+            })) || [],
             clear_featured_image: false,
             delete_gallery_image_ids: [],
             clear_gallery_images: false,
@@ -45,11 +52,14 @@ const PageForm = (props) => {
             const transformedDefaultValues = {
                 ...defaultValues,
                 featured_image: (defaultValues.featured_image && typeof defaultValues.featured_image === 'string' && defaultValues.featured_image !== '')
-                    ? { id: 'existing-featured', img: defaultValues.featured_image, name: 'featured_image' }
+                    ? { 
+                        id: 'existing-featured', 
+                        img: `${appConfig.backendBaseUrl}${defaultValues.featured_image}`, 
+                        name: 'featured_image' }
                     : (defaultValues.featured_image || null),
                 gallery_images: defaultValues.gallery_images?.map(img => ({
                     id: img.id,
-                    img: img.image_path,
+                    img: `${appConfig.backendBaseUrl}${img.image_path}`,
                     name: img.alt_text || `gallery_image_${img.id}`
                 })) || [],
                 clear_featured_image: false,
@@ -82,7 +92,7 @@ const PageForm = (props) => {
             } else if (key === 'gallery_images') {
                 values.gallery_images.forEach((image) => {
                     if (image.file) { 
-                        formData.append('gallery_images[]', image.file);
+                        formData.append('gallery_images', image.file);
                     }
                 });
             } else if (values[key] !== undefined && values[key] !== null) {
