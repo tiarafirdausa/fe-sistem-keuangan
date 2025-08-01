@@ -12,8 +12,6 @@ import {
     apiUpdatePage,
     apiDeletePage,
 } from '@/services/PageService';
-import { apiGetAllCategories } from '@/services/CategoryService'; 
-import { apiGetAllTags } from '@/services/TagService'; 
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
@@ -40,24 +38,6 @@ const PageEdit = () => {
         },
     );
 
-    const { data: categoriesData, isLoading: isLoadingCategories } = useSWR(
-        '/api/categories',
-        async () => {
-            const response = await apiGetAllCategories();
-            return response.data;
-        },
-        { revalidateOnFocus: false, revalidateIfStale: false }
-    );
-
-    const { data: tagsData, isLoading: isLoadingTags } = useSWR(
-        '/api/tags',
-        async () => {
-            const response = await apiGetAllTags();
-            return response.tags;
-        },
-        { revalidateOnFocus: false, revalidateIfStale: false }
-    );
-
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -81,8 +61,6 @@ const PageEdit = () => {
                 author_id: pageData.author_id || 1, 
                 status: pageData.status || 'draft',
                 published_at: pageData.published_at ? new Date(pageData.published_at) : null,
-                categories: pageData.categories?.map(cat => cat.id) || [],
-                tags: pageData.tags?.map(tag => tag.id) || [],
                 clear_featured_image: false,
                 delete_gallery_image_ids: [],
                 clear_gallery_images: false,
@@ -162,7 +140,7 @@ const PageEdit = () => {
         }
     };
 
-    const isLoadingCombined = isLoadingPage || isLoadingCategories || isLoadingTags;
+    const isLoadingCombined = isLoadingPage;
 
     if (isLoadingCombined) {
         return (
@@ -188,8 +166,6 @@ const PageEdit = () => {
             <PageForm
                 defaultValues={defaultFormValues}
                 users={[]}
-                categories={categoriesData || []}
-                tags={tagsData || []}
                 onFormSubmit={handleFormSubmit}
             >
                 <Container>

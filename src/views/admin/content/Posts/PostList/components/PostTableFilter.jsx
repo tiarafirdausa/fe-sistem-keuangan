@@ -62,16 +62,16 @@ const PostTableFilter = () => {
     const { data: categoriesData } = useSWR(
         '/api/categories', 
         async () => {
-            const response = await apiGetAllCategories(); 
+            const response = await apiGetAllCategories({ pageSize: 9999 }); 
             return response.categories; 
         },
         { revalidateOnFocus: false, revalidateIfStale: false }
     );
 
     const { data: tagsData } = useSWR(
-        '/api/tags', 
+        '/api/tags',  
         async () => {
-            const response = await apiGetAllTags(); 
+            const response = await apiGetAllTags({ pageSize: 9999 }); 
             return response.tags; 
         },
         { revalidateOnFocus: false, revalidateIfStale: false }

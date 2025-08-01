@@ -30,8 +30,8 @@ const PostCreate = () => {
             try {
                 setLoadingData(true);
                 const [categoriesRes, tagsRes] = await Promise.all([
-                    apiGetAllCategories(),
-                    apiGetAllTags(),
+                    apiGetAllCategories({ pageSize: 9999 }),
+                    apiGetAllTags({ pageSize: 9999 }),
                 ]);
                 setCategories(categoriesRes.categories);
                 setTags(tagsRes.tags);

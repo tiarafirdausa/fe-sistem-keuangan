@@ -46,7 +46,7 @@ const PostEdit = () => {
     const { data: categoriesData, isLoading: isLoadingCategories } = useSWR(
         '/api/categories',
         async () => {
-            const response = await apiGetAllCategories();
+            const response = await apiGetAllCategories({ pageSize: 9999 });
             return response.data;
         },
         { revalidateOnFocus: false, revalidateIfStale: false }
@@ -55,7 +55,7 @@ const PostEdit = () => {
     const { data: tagsData, isLoading: isLoadingTags } = useSWR(
         '/api/tags',
         async () => {
-            const response = await apiGetAllTags();
+            const response = await apiGetAllTags({ pageSize: 9999 });
             return response.tags;
         },
         { revalidateOnFocus: false, revalidateIfStale: false }
