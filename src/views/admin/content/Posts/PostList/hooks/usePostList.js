@@ -27,8 +27,8 @@ const usePostList = () => {
         },
     );
 
-        const postList = Array.isArray(data) ? data : [];
-        const postListTotal = Array.isArray(data) ? data.length : 0;
+    const postList = data?.data || [];
+    const postListTotal = data?.total || 0;
 
     return {
         error,

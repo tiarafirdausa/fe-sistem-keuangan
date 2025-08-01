@@ -19,7 +19,7 @@ const useMenuList = () => {
         // eslint-disable-next-line no-unused-vars
         async ([_, params]) => {
             const response = await apiGetAllMenus(params); 
-            return response.data; 
+            return response; 
         },
         {
             revalidateOnFocus: false,
@@ -27,9 +27,8 @@ const useMenuList = () => {
         },
     );
 
-    const menuList = data || [];
-    const menuListTotal = data?.length || 0;
-
+    const menuList = data?.data || [];
+    const menuListTotal = data?.total || 0;
     
     return {
         error,
