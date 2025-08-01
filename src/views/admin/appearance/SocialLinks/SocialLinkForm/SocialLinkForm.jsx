@@ -32,6 +32,7 @@ const SocialLinkForm = (props) => {
         reset,
         formState: { errors },
         control,
+        setValue
     } = useForm({
         defaultValues: {
             ...defaultValues,
@@ -59,7 +60,7 @@ const SocialLinkForm = (props) => {
             <Container>
                 <div className="flex flex-col xl:flex-row gap-4">
                     <div className="gap-4 flex flex-col flex-auto">
-                        <SocialLinkGeneralSection control={control} errors={errors} />
+                        <SocialLinkGeneralSection control={control} errors={errors} setValue={setValue}  />
                     </div>
                 </div>
             </Container>
