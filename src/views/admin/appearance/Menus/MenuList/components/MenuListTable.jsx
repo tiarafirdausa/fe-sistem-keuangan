@@ -12,6 +12,7 @@ import { HiOutlineMenu } from 'react-icons/hi';
 import { apiDeleteMenu } from '@/services/MenuService'; 
 import { Tag } from '@/components/ui'; 
 import { GrCatalog } from 'react-icons/gr'; 
+import { toast } from '@/components/ui/toast';
 
 const MenuColumn = ({ row }) => {
     return (
@@ -89,14 +90,34 @@ const MenuListTable = () => {
     };
 
     const handleConfirmDelete = async () => {
+        setDeleteConfirmationOpen(false);
         try {
             await apiDeleteMenu(toDeleteId);
             mutate(); 
             setSelectAllMenus([]); 
-            setDeleteConfirmationOpen(false);
             setToDeleteId('');
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<HiOutlineMenu />}
+                        className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
+                    />
+                    <span>Menu deleted successfully!</span>
+                </div>
+            );
         } catch (error) {
             console.error("Failed to delete menu:", error);
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<HiOutlineMenu />}
+                        className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
+                    />
+                    <span>Failed to delete menu. Please try again.</span>
+                </div>
+            );
             setDeleteConfirmationOpen(false); 
         }
     };

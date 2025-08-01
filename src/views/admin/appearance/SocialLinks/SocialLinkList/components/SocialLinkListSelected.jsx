@@ -3,7 +3,7 @@ import StickyFooter from '@/components/shared/StickyFooter';
 import Button from '@/components/ui/Button';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useSocialLinkList from '../hooks/useSocialLinkList';
-import { TbChecks, TbTag } from 'react-icons/tb'; 
+import { TbChecks, TbTrash } from 'react-icons/tb'; 
 import { apiDeleteSocialLink } from '@/services/SocialLinkService';
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
@@ -38,7 +38,7 @@ const SocialLinkListSelected = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<TbTag />} 
+                        icon={<TbTrash />} 
                         className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
                     />
                     <span>Successfully deleted {selectedSocialLinks.length} social link(s)!</span> 
@@ -50,7 +50,7 @@ const SocialLinkListSelected = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<TbTag />} 
+                        icon={<TbTrash />} 
                         className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
                     />
                     <span>Failed to delete social link(s). Please try again.</span> 

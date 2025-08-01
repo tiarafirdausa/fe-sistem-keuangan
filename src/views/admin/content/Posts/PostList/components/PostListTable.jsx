@@ -7,9 +7,10 @@ import usePostList from '../hooks/usePostList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom';
 import { TbPencil, TbTrash, TbEye } from 'react-icons/tb';
-import { HiOutlineDocumentText } from 'react-icons/hi';
 import { apiDeletePost } from '@/services/PostService';
 import { Tag } from '@/components/ui';
+import { toast } from '@/components/ui/toast';
+import { TbArticle } from 'react-icons/tb';
 
 const PostColumn = ({ row }) => {
     const { title, status, categories, featuredImage } = row; 
@@ -29,7 +30,7 @@ const PostColumn = ({ row }) => {
                 <Avatar
                     shape="round"
                     size={60}
-                    icon={<HiOutlineDocumentText />} 
+                    icon={<TbArticle />} 
                 />
             )}
             <div>
@@ -115,16 +116,35 @@ const PostListTable = () => {
     };
 
     const handleConfirmDelete = async () => {
+        setDeleteConfirmationOpen(false);
         try {
             await apiDeletePost(toDeleteId);
 
             mutate();
             setSelectAllPosts([]);
-
-            setDeleteConfirmationOpen(false);
             setToDeleteId('');
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<TbArticle />} 
+                        className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
+                    />
+                    <span>Successfully deleted the post!</span>
+                </div>
+            );
         } catch (error) {
             console.error("Failed to delete post:", error);
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<TbArticle />}
+                        className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
+                    />
+                    <span>Failed to delete the post. Please try again.</span>
+                </div>
+            );
             setDeleteConfirmationOpen(false);
         }
     };

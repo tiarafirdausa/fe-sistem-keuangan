@@ -6,10 +6,11 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useTagList from '../hooks/useTagList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom'
-import { TbPencil, TbTrash } from 'react-icons/tb';
+import { TbPencil, TbTrash,TbTag } from 'react-icons/tb';
 import { FaTag } from 'react-icons/fa'; 
 import { apiDeleteTag } from '@/services/TagService';
 import { Tag } from '@/components/ui'; 
+import { toast } from '@/components/ui/toast';
 
 const TagColumn = ({ row }) => {
     return (
@@ -74,17 +75,37 @@ const TagListTable = () => {
     };
 
     const handleConfirmDelete = async () => {
+        setDeleteConfirmationOpen(false);
         try {
             await apiDeleteTag(toDeleteId);
 
             mutate();
 
             setSelectAllTags([]); 
-
-            setDeleteConfirmationOpen(false);
             setToDeleteId('');
+
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<TbTag />} 
+                        className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
+                    />
+                    <span>Tag deleted successfully.</span>
+                </div>
+            );
         } catch (error) {
             console.error("Failed to delete tag:", error);
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<TbTag />}
+                        className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
+                    />
+                    <span>Failed to delete tag. Please try again.</span>
+                </div>
+            );
             setDeleteConfirmationOpen(false); 
         }
     };

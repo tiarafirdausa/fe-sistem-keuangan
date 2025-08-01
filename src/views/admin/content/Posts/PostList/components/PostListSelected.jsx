@@ -55,10 +55,6 @@ const PostListSelected = () => {
                     />
                     <span>Failed to delete post(s). Please try again.</span>
                 </div>,
-                {
-                    duration: 3000, 
-                    placement: 'bottom-end',
-                }
             );
         }
     };

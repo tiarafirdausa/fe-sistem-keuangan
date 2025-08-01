@@ -8,7 +8,7 @@ import { HiOutlineCheck} from 'react-icons/hi';
 import { apiDeleteCategory } from '@/services/CategoryService';
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
-import { FcAdvertising } from 'react-icons/fc';
+import { FaShapes } from 'react-icons/fa';
 
 const CategoryListSelected = () => {
     const {
@@ -40,7 +40,7 @@ const CategoryListSelected = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<FcAdvertising />}
+                        icon={<FaShapes />}
                         className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
                     />
                     <span>Successfully deleted {selectedCategories.length} category(s)!</span>
@@ -53,7 +53,7 @@ const CategoryListSelected = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<FcAdvertising />}
+                        icon={<FaShapes />}
                         className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
                     />
                     <span>Failed to delete category(s). Please try again.</span>

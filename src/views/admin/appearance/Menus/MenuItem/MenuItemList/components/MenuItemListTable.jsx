@@ -11,6 +11,7 @@ import { TbPencil, TbTrash } from 'react-icons/tb';
 import { HiOutlineLink } from 'react-icons/hi'; 
 import { apiDeleteMenuItem } from '@/services/MenuService';
 import { Tag } from '@/components/ui'; 
+import { toast } from '@/components/ui/toast';
 
 const MenuItemColumn = ({ row }) => {
     return (
@@ -87,14 +88,34 @@ const MenuItemListTable = ( {menuId} ) => {
     };
 
     const handleConfirmDelete = async () => {
+        setDeleteConfirmationOpen(false);
         try {
             await apiDeleteMenuItem(toDeleteId); 
             mutate();
             setSelectAllMenuItems([]);
-            setDeleteConfirmationOpen(false);
             setToDeleteId('');
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<HiOutlineLink />}
+                        className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
+                    />
+                    <span>Menu item deleted successfully!</span>
+                </div>
+            );
         } catch (error) {
             console.error("Failed to delete menu item:", error);
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<HiOutlineLink />}
+                        className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
+                    />
+                    <span>Failed to delete menu item. Please try again.</span>
+                </div>
+            );
             setDeleteConfirmationOpen(false); 
         }
     };

@@ -53,7 +53,7 @@ const TagListSelected = () => {
                         icon={<TbTag />} 
                         className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
                     />
-                    <span>Failed to delete tag(s). Please try again.</span> {/* Updated message */}
+                    <span>Failed to delete tag(s). Please try again.</span>
                 </div>
             );
         }

@@ -8,10 +8,10 @@ import useCategoryList from '../hooks/useCategoryList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi';
-import { FcAdvertising } from 'react-icons/fc'; 
 import { apiDeleteCategory } from '@/services/CategoryService';
 import { toast } from '@/components/ui/toast'; 
 import { Tag } from '@/components/ui'; 
+import { FaShapes } from 'react-icons/fa';
 
 const CategoryColumn = ({ row }) => {
     return (
@@ -19,7 +19,7 @@ const CategoryColumn = ({ row }) => {
             <Avatar
                 shape="round"
                 size={30}
-                icon={<FcAdvertising />} 
+                icon={<FaShapes />} 
             />
             <div>
                 <div className="font-bold heading-text mb-1">{row.name}</div>
@@ -76,17 +76,17 @@ const CategoryListTable = () => {
     };
 
     const handleConfirmDelete = async () => {
+        setDeleteConfirmationOpen(false);
         try {
             await apiDeleteCategory(toDeleteId);
             mutate();
             setSelectAllCategories([]);
-            setDeleteConfirmationOpen(false);
             setToDeleteId('');
             toast.push(
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<FcAdvertising />}
+                        icon={<FaShapes />}
                         className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
                     />
                     <span>Category deleted successfully!</span>
@@ -99,7 +99,7 @@ const CategoryListTable = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<FcAdvertising />}
+                        icon={<FaShapes />}
                         className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
                     />
                     <span>Failed to delete category. Please try again.</span>

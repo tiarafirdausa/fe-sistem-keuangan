@@ -10,6 +10,7 @@ import { TbPencil, TbTrash, TbEye } from 'react-icons/tb';
 import { HiOutlineDocumentText } from 'react-icons/hi';
 import { apiDeletePage } from '@/services/PageService';
 import { Tag } from '@/components/ui';
+import { toast } from '@/components/ui/toast';
 
 const PageColumn = ({ row }) => { 
     const { title, status, featuredImage } = row; 
@@ -110,16 +111,35 @@ const PageListTable = () => {
     };
 
     const handleConfirmDelete = async () => {
+        setDeleteConfirmationOpen(false);
         try {
             await apiDeletePage(toDeleteId); 
 
             mutate();
             setSelectAllPages([]);
-
-            setDeleteConfirmationOpen(false);
             setToDeleteId('');
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<HiOutlineDocumentText />}
+                        className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
+                    />
+                    <span>Page deleted successfully.</span>
+                </div>
+            );
         } catch (error) {
             console.error("Failed to delete page:", error); 
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<HiOutlineDocumentText />}
+                        className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
+                    />
+                    <span>Failed to delete page. Please try again.</span>
+                </div>
+            );
             setDeleteConfirmationOpen(false);
         }
     };

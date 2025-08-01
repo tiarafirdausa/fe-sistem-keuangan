@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { DataTable } from '@/components/shared';
 import { Avatar, Tooltip, Tag, Badge } from '@/components/ui';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import Notification from '@/components/ui/Notification';
 import toast from '@/components/ui/toast';
 import useSocialLinkList from '../hooks/useSocialLinkList';
 import { apiDeleteSocialLink } from '@/services/SocialLinkService';
@@ -76,29 +75,34 @@ const SocialLinkListTable = () => {
     };
 
     const handleConfirmDelete = async () => {
+        setDeleteConfirmationOpen(false);
         try {
             await apiDeleteSocialLink(toDeleteId);
 
             mutate();
-
             setSelectAllSocialLinks([]);
-
-            toast.push(
-                <Notification type="success" title="Success">
-                    Social link deleted successfully!
-                </Notification>,
-                { placement: 'top-center' },
-            );
-
-            setDeleteConfirmationOpen(false);
             setToDeleteId('');
+            toast.push(
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<TbTrash />}
+                        className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
+                    />
+                    <span>Successfully deleted social link!</span>
+                </div>
+            );
         } catch (error) {
             console.error("Failed to delete social link:", error);
             toast.push(
-                <Notification type="danger" title="Error">
-                    Failed to delete social link: {error.response?.data?.error || error.message || 'Unknown error.'}
-                </Notification>,
-                { placement: 'top-center' },
+                <div className="flex items-center">
+                    <Avatar
+                        shape="circle"
+                        icon={<TbTrash />}
+                        className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
+                    />
+                    <span>Failed to delete social link. Please try again.</span>
+                </div>
             );
             setDeleteConfirmationOpen(false);
         }

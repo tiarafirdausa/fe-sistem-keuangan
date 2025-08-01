@@ -3,7 +3,8 @@ import StickyFooter from '@/components/shared/StickyFooter';
 import Button from '@/components/ui/Button';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import usePageList from '../hooks/usePageList'; 
-import { TbChecks, TbArticle } from 'react-icons/tb'; 
+import { TbChecks } from 'react-icons/tb'; 
+import { HiOutlineDocumentText } from 'react-icons/hi';
 import { apiDeletePage } from '@/services/PageService'; 
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
@@ -38,7 +39,7 @@ const PageListSelected = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<TbArticle />} 
+                        icon={<HiOutlineDocumentText />} 
                         className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
                     />
                     <span>Successfully deleted {selectedPages.length} page(s)!</span> 
@@ -50,7 +51,7 @@ const PageListSelected = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<TbArticle />}
+                        icon={<HiOutlineDocumentText />}
                         className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
                     />
                     <span>Failed to delete page(s). Please try again.</span>

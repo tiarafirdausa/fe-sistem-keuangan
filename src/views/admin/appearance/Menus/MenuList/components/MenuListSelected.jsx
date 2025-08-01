@@ -4,7 +4,7 @@ import StickyFooter from '@/components/shared/StickyFooter';
 import Button from '@/components/ui/Button';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useMenuList from '../hooks/useMenuList';
-import { TbChecks, TbMenu } from 'react-icons/tb'; // Changed icon to TbMenu
+import { TbChecks, TbMenu } from 'react-icons/tb'; 
 import { apiDeleteMenu } from '@/services/MenuService'; 
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
@@ -39,7 +39,7 @@ const MenuListSelected = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<TbMenu />} // Changed icon to TbMenu
+                        icon={<TbMenu />} 
                         className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
                     />
                     <span>Successfully deleted {selectedMenus.length} menu(s)!</span>
@@ -51,7 +51,7 @@ const MenuListSelected = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<TbMenu />} // Changed icon to TbMenu
+                        icon={<TbMenu />} 
                         className="bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100 mr-2"
                     />
                     <span>Failed to delete menu(s). Please try again.</span>
