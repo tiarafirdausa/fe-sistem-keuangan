@@ -16,19 +16,27 @@ const endpointConfig = {
     deleteUser: (id) => `/users/${id}`,
 
     // Media
-    getAllMedia: '/media',
+    getAllMedia: `/media`,
     getMediaById: (id) => `/media/id/${id}`,
     getMediaByCategorySlug: (slug) => `/media/category/${slug}`,
-    createMedia: '/media',
-    updateMedia: (id) => `/media/id/${id}`,
+    createMedia: `/media`,
+    updateMedia: (id) => `/media/${id}`,
     deleteMedia: (id) => `/media/${id}`,
+
+    // Endpoints untuk Media Categories
+    getAllMediaCategories: `/media-categories`,
+    getMediaCategoryById: (id) => `/media-categories/id/${id}`,
+    getMediaCategoryBySlug: (slug) => `/media-categories/${slug}`,
+    createMediaCategory: `/media-categories`,
+    updateMediaCategory: (id) => `/media-categories/${id}`,
+    deleteMediaCategory: (id) => `/media-categories/${id}`,
 
     // Categories (untuk posts/pages)
     getAllCategories: '/categories',
     getCategoryById: (id) => `/categories/id/${id}`,
     getCategoryBySlug: (slug) => `/categories/${slug}`,
     createCategory: '/categories',
-    updateCategory: (id) => `/categories/id/${id}`,
+    updateCategory: (id) => `/categories/${id}`,
     deleteCategory: (id) => `/categories/${id}`,
 
     // Posts

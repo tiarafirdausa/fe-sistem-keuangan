@@ -186,13 +186,48 @@ const contentManagementRoute = [
             pageContainerType: 'contained',
         },
     },
+    // {
+    //     key: 'contentManagement.media',
+    //     path: `${ADMIN_PREFIX_PATH}/media`,
+    //     component: lazy(() => import('@/views/admin/content/Media/MediaCategoryList')),
+    //     authority: [ADMIN],
+    //     meta: {
+    //         pageContainerType: 'contained',
+    //     },
+    // },
     {
-        key: 'contentManagement.media',
-        path: `${ADMIN_PREFIX_PATH}/media`,
-        component: lazy(() => import('@/views/admin/content/Media')),
+        key: 'contentManagement.mediaCategories',
+        path: `${ADMIN_PREFIX_PATH}/media-categories`,
+        component: lazy(() => import('@/views/admin/content/Media/MediaCategoryList')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
+        },
+    },
+    {
+        key: 'contentManagement.mediaCategories.new',
+        path: `${ADMIN_PREFIX_PATH}/media-categories/new`,
+        component: lazy(() => import('@/views/admin/content/Media/MediaCategoryCreate')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Media Category',
+            },
+        },
+    },
+    {
+        key: 'contentManagement.mediaCategories.edit',
+        path: `${ADMIN_PREFIX_PATH}/media-categories/edit/:slug`,
+        component: lazy(() => import('@/views/admin/content/Media/MediaCategoryEdit')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Media Category',
+            },
         },
     },
 ]
