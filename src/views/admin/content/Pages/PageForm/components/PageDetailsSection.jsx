@@ -54,25 +54,6 @@ const PageDetailsSection = ({ control, errors }) => {
                         )}
                     />
                 </FormItem>
-
-                {/* <FormItem
-                    label="Published At"
-                    invalid={Boolean(errors.published_at)}
-                    errorMessage={errors.published_at?.message}
-                >
-                    <Controller
-                        name="published_at"
-                        control={control}
-                        render={({ field }) => (
-                            <DatePicker
-                                value={field.value ? new Date(field.value) : null}
-                                placeholder="Select Publish Date"
-                                enableCloseOnSelect={true}
-                                onChange={(date) => field.onChange(date)}
-                            />
-                        )}
-                    />
-                </FormItem> */}
             </div>
         </Card>
     );

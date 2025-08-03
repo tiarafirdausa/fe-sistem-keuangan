@@ -1,3 +1,5 @@
+// src/views/admin/content/Media/MediaCategoryCreate.js
+
 import { useState } from 'react';
 import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
@@ -27,7 +29,7 @@ const MediaCategoryCreate = () => {
                     </Notification>,
                     { placement: 'top-center' },
                 );
-                navigate('/admin/media-categories');
+                navigate('/admin/media/categories');
             } else {
                 toast.push(
                     <Notification type="warning" title="Unexpected Response">
@@ -57,7 +59,7 @@ const MediaCategoryCreate = () => {
             </Notification>,
             { placement: 'top-center' },
         );
-        navigate('/admin/media-categories');
+        navigate('/admin/media/categories');
     };
 
     const handleDiscard = () => {

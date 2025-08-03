@@ -1,3 +1,5 @@
+// src/views/admin/content/Media/MediaCategoryEdit.js
+
 import { useState } from 'react';
 import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
@@ -50,7 +52,7 @@ const MediaCategoryEdit = () => {
                 { placement: 'top-center' },
             );
             mutate();
-            navigate('/admin/media-categories');
+            navigate('/admin/media/categories');
         } catch (error) {
             console.error('Error updating media category:', error.response?.data || error.message);
             toast.push(
@@ -73,7 +75,7 @@ const MediaCategoryEdit = () => {
     };
 
     const handleBack = () => {
-        navigate('/admin/media-categories');
+        navigate('/admin/media/categories');
     };
 
     const handleConfirmDelete = async () => {
@@ -90,7 +92,7 @@ const MediaCategoryEdit = () => {
                 </Notification>,
                 { placement: 'top-center' },
             );
-            navigate('/admin/media-categories');
+            navigate('/admin/media/categories');
         } catch (error) {
             console.error('Error deleting media category:', error.response?.data || error.message);
             toast.push(

@@ -10,7 +10,7 @@ const MediaCategoryListActionTools = () => {
             <Button
                 variant="solid"
                 icon={<TbPlus className="text-xl" />}
-                onClick={() => navigate('/admin/media-categories/new')}
+                onClick={() => navigate('/admin/media/categories/new')}
             >
                 Add Media Category
             </Button>

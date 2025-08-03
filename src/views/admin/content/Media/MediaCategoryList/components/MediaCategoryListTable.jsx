@@ -6,7 +6,7 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useMediaCategoryList from '../hooks/useMediaCategoryList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom';
-import { TbPencil, TbTrash} from 'react-icons/tb';
+import { TbPencil, TbTrash } from 'react-icons/tb';
 import { FaTag } from 'react-icons/fa';
 import { apiDeleteMediaCategory } from '@/services/MediaService';
 import { Tag } from '@/components/ui';
@@ -31,18 +31,9 @@ const MediaCategoryColumn = ({ row }) => {
     );
 };
 
-const ActionColumn = ({ onEdit, onDelete, onShowMedia }) => {
+const ActionColumn = ({ onEdit, onDelete }) => {
     return (
         <div className="flex items-center justify-end gap-3">
-            <Tooltip title="View Media">
-                <Button
-                    variant="twoTone"
-                    size="sm"
-                    onClick={onShowMedia}
-                >
-                   Media
-                </Button>
-            </Tooltip>
             <Tooltip title="Edit">
                 <Button
                     size="sm"
@@ -79,11 +70,7 @@ const MediaCategoryListTable = () => {
     };
 
     const handleEdit = (category) => {
-        navigate(`/admin/media-categories/edit/${category.slug}`);
-    };
-
-    const handleShowMedia = (category) => {
-        navigate(`/admin/media/category/${category.slug}`);
+        navigate(`/admin/media/categories/edit/${category.slug}`);
     };
 
     const handleConfirmDelete = async () => {
@@ -187,7 +174,6 @@ const MediaCategoryListTable = () => {
                     <ActionColumn
                         onEdit={() => handleEdit(props.row.original)}
                         onDelete={() => handleDelete(props.row.original)}
-                        onShowMedia={() => handleShowMedia(props.row.original)}
                     />
                 ),
             },
