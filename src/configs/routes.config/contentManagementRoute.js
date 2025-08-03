@@ -115,7 +115,9 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.categories.new',
         path: `${ADMIN_PREFIX_PATH}/categories/new`,
-        component: lazy(() => import('@/views/admin/content/Categories/CategoryCreate')),
+        component: lazy(
+            () => import('@/views/admin/content/Categories/CategoryCreate'),
+        ),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
@@ -165,9 +167,7 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.tags.edit',
         path: `${ADMIN_PREFIX_PATH}/tags/edit/:slug`,
-        component: lazy(
-            () => import('@/views/admin/content/Tags/TagEdit'),
-        ),
+        component: lazy(() => import('@/views/admin/content/Tags/TagEdit')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
@@ -186,28 +186,64 @@ const contentManagementRoute = [
             pageContainerType: 'contained',
         },
     },
-    // {
-    //     key: 'contentManagement.media',
-    //     path: `${ADMIN_PREFIX_PATH}/media`,
-    //     component: lazy(() => import('@/views/admin/content/Media/MediaCategoryList')),
-    //     authority: [ADMIN],
-    //     meta: {
-    //         pageContainerType: 'contained',
-    //     },
-    // },
     {
-        key: 'contentManagement.mediaCategories',
-        path: `${ADMIN_PREFIX_PATH}/media-categories`,
-        component: lazy(() => import('@/views/admin/content/Media/MediaCategoryList')),
+        key: 'contentManagement.media.list',
+        path: `${ADMIN_PREFIX_PATH}/media/list`,
+        component: lazy(() => import('@/views/admin/content/Media/MediaList')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
         },
     },
     {
-        key: 'contentManagement.mediaCategories.new',
-        path: `${ADMIN_PREFIX_PATH}/media-categories/new`,
-        component: lazy(() => import('@/views/admin/content/Media/MediaCategoryCreate')),
+        key: 'contentManagement.media.new',
+        path: `${ADMIN_PREFIX_PATH}/media/new`,
+        component: lazy(
+            () => import('@/views/admin/content/Media/MediaCreate'),
+        ),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Media',
+            },
+        },
+    },
+    {
+        key: 'contentManagement.media.edit',
+        path: `${ADMIN_PREFIX_PATH}/media/edit/:id`,
+        component: lazy(
+            () => import('@/views/admin/content/Media/MediaEdit'),
+        ),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Media ',
+            },
+        },
+    },
+
+    // Rute untuk Media Categories
+    {
+        key: 'contentManagement.media.categories',
+        path: `${ADMIN_PREFIX_PATH}/media/categories`,
+        component: lazy(
+            () => import('@/views/admin/content/Media/MediaCategoryList'),
+        ),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+        },
+    },
+    {
+        key: 'contentManagement.media.categories.new',
+        path: `${ADMIN_PREFIX_PATH}/media/categories/new`,
+        component: lazy(
+            () => import('@/views/admin/content/Media/MediaCategoryCreate'),
+        ),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
@@ -218,9 +254,11 @@ const contentManagementRoute = [
         },
     },
     {
-        key: 'contentManagement.mediaCategories.edit',
-        path: `${ADMIN_PREFIX_PATH}/media-categories/edit/:slug`,
-        component: lazy(() => import('@/views/admin/content/Media/MediaCategoryEdit')),
+        key: 'contentManagement.media.categories.edit',
+        path: `${ADMIN_PREFIX_PATH}/media/categories/edit/:slug`,
+        component: lazy(
+            () => import('@/views/admin/content/Media/MediaCategoryEdit'),
+        ),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',

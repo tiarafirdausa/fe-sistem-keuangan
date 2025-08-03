@@ -14,28 +14,6 @@ const PageDetailsSection = ({ control, errors }) => {
         <Card>
             <h4 className="mb-6">Page Details</h4>
             <div className="flex flex-col gap-4">
-                {/* Author ID and Published At are typically not relevant for static pages, removed */}
-                {/* <FormItem
-                    label="Author ID"
-                    invalid={Boolean(errors.author_id)}
-                    errorMessage={errors.author_id?.message}
-                >
-                    <Controller
-                        name="author_id"
-                        control={control}
-                        render={({ field }) => (
-                            <Input
-                                type="number"
-                                autoComplete="off"
-                                placeholder="Author ID"
-                                value={field.value || ''}
-                                disabled={true}
-                                onChange={(e) => field.onChange(parseInt(e.target.value) || null)}
-                            />
-                        )}
-                    />
-                </FormItem> */}
-
                 <FormItem
                     label="Status"
                     invalid={Boolean(errors.status)}

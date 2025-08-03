@@ -47,7 +47,6 @@ const CustomStatusControl = ({ children, ...props }) => {
 
 const validationSchema = z.object({
     status: z.string().optional(),
-    // authorId: z.array(z.number()).optional(), // authorId DIHAPUS
 });
 
 const PageTableFilter = () => {
@@ -55,24 +54,9 @@ const PageTableFilter = () => {
 
     const { pageFilterData, setPageFilterData } = usePageList();
 
-    // Mengambil data pengguna (users) untuk filter penulis - DIKOMENTARI/DIHAPUS
-    // const { data: usersData } = useSWR(
-    //     '/api/users',
-    //     async () => {
-    //         const response = await apiGetAllUsers();
-    //         return response.users;
-    //     },
-    //     { revalidateOnFocus: false, revalidateIfStale: false }
-    // );
-
-    // const authorOptions = useMemo(() => { // authorOptions DIHAPUS
-    //     return usersData?.map(user => ({ value: user.id, label: user.name })) || [];
-    // }, [usersData]);
-
     const { handleSubmit, control, reset } = useForm({
         defaultValues: {
             status: pageFilterData.status || '',
-            // authorId: pageFilterData.authorId || [], // authorId DIHAPUS
         },
         resolver: zodResolver(validationSchema),
     });
@@ -81,7 +65,6 @@ const PageTableFilter = () => {
         if (filterIsOpen) {
             reset({
                 status: pageFilterData.status || '',
-                // authorId: pageFilterData.authorId || [], // authorId DIHAPUS
             });
         }
     }, [filterIsOpen, pageFilterData, reset]);
@@ -90,7 +73,6 @@ const PageTableFilter = () => {
         setPageFilterData({
             ...pageFilterData,
             status: values.status,
-            // authorId: values.authorId, // authorId DIHAPUS
             pageIndex: 1,
         });
         setFilterIsOpen(false);
@@ -99,12 +81,10 @@ const PageTableFilter = () => {
     const handleClearFilters = () => {
         reset({
             status: '',
-            // authorId: [], // authorId DIHAPUS
         });
         setPageFilterData({
             ...pageFilterData,
             status: '',
-            // authorId: '', // authorId DIHAPUS
             pageIndex: 1,
         });
         setFilterIsOpen(false);
@@ -150,29 +130,6 @@ const PageTableFilter = () => {
                                 )}
                             />
                         </FormItem>
-
-                        {/* FormItem Author DIHAPUS */}
-                        {/* <FormItem label="Author">
-                            <Controller
-                                name="authorId"
-                                control={control}
-                                render={({ field }) => (
-                                    <Select
-                                        isMulti
-                                        options={authorOptions}
-                                        {...field}
-                                        value={authorOptions.filter(option =>
-                                            field.value.includes(option.value)
-                                        )}
-                                        placeholder="Select authors"
-                                        onChange={(selectedOptions) =>
-                                            field.onChange(selectedOptions ? selectedOptions.map(opt => opt.value) : [])
-                                        }
-                                    />
-                                )}
-                            />
-                        </FormItem> */}
-
                     </div>
 
                     <div className="flex items-center justify-between mt-4">

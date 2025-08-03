@@ -1,7 +1,7 @@
 import MediaListSearch from "./MediaListSearch";
-import MediaTableFilter from "./MediaTableFilter";
 import useMediaList from "../hooks/useMediaList";
 import cloneDeep from 'lodash/cloneDeep';
+import MediaTableFilter from "./MediaTableFilter";
 
 const MediaListTableTools = () => {
     const { mediaTableData, setMediaTableData } = useMediaList();

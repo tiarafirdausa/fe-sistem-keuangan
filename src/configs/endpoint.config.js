@@ -16,12 +16,11 @@ const endpointConfig = {
     deleteUser: (id) => `/users/${id}`,
 
     // Media
-    getAllMedia: `/media`,
-    getMediaById: (id) => `/media/id/${id}`,
-    getMediaByCategorySlug: (slug) => `/media/category/${slug}`,
-    createMedia: `/media`,
-    updateMedia: (id) => `/media/${id}`,
-    deleteMedia: (id) => `/media/${id}`,
+    getAllMediaCollections: `/media`,
+    getMediaCollectionById: (id) => `/media/id/${id}`,
+    createMediaCollection: `/media`,
+    updateMediaCollection: (id) => `/media/${id}`,
+    deleteMediaCollection: (id) => `/media/${id}`,
 
     // Endpoints untuk Media Categories
     getAllMediaCategories: `/media-categories`,

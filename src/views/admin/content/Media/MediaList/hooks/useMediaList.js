@@ -1,38 +1,33 @@
-// src/views/admin/content/Media/hooks/useMediaList.js
-
-import { apiGetAllMedia } from '@/services/MediaService';
+import { apiGetAllMediaCollections } from '@/services/MediaService';
 import useSWR from 'swr';
 import { useMediaListStore } from '../store/mediaListStore';
 
-const useMediaList = () => { 
+const useMediaList = () => {
     const {
         mediaTableData,
         mediaFilterData,
         setMediaTableData,
         setMediaFilterData,
-        setSelectedMedia,
-        setSelectAllMedia,
-        selectedMedia,
+        selectedMediaCollections,
+        setSelectedMediaCollections,
+        setSelectAllMediaCollections,
     } = useMediaListStore((state) => state);
 
-    const swrKey = ['/api/media', { ...mediaTableData, ...mediaFilterData }];
-
     const { data, error, isLoading, mutate } = useSWR(
-        swrKey,
+        ['/api/media', { ...mediaTableData, ...mediaFilterData }],
         // eslint-disable-next-line no-unused-vars
         async ([_, params]) => {
-            const response = await apiGetAllMedia(params);
+            const response = await apiGetAllMediaCollections(params);
             return response;
         },
         {
             revalidateOnFocus: false,
             revalidateIfStale: true,
-            shouldRetryOnError: true,
         },
     );
 
-    const mediaList = data?.data || [];
-    const mediaListTotal = data?.total || 0;
+    const mediaCollectionList = data?.data || [];
+    const mediaListTotal = data?.pagination?.totalItems || 0;
 
     return {
         error,
@@ -40,13 +35,13 @@ const useMediaList = () => {
         mediaTableData,
         mediaFilterData,
         mutate,
-        mediaList,
+        mediaCollectionList,
         mediaListTotal,
         setMediaTableData,
+        selectedMediaCollections,
+        setSelectedMediaCollections,
+        setSelectAllMediaCollections,
         setMediaFilterData,
-        selectedMedia,
-        setSelectedMedia,
-        setSelectAllMedia,
     };
 };
 

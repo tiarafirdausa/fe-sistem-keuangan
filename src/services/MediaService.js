@@ -3,49 +3,42 @@ import endpointConfig from '@/configs/endpoint.config';
 
 // === Media Endpoints ===
 
-export async function apiGetAllMedia(params) {
+export async function apiGetAllMediaCollections(params) {
     return ApiService.fetchDataWithAxios({
-        url: endpointConfig.getAllMedia,
+        url: endpointConfig.getAllMediaCollections,
         method: 'get',
         params,
     });
 }
 
-export async function apiGetMediaById(id) {
+export async function apiGetMediaCollectionById(id) {
     return ApiService.fetchDataWithAxios({
-        url: endpointConfig.getMediaById(id),
+        url: endpointConfig.getMediaCollectionById(id),
         method: 'get',
     });
 }
 
-export async function apiGetMediaByCategorySlug(slug) {
+export async function apiCreateMediaCollection(data) {
     return ApiService.fetchDataWithAxios({
-        url: endpointConfig.getMediaByCategorySlug(slug),
-        method: 'get',
-    });
-}
-
-export async function apiCreateMedia(data) {
-    return ApiService.fetchDataWithAxios({
-        url: endpointConfig.createMedia,
+        url: endpointConfig.createMediaCollection,
         method: 'post',
         data,
         headers: { 'Content-Type': 'multipart/form-data' },
     });
 }
 
-export async function apiUpdateMedia(id, data) {
+export async function apiUpdateMediaCollection(id, data) {
     return ApiService.fetchDataWithAxios({
-        url: endpointConfig.updateMedia(id),
+        url: endpointConfig.updateMediaCollection(id),
         method: 'put',
         data,
         headers: { 'Content-Type': 'multipart/form-data' },
     });
 }
 
-export async function apiDeleteMedia(id) {
+export async function apiDeleteMediaCollection(id) {
     return ApiService.fetchDataWithAxios({
-        url: endpointConfig.deleteMedia(id),
+        url: endpointConfig.deleteMediaCollection(id),
         method: 'delete',
     });
 }

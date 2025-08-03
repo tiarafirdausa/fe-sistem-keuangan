@@ -1,5 +1,3 @@
-// src/views/admin/content/Media/MediaList/components/MediaTableFilter.js
-
 import { useState, useEffect, useMemo } from 'react';
 import Button from '@/components/ui/Button';
 import Drawer from '@/components/ui/Drawer';
@@ -10,26 +8,32 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import useSWR from 'swr';
-import { apiGetAllUsers } from '@/services/UserService';
 import useMediaList from '../hooks/useMediaList';
-import useMediaCategoryList from '../../MediaCategoryList/hooks/useMediaCategoryList'; // Impor hook kategori
-
-const mediaTypeOptions = [
-    { value: 'image', label: 'Image' },
-    { value: 'video', label: 'Video' },
-    { value: 'audio', label: 'Audio' },
-    { value: 'pdf', label: 'PDF' },
-];
+import { apiGetAllMediaCategories } from '@/services/MediaService';
+import { apiGetAllUsers } from '@/services/UserService';
 
 const validationSchema = z.object({
-    type: z.string().optional(),
-    uploadedBy: z.string().optional(),
     categoryId: z.string().optional(),
+    authorId: z.string().optional(),
 });
 
 const MediaTableFilter = () => {
     const [filterIsOpen, setFilterIsOpen] = useState(false);
     const { mediaFilterData, setMediaFilterData } = useMediaList();
+
+    const { data: categoriesData } = useSWR(
+        '/api/media-categories',
+        async () => {
+            const response = await apiGetAllMediaCategories();
+            console.log(response)
+            return response.mediaCategories;
+        },
+        { revalidateOnFocus: false, revalidateIfStale: false },
+    );
+
+    const categoryOptions = useMemo(() => {
+        return categoriesData?.map((category) => ({ value: category.id, label: category.name })) || [];
+    }, [categoriesData]);
 
     const { data: usersData } = useSWR(
         '/api/users',
@@ -37,34 +41,17 @@ const MediaTableFilter = () => {
             const response = await apiGetAllUsers();
             return response.users;
         },
-        { revalidateOnFocus: false, revalidateIfStale: false }
+        { revalidateOnFocus: false, revalidateIfStale: false },
     );
 
-    const { mediaCategoryList } = useMediaCategoryList();
-
-    const uploaderOptions = useMemo(() => {
-        return (
-            usersData?.map((user) => ({
-                value: user.id.toString(),
-                label: user.name,
-            })) || []
-        );
+    const authorOptions = useMemo(() => {
+        return usersData?.map((user) => ({ value: user.id, label: user.name })) || [];
     }, [usersData]);
-
-    const categoryOptions = useMemo(() => {
-        return (
-            mediaCategoryList?.map((category) => ({
-                value: category.id.toString(),
-                label: category.name,
-            })) || []
-        );
-    }, [mediaCategoryList]);
 
     const { handleSubmit, control, reset } = useForm({
         defaultValues: {
-            type: mediaFilterData.type || '',
-            uploadedBy: mediaFilterData.uploadedBy || '',
             categoryId: mediaFilterData.categoryId || '',
+            authorId: mediaFilterData.authorId || '',
         },
         resolver: zodResolver(validationSchema),
     });
@@ -72,9 +59,8 @@ const MediaTableFilter = () => {
     useEffect(() => {
         if (filterIsOpen) {
             reset({
-                type: mediaFilterData.type || '',
-                uploadedBy: mediaFilterData.uploadedBy || '',
                 categoryId: mediaFilterData.categoryId || '',
+                authorId: mediaFilterData.authorId || '',
             });
         }
     }, [filterIsOpen, mediaFilterData, reset]);
@@ -82,9 +68,8 @@ const MediaTableFilter = () => {
     const onSubmit = (values) => {
         setMediaFilterData({
             ...mediaFilterData,
-            type: values.type,
-            uploadedBy: values.uploadedBy,
             categoryId: values.categoryId,
+            authorId: values.authorId,
             pageIndex: 1,
         });
         setFilterIsOpen(false);
@@ -92,15 +77,13 @@ const MediaTableFilter = () => {
 
     const handleClearFilters = () => {
         reset({
-            type: '',
-            uploadedBy: '',
             categoryId: '',
+            authorId: '',
         });
         setMediaFilterData({
             ...mediaFilterData,
-            type: '',
-            uploadedBy: '',
             categoryId: '',
+            authorId: '',
             pageIndex: 1,
         });
         setFilterIsOpen(false);
@@ -123,65 +106,35 @@ const MediaTableFilter = () => {
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     <div>
-                        {/* Filter by Media Type */}
-                        <FormItem label="Media Type">
-                            <Controller
-                                name="type"
-                                control={control}
-                                render={({ field }) => (
-                                    <Select
-                                        isClearable
-                                        options={mediaTypeOptions}
-                                        {...field}
-                                        value={mediaTypeOptions.find(
-                                            (option) =>
-                                                option.value === field.value
-                                        )}
-                                        onChange={(option) =>
-                                            field.onChange(option?.value)
-                                        }
-                                    />
-                                )}
-                            />
-                        </FormItem>
-
-                        <FormItem label="Media Category">
+                        <FormItem label="Category">
                             <Controller
                                 name="categoryId"
                                 control={control}
                                 render={({ field }) => (
                                     <Select
-                                        isClearable
                                         options={categoryOptions}
                                         {...field}
                                         value={categoryOptions.find(
-                                            (option) =>
-                                                option.value === field.value
+                                            (option) => option.value === field.value,
                                         )}
-                                        onChange={(option) =>
-                                            field.onChange(option?.value)
-                                        }
+                                        onChange={(option) => field.onChange(option?.value || '')}
                                     />
                                 )}
                             />
                         </FormItem>
 
-                        <FormItem label="Uploader">
+                        <FormItem label="Author">
                             <Controller
-                                name="uploadedBy"
+                                name="authorId"
                                 control={control}
                                 render={({ field }) => (
                                     <Select
-                                        isClearable
-                                        options={uploaderOptions}
+                                        options={authorOptions}
                                         {...field}
-                                        value={uploaderOptions.find(
-                                            (option) =>
-                                                option.value === field.value
+                                        value={authorOptions.find(
+                                            (option) => option.value === field.value,
                                         )}
-                                        onChange={(option) =>
-                                            field.onChange(option?.value)
-                                        }
+                                        onChange={(option) => field.onChange(option?.value || '')}
                                     />
                                 )}
                             />

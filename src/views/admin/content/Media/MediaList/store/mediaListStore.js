@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 
 export const initialMediaTableData = {
     pageIndex: 1,
@@ -8,41 +8,41 @@ export const initialMediaTableData = {
         order: '',
         key: '',
     },
-}
+};
 
 export const initialMediaFilterData = {
     search: '',
     categoryId: '',
-    type: '',
-    uploadedBy: '',
-}
+    authorId: '',
+};
 
 const initialMediaState = {
     mediaTableData: initialMediaTableData,
     mediaFilterData: initialMediaFilterData,
-    selectedMedia: [],
-}
+    selectedMediaCollections: [],
+};
 
 export const useMediaListStore = create((set) => ({
     ...initialMediaState,
     setMediaFilterData: (payload) => set(() => ({ mediaFilterData: payload })),
     setMediaTableData: (payload) => set(() => ({ mediaTableData: payload })),
-    setSelectedMedia: (checked, media) =>
+    setSelectedMediaCollections: (checked, collection) =>
         set((state) => {
-            const prevSelectedMedia = state.selectedMedia
+            const prevSelectedCollections = state.selectedMediaCollections;
             if (checked) {
-                if (!prevSelectedMedia.some((prevMedia) => media.id === prevMedia.id)) {
-                    return { selectedMedia: [...prevSelectedMedia, media] }
+                if (!prevSelectedCollections.some((prevCol) => collection.id === prevCol.id)) {
+                    return { selectedMediaCollections: [...prevSelectedCollections, collection] };
                 }
             } else {
                 return {
-                    selectedMedia: prevSelectedMedia.filter(
-                        (prevMedia) => prevMedia.id !== media.id,
+                    selectedMediaCollections: prevSelectedCollections.filter(
+                        (prevCol) => prevCol.id !== collection.id,
                     ),
-                }
+                };
             }
-            return { selectedMedia: prevSelectedMedia };
+            return { selectedMediaCollections: prevSelectedCollections };
         }),
-    setSelectAllMedia: (mediaList) => set(() => ({ selectedMedia: mediaList })),
+
+    setSelectAllMediaCollections: (collections) => set(() => ({ selectedMediaCollections: collections })),
     resetMediaListStore: () => set(initialMediaState),
-}))
+}));
