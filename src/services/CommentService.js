@@ -32,16 +32,10 @@ export async function apiDeleteComment(id) {
     });
 }
 
-export async function apiApproveComment(id) {
+export async function apiUpdateCommentStatus(id, data) {
     return ApiService.fetchDataWithAxios({
-        url: endpointConfig.approveComment(id),
+        url: endpointConfig.updateCommentStatus(id), 
         method: 'put',
-    });
-}
-
-export async function apiUnapproveComment(id) {
-    return ApiService.fetchDataWithAxios({
-        url: endpointConfig.unapproveComment(id),
-        method: 'put',
+        data,
     });
 }

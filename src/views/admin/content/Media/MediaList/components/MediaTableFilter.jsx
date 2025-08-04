@@ -58,7 +58,7 @@ const MediaTableFilter = () => {
         );
     }, [categoriesData]);
 
-    const { handleSubmit, control, reset, formState } = useForm({
+    const { handleSubmit, control, reset} = useForm({
         defaultValues: {
             categoryId: mediaFilterData.categoryId || '',
             authorId: mediaFilterData.authorId || '',
@@ -76,7 +76,6 @@ const MediaTableFilter = () => {
     }, [filterIsOpen, mediaFilterData, reset]);
 
     const onSubmit = (values) => {
-        console.log('Form values submitted:', values);
         setMediaFilterData({
             ...mediaFilterData,
             categoryId: values.categoryId,
@@ -87,7 +86,6 @@ const MediaTableFilter = () => {
     };
 
     const handleClearFilters = () => {
-        console.log('Clearing filters...');
         reset({
             categoryId: '',
             authorId: '',
@@ -116,9 +114,7 @@ const MediaTableFilter = () => {
                     className="h-full"
                     containerClassName="flex flex-col justify-between h-full"
                     onSubmit={(e) => {
-                        console.log('Form submission attempted...');
                         handleSubmit(onSubmit)(e);
-                        console.log('Form errors:', formState.errors);
                     }}
                 >
                     <div>

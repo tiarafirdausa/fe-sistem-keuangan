@@ -4,14 +4,15 @@ import Button from '@/components/ui/Button'
 import ActionLink from '@/components/shared/ActionLink'
 import ResetPasswordForm from './components/ResetPasswordForm'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 export const ResetPasswordBase = ({ signInUrl = '/sign-in' }) => {
     const [resetComplete, setResetComplete] = useState(false)
-
     const [message, setMessage] = useTimeOutMessage()
-
     const navigate = useNavigate()
+
+    const [searchParams] = useSearchParams()
+    const token = searchParams.get('token')
 
     const handleContinue = () => {
         navigate(signInUrl)
@@ -45,6 +46,7 @@ export const ResetPasswordBase = ({ signInUrl = '/sign-in' }) => {
                 resetComplete={resetComplete}
                 setMessage={setMessage}
                 setResetComplete={setResetComplete}
+                token={token}
             >
                 <Button
                     block

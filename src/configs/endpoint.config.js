@@ -59,8 +59,7 @@ const endpointConfig = {
     getCommentById: (id) => `/comments/post/${id}`,
     createComment: '/comments',
     deleteComment: (id) => `/comments/${id}`,
-    approveComment: (id) => `/comments/${id}/approve`,
-    unapproveComment: (id) => `/comments/${id}/unapprove`,
+    updateCommentStatus: (id) => `/comments/${id}/status`,
 
     // Menus
     getAllMenus: '/menus',

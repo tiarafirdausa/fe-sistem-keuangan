@@ -5,12 +5,13 @@ import DataTable from '@/components/shared/DataTable';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useCommentList from '../hooks/useCommentList';
 import cloneDeep from 'lodash/cloneDeep';
-import { useNavigate } from 'react-router-dom';
-import { TbTrash, TbEye } from 'react-icons/tb';
+import { TbTrash } from 'react-icons/tb';
 import { HiOutlineChatAlt2 } from 'react-icons/hi';
-import { apiDeleteComment } from '@/services/CommentService';
+import { apiDeleteComment, apiUpdateCommentStatus } from '@/services/CommentService';
 import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
+import { TbCheck, TbX } from 'react-icons/tb';
+import Notification from '@/components/template/Notification';
 
 const CommentColumn = ({ row }) => { 
     const { author_name, status } = row; 
@@ -22,8 +23,8 @@ const CommentColumn = ({ row }) => {
     };
 
     const statusText = {
-        'approved': 'Disetujui',
-        'pending': 'Menunggu',
+        'approved': 'Approved',
+        'pending': 'Pending',
         'spam': 'Spam',
     };
 
@@ -44,18 +45,34 @@ const CommentColumn = ({ row }) => {
     );
 };
 
-const ActionColumn = ({ onDelete, onViewDetail }) => {
+const ActionColumn = ({ onDelete, onUpdateStatus, row  }) => {
+    const { status } = row;
+    const showStatusButtons = status === 'pending';
+
     return (
         <div className="flex items-center justify-end gap-3">
-            <Tooltip title="View Detail">
-                <div
-                    className={`text-xl cursor-pointer select-none font-semibold`}
-                    role="button"
-                    onClick={onViewDetail}
-                >
-                    <TbEye />
-                </div>
-            </Tooltip>
+            {showStatusButtons && (
+                <>
+                    <Tooltip title="Approve Comment">
+                        <div
+                            className={`text-xl cursor-pointer select-none font-semibold text-emerald-500`}
+                            role="button"
+                            onClick={() => onUpdateStatus(row.id, 'approved')}
+                        >
+                            <TbCheck />
+                        </div>
+                    </Tooltip>
+                    <Tooltip title="Mark as Spam">
+                        <div
+                            className={`text-xl cursor-pointer select-none font-semibold text-red-500`}
+                            role="button"
+                            onClick={() => onUpdateStatus(row.id, 'spam')}
+                        >
+                            <TbX />
+                        </div>
+                    </Tooltip>
+                </>
+            )}
             <Tooltip title="Delete">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -70,8 +87,6 @@ const ActionColumn = ({ onDelete, onViewDetail }) => {
 };
 
 const CommentListTable = () => { 
-    const navigate = useNavigate();
-
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const [toDeleteId, setToDeleteId] = useState('');
 
@@ -84,8 +99,25 @@ const CommentListTable = () => {
         setToDeleteId(comment.id);
     };
 
-    const handleViewDetail = (comment) => { 
-        navigate(`/admin/comment/${comment.post_id}`);
+    const handleUpdateStatus = async (id, status) => {
+        try {
+            await apiUpdateCommentStatus(id, { status });
+            mutate(); // Memuat ulang data setelah sukses
+            toast.push(
+                <Notification type="success" title="Success">
+                    Comment status updated to **{status}** successfully!
+                </Notification>,
+                { placement: 'top-center' },
+            );
+        } catch (error) {
+            console.error("Failed to update comment status:", error);
+            toast.push(
+                <Notification type="danger" title="Error">
+                    Failed to update comment status. Please try again.
+                </Notification>,
+                { placement: 'top-center' },
+            );
+        }
     };
 
     const handleConfirmDelete = async () => {
@@ -94,7 +126,7 @@ const CommentListTable = () => {
             await apiDeleteComment(toDeleteId); 
 
             mutate(); 
-            setSelectedComments([]); 
+            setSelectAllComments([]); 
             setToDeleteId('');
             toast.push(
                 <div className="flex items-center">
@@ -149,7 +181,11 @@ const CommentListTable = () => {
                 accessorKey: 'content',
                 cell: (props) => {
                     const { content } = props.row.original;
-                    return <div className="line-clamp-2">{content}</div>;
+                    return (
+                        <Tooltip title={content}>
+                            <div className="line-clamp-2">{content}</div>
+                        </Tooltip>
+                    );
                 },
             },
             {
@@ -183,8 +219,9 @@ const CommentListTable = () => {
                 id: 'action',
                 cell: (props) => (
                     <ActionColumn
-                        onViewDetail={() => handleViewDetail(props.row.original)}
+                        row={props.row.original} 
                         onDelete={() => handleDelete(props.row.original)}
+                        onUpdateStatus={handleUpdateStatus}
                     />
                 ),
             },

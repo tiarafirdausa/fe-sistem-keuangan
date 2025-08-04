@@ -138,7 +138,7 @@ const contentManagementRoute = [
             pageContainerType: 'contained',
             header: {
                 contained: true,
-                title: 'Edit Tag',
+                title: 'Edit Category',
             },
         },
     },

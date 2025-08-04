@@ -26,7 +26,7 @@ const ForgotPasswordForm = (props) => {
 
     const onForgotPassword = async (values) => {
         const { email } = values
-
+        setSubmitting(true)
         try {
             const resp = await apiForgotPassword({ email })
             if (resp) {
@@ -39,8 +39,6 @@ const ForgotPasswordForm = (props) => {
             )
             setSubmitting(false)
         }
-
-        setSubmitting(false)
     }
 
     return (

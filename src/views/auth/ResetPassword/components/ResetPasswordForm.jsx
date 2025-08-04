@@ -22,7 +22,7 @@ const validationSchema = z
 const ResetPasswordForm = (props) => {
     const [isSubmitting, setSubmitting] = useState(false)
 
-    const { className, setMessage, setResetComplete, resetComplete, children } =
+    const { className, setMessage, setResetComplete, resetComplete, children, token } =
         props
 
     const {
@@ -36,10 +36,19 @@ const ResetPasswordForm = (props) => {
     const onResetPassword = async (values) => {
         const { newPassword } = values
 
+        if (!token) {
+            setMessage?.('Token reset password tidak ditemukan atau tidak valid.')
+            return
+        }
+
         try {
-            const resp = await apiResetPassword({
-                password: newPassword,
-            })
+            setSubmitting(true) 
+            const resp = await apiResetPassword(
+                {
+                    password: newPassword,
+                },
+                token
+            )
             if (resp) {
                 setSubmitting(false)
                 setResetComplete?.(true)
@@ -52,8 +61,6 @@ const ResetPasswordForm = (props) => {
             )
             setSubmitting(false)
         }
-
-        setSubmitting(false)
     }
 
     return (
