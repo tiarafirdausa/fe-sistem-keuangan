@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Button from '@/components/ui/Button';
 import Drawer from '@/components/ui/Drawer';
 import Select, { Option as DefaultOption } from '@/components/ui/Select';
@@ -10,6 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import classNames from '@/utils/classNames';
 import usePageList from '../hooks/usePageList'; 
+import { apiGetAllUsers } from '@/services/UserService';
+import useSWR from 'swr';
 
 const { Control } = components;
 
@@ -47,6 +49,7 @@ const CustomStatusControl = ({ children, ...props }) => {
 
 const validationSchema = z.object({
     status: z.string().optional(),
+    author_id: z.union([z.number(), z.string()]).optional(),
 });
 
 const PageTableFilter = () => {
@@ -54,9 +57,23 @@ const PageTableFilter = () => {
 
     const { pageFilterData, setPageFilterData } = usePageList();
 
+    const { data: usersData } = useSWR(
+        '/api/users',
+        async () => {
+            const response = await apiGetAllUsers({ pageSize: 9999 }); 
+            return response.users;
+        },
+        { revalidateOnFocus: false, revalidateIfStale: false }
+    );
+
+    const authorOptions = useMemo(() => {
+        return usersData?.map(user => ({ value: user.id, label: user.name })) || [];
+    }, [usersData]);
+
     const { handleSubmit, control, reset } = useForm({
         defaultValues: {
             status: pageFilterData.status || '',
+            author_id: pageFilterData.author_id || '',
         },
         resolver: zodResolver(validationSchema),
     });
@@ -65,6 +82,7 @@ const PageTableFilter = () => {
         if (filterIsOpen) {
             reset({
                 status: pageFilterData.status || '',
+                author_id: pageFilterData.author_id || '',
             });
         }
     }, [filterIsOpen, pageFilterData, reset]);
@@ -73,6 +91,7 @@ const PageTableFilter = () => {
         setPageFilterData({
             ...pageFilterData,
             status: values.status,
+            author_id: values.author_id,
             pageIndex: 1,
         });
         setFilterIsOpen(false);
@@ -81,10 +100,12 @@ const PageTableFilter = () => {
     const handleClearFilters = () => {
         reset({
             status: '',
+            author_id: '',
         });
         setPageFilterData({
             ...pageFilterData,
             status: '',
+            author_id: '',
             pageIndex: 1,
         });
         setFilterIsOpen(false);
@@ -125,6 +146,27 @@ const PageTableFilter = () => {
                                         }}
                                         onChange={(option) =>
                                             field.onChange(option?.value)
+                                        }
+                                    />
+                                )}
+                            />
+                        </FormItem>
+
+                        <FormItem label="Author">
+                            <Controller
+                                isClearable
+                                name="author_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        options={authorOptions}
+                                        {...field}
+                                        value={authorOptions.find(
+                                            (option) => option.value === field.value,
+                                        )}
+                                        placeholder="Select an author"
+                                        onChange={(option) =>
+                                            field.onChange(option ? option.value : '')
                                         }
                                     />
                                 )}

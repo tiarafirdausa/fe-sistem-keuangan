@@ -12,6 +12,7 @@ import classNames from '@/utils/classNames'
 import useSWR from 'swr' 
 import { apiGetAllCategories } from '@/services/CategoryService'
 import { apiGetAllTags } from '@/services/TagService'
+import { apiGetAllUsers } from '@/services/UserService'
 import usePostList from '../hooks/usePostList'
 
 const { Control } = components
@@ -52,12 +53,22 @@ const validationSchema = z.object({
     status: z.string().optional(), 
     categoryId: z.array(z.number()).optional(),
     tagId: z.array(z.number()).optional(),
+    authorId: z.number().optional(),
 })
 
 const PostTableFilter = () => {
     const [filterIsOpen, setFilterIsOpen] = useState(false)
 
     const { postFilterData, setPostFilterData } = usePostList()
+
+    const { data: authorsData } = useSWR(
+        '/api/users',
+        async () => {
+            const response = await apiGetAllUsers({ pageSize: 9999 }); 
+            return response.users;
+        },
+        { revalidateOnFocus: false, revalidateIfStale: false }
+    );
 
     const { data: categoriesData } = useSWR(
         '/api/categories', 
@@ -77,6 +88,10 @@ const PostTableFilter = () => {
         { revalidateOnFocus: false, revalidateIfStale: false }
     );
 
+    const authorOptions = useMemo(() => {
+        return authorsData?.map(author => ({ value: author.id, label: author.name })) || [];
+    }, [authorsData]);
+
     const categoryOptions = useMemo(() => {
         return categoriesData?.map(cat => ({ value: cat.id, label: cat.name })) || [];
     }, [categoriesData]);
@@ -91,6 +106,7 @@ const PostTableFilter = () => {
             status: postFilterData.status || '',
             categoryId: postFilterData.categoryId || [],
             tagId: postFilterData.tagId || [],
+            authorId: postFilterData.authorId || null,
         },
         resolver: zodResolver(validationSchema),
     })
@@ -101,6 +117,7 @@ const PostTableFilter = () => {
                 status: postFilterData.status || '',
                 categoryId: postFilterData.categoryId || [],
                 tagId: postFilterData.tagId || [],
+                authorId: postFilterData.authorId || null,
             });
         }
     }, [filterIsOpen, postFilterData, reset]);
@@ -112,6 +129,7 @@ const PostTableFilter = () => {
             status: values.status,
             categoryId: values.categoryId,
             tagId: values.tagId,
+            authorId: values.authorId,
             pageIndex: 1, 
         });
         setFilterIsOpen(false); 
@@ -122,12 +140,14 @@ const PostTableFilter = () => {
             status: '',
             categoryId: [],
             tagId: [],
+            authorId: null,
         });
         setPostFilterData({
             ...postFilterData,
             status: '',
             categoryId: '', 
-            tagId: '',      
+            tagId: '',   
+            authorId: '',   
             pageIndex: 1,
         });
         setFilterIsOpen(false);
@@ -168,6 +188,27 @@ const PostTableFilter = () => {
                                         }}
                                         onChange={(option) =>
                                             field.onChange(option?.value)
+                                        }
+                                    />
+                                )}
+                            />
+                        </FormItem>
+
+                        <FormItem label="Author">
+                            <Controller
+                                name="authorId"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        isClearable
+                                        options={authorOptions}
+                                        {...field}
+                                        value={authorOptions.find(
+                                            (option) => option.value === field.value,
+                                        )}
+                                        placeholder="Select an author"
+                                        onChange={(option) =>
+                                            field.onChange(option ? option.value : '')
                                         }
                                     />
                                 )}

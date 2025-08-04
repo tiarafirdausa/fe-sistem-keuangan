@@ -14,7 +14,7 @@ export const initialPageTableData = {
 export const initialPageFilterData = {
     search: '',
     status: '',
-    authorId: '',
+    author_id: '',
 };
 
 const initialPageState = {

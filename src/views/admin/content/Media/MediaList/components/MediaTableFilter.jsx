@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Button from '@/components/ui/Button';
 import Drawer from '@/components/ui/Drawer';
 import Select from '@/components/ui/Select';
@@ -8,9 +8,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import useSWR from 'swr';
-import useMediaList from '../hooks/useMediaList';
-import { apiGetAllMediaCategories } from '@/services/MediaService';
 import { apiGetAllUsers } from '@/services/UserService';
+import { apiGetAllMediaCategories } from '@/services/MediaService';
+import useMediaList from '../hooks/useMediaList';
 
 const validationSchema = z.object({
     categoryId: z.string().optional(),
@@ -19,35 +19,46 @@ const validationSchema = z.object({
 
 const MediaTableFilter = () => {
     const [filterIsOpen, setFilterIsOpen] = useState(false);
+
     const { mediaFilterData, setMediaFilterData } = useMediaList();
+
+    const { data: authorsData } = useSWR(
+        '/api/users',
+        async () => {
+            const response = await apiGetAllUsers({ pageSize: 9999 });
+            return response.users;
+        },
+        { revalidateOnFocus: false, revalidateIfStale: false }
+    );
 
     const { data: categoriesData } = useSWR(
         '/api/media-categories',
         async () => {
-            const response = await apiGetAllMediaCategories();
+            const response = await apiGetAllMediaCategories({ pageSize: 9999 });
             return response.mediaCategories;
         },
-        { revalidateOnFocus: false, revalidateIfStale: false },
-    );
-
-    const categoryOptions = useMemo(() => {
-        return categoriesData?.map((category) => ({ value: category.id, label: category.name })) || [];
-    }, [categoriesData]);
-
-    const { data: usersData } = useSWR(
-        '/api/users',
-        async () => {
-            const response = await apiGetAllUsers();
-            return response.users;
-        },
-        { revalidateOnFocus: false, revalidateIfStale: false },
+        { revalidateOnFocus: false, revalidateIfStale: false }
     );
 
     const authorOptions = useMemo(() => {
-        return usersData?.map((user) => ({ value: user.id, label: user.name })) || [];
-    }, [usersData]);
+        return (
+            authorsData?.map((author) => ({
+                value: author.id.toString(), 
+                label: author.name,
+            })) || []
+        );
+    }, [authorsData]);
 
-    const { handleSubmit, control, reset } = useForm({
+    const categoryOptions = useMemo(() => {
+        return (
+            categoriesData?.map((cat) => ({
+                value: cat.id.toString(), 
+                label: cat.name,
+            })) || []
+        );
+    }, [categoriesData]);
+
+    const { handleSubmit, control, reset, formState } = useForm({
         defaultValues: {
             categoryId: mediaFilterData.categoryId || '',
             authorId: mediaFilterData.authorId || '',
@@ -65,6 +76,7 @@ const MediaTableFilter = () => {
     }, [filterIsOpen, mediaFilterData, reset]);
 
     const onSubmit = (values) => {
+        console.log('Form values submitted:', values);
         setMediaFilterData({
             ...mediaFilterData,
             categoryId: values.categoryId,
@@ -75,6 +87,7 @@ const MediaTableFilter = () => {
     };
 
     const handleClearFilters = () => {
+        console.log('Clearing filters...');
         reset({
             categoryId: '',
             authorId: '',
@@ -102,38 +115,50 @@ const MediaTableFilter = () => {
                 <Form
                     className="h-full"
                     containerClassName="flex flex-col justify-between h-full"
-                    onSubmit={handleSubmit(onSubmit)}
+                    onSubmit={(e) => {
+                        console.log('Form submission attempted...');
+                        handleSubmit(onSubmit)(e);
+                        console.log('Form errors:', formState.errors);
+                    }}
                 >
                     <div>
-                        <FormItem label="Category">
-                            <Controller
-                                name="categoryId"
-                                control={control}
-                                render={({ field }) => (
-                                    <Select
-                                        options={categoryOptions}
-                                        {...field}
-                                        value={categoryOptions.find(
-                                            (option) => option.value === field.value,
-                                        )}
-                                        onChange={(option) => field.onChange(option?.value || '')}
-                                    />
-                                )}
-                            />
-                        </FormItem>
-
                         <FormItem label="Author">
                             <Controller
                                 name="authorId"
                                 control={control}
                                 render={({ field }) => (
                                     <Select
+                                        isClearable
                                         options={authorOptions}
                                         {...field}
                                         value={authorOptions.find(
-                                            (option) => option.value === field.value,
+                                            (option) => option.value === field.value
                                         )}
-                                        onChange={(option) => field.onChange(option?.value || '')}
+                                        placeholder="Select an author"
+                                        onChange={(option) =>
+                                            field.onChange(option ? option.value : '')
+                                        }
+                                    />
+                                )}
+                            />
+                        </FormItem>
+
+                        <FormItem label="Categories">
+                            <Controller
+                                name="categoryId"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        isClearable
+                                        options={categoryOptions}
+                                        {...field}
+                                        value={categoryOptions.find(
+                                            (option) => option.value === field.value
+                                        )}
+                                        placeholder="Select a category"
+                                        onChange={(option) =>
+                                            field.onChange(option ? option.value : '')
+                                        }
                                     />
                                 )}
                             />

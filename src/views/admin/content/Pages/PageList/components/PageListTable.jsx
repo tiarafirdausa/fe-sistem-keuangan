@@ -172,10 +172,10 @@ const PageListTable = () => {
             },
             {
                 header: 'Author',
-                accessorKey: 'author.name',
+                accessorKey: 'author_name',
                 cell: (props) => {
-                    const { author } = props.row.original;
-                    return <span>{author?.name || 'Unknown'}</span>;
+                    const { author_name } = props.row.original;
+                    return <span>{author_name || 'Unknown'}</span>;
                 },
             },
             {
