@@ -5,7 +5,6 @@ import Container from '@/components/shared/Container';
 import BottomStickyBar from '@/components/template/BottomStickyBar';
 import MediaGeneralSection from './components/MediaGeneralSection';
 import MediaImageSection from './components/MediaImageSection';
-import appConfig from '@/configs/app.config';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import isEmpty from 'lodash/isEmpty';
@@ -26,38 +25,13 @@ const MediaForm = (props) => {
         setValue,
         getValues,
     } = useForm({
-        defaultValues: {
-            ...defaultValues,
-            media:
-                defaultValues.media?.map((file) => ({
-                    id: file.id,
-                    url: `${appConfig.backendBaseUrl}${file.file_path}`,
-                    name: file.name,
-                })) || [],
-            clear_media_files: false,
-            delete_media_file_ids: [],
-        },
+        defaultValues,
         resolver: zodResolver(MEDIA_VALIDATION_SCHEMA),
     });
 
     useEffect(() => {
-        if (
-            !isEmpty(defaultValues) &&
-            JSON.stringify(defaultValues) !==
-                JSON.stringify(MEDIA_DEFAULT_VALUES)
-        ) {
-            const transformedDefaultValues = {
-                ...defaultValues,
-                media:
-                    defaultValues.media?.map((file) => ({
-                        id: file.id,
-                        url: `${appConfig.backendBaseUrl}${file.file_path}`,
-                        name: file.name,
-                    })) || [],
-                clear_media_files: false,
-                delete_media_file_ids: [],
-            };
-            reset(transformedDefaultValues);
+        if (!isEmpty(defaultValues)) {
+            reset(defaultValues);
         } else if (
             JSON.stringify(defaultValues) ===
             JSON.stringify(MEDIA_DEFAULT_VALUES)
@@ -70,7 +44,7 @@ const MediaForm = (props) => {
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(defaultValues), reset]);
+    }, [defaultValues]);
 
     const onSubmit = (values) => {
         const formData = new FormData();
@@ -106,7 +80,14 @@ const MediaForm = (props) => {
             getValues('clear_media_files') ? 'true' : 'false',
         );
 
-        onFormSubmit?.(formData, getValues());
+        if (getValues('delete_media_file_ids')?.length > 0) {
+            formData.append(
+                'delete_media_file_ids',
+                JSON.stringify(getValues('delete_media_file_ids')),
+            );
+        }
+
+        onFormSubmit?.(formData);
     };
 
     return (

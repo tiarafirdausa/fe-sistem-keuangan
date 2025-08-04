@@ -1,4 +1,3 @@
-// src/views/admin/content/Media/MediaEdit/MediaEdit.jsx
 import { useState, useMemo } from 'react';
 import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
@@ -29,8 +28,6 @@ const MediaEdit = () => {
         async ([_, mediaId]) => {
             try {
                 const response = await apiGetMediaCollectionById(mediaId);
-                console.log("Data media yang diterima dari API:", response);
-
                 return response;
             } catch (err) {
                 console.error("Error fetching media by ID:", err);
@@ -47,32 +44,30 @@ const MediaEdit = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const defaultFormValues = useMemo(() => {
-        if (mediaData) {
-            return {
-                title: mediaData.title || '',
-                caption: mediaData.caption || '', 
-                media: mediaData.files?.map(file => ({
-                    id: file.id,
-                    img: `${appConfig.backendBaseUrl}${file.url}`,
-                    name: file.file_name,
-                })) || [],
-                category_id: mediaData.category_id || null,
-                uploaded_by: mediaData.uploaded_by || user?.id || null,
-                clear_media: false,
-            };
-        }
-        return {};
-    }, [mediaData, user]);
+    if (mediaData) {
+        const values = {
+            title: mediaData.title || '',
+            caption: mediaData.caption || '', 
+            media: mediaData.files?.map(file => ({
+                id: file.id,
+                img: `${appConfig.backendBaseUrl}${file.url}`, 
+                name: file.file_name,
+            })) || [],
+            category_id: mediaData.category_id || null,
+            uploaded_by: mediaData.uploaded_by || user?.id || null,
+            clear_media_files: false,
+            delete_media_file_ids: [],
+        };
+        return values;
+    }
+    return {};
+}, [mediaData, user]);
 
-    const handleFormSubmit = async (formData, formValues) => {
+    const handleFormSubmit = async (formData) => {
         setIsSubmitting(true);
         try {
             if (!mediaData?.id) {
                 throw new Error("Media ID not available for update.");
-            }
-            const { delete_media_file_ids } = formValues;
-            if (delete_media_file_ids && delete_media_file_ids.length > 0) {
-            formData.append('delete_media_file_ids', JSON.stringify(delete_media_file_ids));
             }
             if (!formData.has('uploaded_by') && user?.id) {
                 formData.append('uploaded_by', user.id);

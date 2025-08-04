@@ -77,11 +77,14 @@ const PostEdit = () => {
                         img: `${appConfig.backendBaseUrl}${postData.featured_image}`, 
                         name: 'featured_image' }
                     : null,
-                gallery_images: postData.gallery_images?.map(img => ({
-                    id: img.id,
-                    img: `${appConfig.backendBaseUrl}${img.image_path}`,
-                    name: img.alt_text || `gallery_image_${img.id}`
-                })) || [],
+                gallery_images: postData.gallery_images?.map(img => {
+                    const fullImageUrl = `${appConfig.backendBaseUrl}${img.image_path}`;
+                    return {
+                        id: img.id,
+                        img: fullImageUrl,
+                        name: img.alt_text || `gallery_image_${img.id}`
+                    };
+                }) || [],
                 meta_title: postData.meta_title || '',
                 meta_description: postData.meta_description || '',
                 author_id: postData.author_id,
@@ -168,25 +171,26 @@ const PostEdit = () => {
     };
 
     const isLoadingCombined = isLoadingPost || isLoadingCategories || isLoadingTags;
-
-    if (isLoadingCombined) {
+    
+    if (isLoadingCombined || !postData) {
         return (
             <Container className="h-full flex items-center justify-center">
                 <Spinner size={40} />
             </Container>
         );
     }
-
-    if (postError || !postData) {
-        return (
-            <div className="h-full flex flex-col items-center justify-center">
-                <h3 className="mt-8">No post found!</h3>
-                <Button className="mt-4" onClick={handleBack}>
-                    Go back to Posts
-                </Button>
-            </div>
-        );
-    }
+    
+    if (postError) {
+         return (
+             <div className="h-full flex flex-col items-center justify-center">
+                 <h3 className="mt-8">No post found!</h3>
+                 <Button className="mt-4" onClick={handleBack}>
+                     Go back to Posts
+                 </Button>
+             </div>
+         );
+     }
+    
 
     return (
         <>

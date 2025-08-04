@@ -25,7 +25,6 @@ const MediaTableFilter = () => {
         '/api/media-categories',
         async () => {
             const response = await apiGetAllMediaCategories();
-            console.log(response)
             return response.mediaCategories;
         },
         { revalidateOnFocus: false, revalidateIfStale: false },

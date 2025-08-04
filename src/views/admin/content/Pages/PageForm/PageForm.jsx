@@ -6,7 +6,6 @@ import PageGeneralSection from './components/PageGeneralSection'
 import PageImageSection from './components/PageImageSection'
 import PageSeoSection from './components/PageSeoSection'
 import PageDetailsSection from './components/PageDetailsSection'
-import appConfig from '@/configs/app.config'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
@@ -27,74 +26,16 @@ const PageForm = (props) => {
         setValue,
         getValues,
     } = useForm({
-        defaultValues: {
-            ...defaultValues,
-            featured_image:
-                defaultValues.featured_image &&
-                defaultValues.featured_image !== ''
-                    ? {
-                          id: 'existing-featured',
-                          img: `${appConfig.backendBaseUrl}${defaultValues.featured_image}`,
-                          name: 'featured_image',
-                      }
-                    : null,
-            gallery_images:
-                defaultValues.gallery_images?.map((img) => ({
-                    id: img.id,
-                    img: `${appConfig.backendBaseUrl}${img.image_path}`,
-                    name: img.alt_text || `gallery_image_${img.id}`,
-                })) || [],
-            clear_featured_image: false,
-            delete_gallery_image_ids: [],
-            clear_gallery_images: false,
-        },
+        defaultValues,
         resolver: zodResolver(PAGE_VALIDATION_SCHEMA),
     })
 
     useEffect(() => {
-        if (
-            !isEmpty(defaultValues) &&
-            JSON.stringify(defaultValues) !==
-                JSON.stringify(PAGE_DEFAULT_VALUES)
-        ) {
-            const transformedDefaultValues = {
-                ...defaultValues,
-                featured_image:
-                    defaultValues.featured_image &&
-                    typeof defaultValues.featured_image === 'string' &&
-                    defaultValues.featured_image !== ''
-                        ? {
-                              id: 'existing-featured',
-                              img: `${appConfig.backendBaseUrl}${defaultValues.featured_image}`,
-                              name: 'featured_image',
-                          }
-                        : defaultValues.featured_image || null,
-                gallery_images:
-                    defaultValues.gallery_images?.map((img) => ({
-                        id: img.id,
-                        img: `${appConfig.backendBaseUrl}${img.image_path}`,
-                        name: img.alt_text || `gallery_image_${img.id}`,
-                    })) || [],
-                clear_featured_image: false,
-                delete_gallery_image_ids: [],
-                clear_gallery_images: false,
-            }
-            reset(transformedDefaultValues)
-        } else if (
-            JSON.stringify(defaultValues) ===
-            JSON.stringify(PAGE_DEFAULT_VALUES)
-        ) {
-            reset({
-                ...PAGE_DEFAULT_VALUES,
-                featured_image: null,
-                gallery_images: [],
-                clear_featured_image: false,
-                delete_gallery_image_ids: [],
-                clear_gallery_images: false,
-            })
+        if (!isEmpty(defaultValues)) {
+            reset(defaultValues)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(defaultValues), reset])
+    }, [defaultValues])
 
     const onSubmit = (values) => {
         const formData = new FormData()

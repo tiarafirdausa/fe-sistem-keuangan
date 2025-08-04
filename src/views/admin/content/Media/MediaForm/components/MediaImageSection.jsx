@@ -48,12 +48,12 @@ const ImageList = (props) => {
         <>
             {imgList.map((img) => (
                 <div
-                    key={img.id || img.url}
+                    key={img.id || img.img}
                     className="group relative rounded-xl border border-gray-200 dark:border-gray-600 p-2 flex"
                 >
                     <img
                         className="rounded-lg max-h-[140px] mx-auto max-w-full dark:bg-transparent"
-                        src={img.url}
+                        src={img.img}
                         alt={img.name}
                     />
                     <div className="absolute inset-2 bg-[#000000ba] group-hover:flex hidden text-xl items-center justify-center">
@@ -80,7 +80,7 @@ const ImageList = (props) => {
                 <h5 className="mb-4">{selectedImg.name}</h5>
                 <img
                     className="w-full"
-                    src={selectedImg.url}
+                    src={selectedImg.img}
                     alt={selectedImg.name}
                 />
             </Dialog>
@@ -103,8 +103,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
     const beforeUpload = (file) => {
         let valid = true;
         const allowedFileType = ['image/jpeg', 'image/png', 'video/mp4', 'audio/mp3'];
-        const maxFileSize = 5000000; // 5MB
-
+        const maxFileSize = 5000000;
         if (file) {
             for (const f of file) {
                 if (!allowedFileType.includes(f.type)) {
@@ -122,7 +121,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
         const newMedia = files.map((file, index) => ({
             id: `media-${Date.now()}-${index}`,
             name: file.name,
-            url: URL.createObjectURL(file),
+            img: URL.createObjectURL(file),
             file: file
         }));
         const updatedList = [...originalMediaList, ...newMedia];
