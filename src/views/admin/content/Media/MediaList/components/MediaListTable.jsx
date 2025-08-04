@@ -190,7 +190,7 @@ const MediaListTable = () => {
                 },
             },
             {
-                header: 'Last Modified',
+                header: 'Update At',
                 accessorKey: 'updated_at',
                 cell: (props) => {
                     const { updated_at } = props.row.original;
