@@ -1,5 +1,5 @@
 // src/views/admin/content/Posts/PostCreate/PostCreate.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
 import Notification from '@/components/ui/Notification';
@@ -13,7 +13,7 @@ import { apiCreatePost } from '@/services/PostService';
 import { apiGetAllCategories } from '@/services/CategoryService';
 import { apiGetAllTags } from '@/services/TagService';
 import { POST_DEFAULT_VALUES } from '../PostForm/constants';
-import { useAuth } from '@/auth'; 
+import { useAuth } from '@/auth';
 
 const PostCreate = () => {
     const navigate = useNavigate();
@@ -49,6 +49,13 @@ const PostCreate = () => {
         };
         fetchData();
     }, []);
+
+    const defaultFormValues = useMemo(() => {
+        return {
+            ...POST_DEFAULT_VALUES,
+            author_id: user?.id || null, 
+        };
+    }, [user]);
 
     const handleFormSubmit = async (formData) => {
         setIsSubmitting(true);
@@ -114,7 +121,7 @@ const PostCreate = () => {
     return (
         <>
             <PostForm
-                defaultValues={POST_DEFAULT_VALUES}
+                defaultValues={defaultFormValues}
                 categories={categories}
                 tags={tags}
                 currentUser={user}

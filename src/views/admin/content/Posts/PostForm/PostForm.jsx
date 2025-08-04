@@ -45,7 +45,7 @@ const PostForm = (props) => {
     }, [reset, defaultValues]);
 
 
-     const onSubmit = (values) => {
+    const onSubmit = (values) => {
         const formData = new FormData();
 
         for (const key in values) {

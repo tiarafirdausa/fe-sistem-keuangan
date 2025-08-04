@@ -13,6 +13,24 @@ import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
 import appConfig from '@/configs/app.config';
 
+// Helper function to format date
+const formatDate = (dateString) => {
+    if (!dateString) {
+        return 'N/A';
+    }
+    const date = new Date(dateString);
+    if (isNaN(date)) {
+        return 'Invalid Date';
+    }
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+};
+
 const UserColumn = ({ row }) => {
     const { name, role, status, foto } = row;
 
@@ -183,15 +201,7 @@ const UserListTable = () => {
                 cell: (props) => {
                     const { created_at } = props.row.original;
                     return (
-                        <span>
-                            {created_at ? new Date(created_at).toLocaleString('en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                            }) : 'N/A'}
-                        </span>
+                        <span>{formatDate(created_at)}</span>
                     );
                 },
             },
@@ -201,15 +211,7 @@ const UserListTable = () => {
                 cell: (props) => {
                     const { updated_at } = props.row.original;
                     return (
-                        <span>
-                            {new Date(updated_at).toLocaleString('en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                            })}
-                        </span>
+                        <span>{formatDate(updated_at)}</span>
                     );
                 },
             },

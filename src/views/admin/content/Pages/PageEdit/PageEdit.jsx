@@ -6,7 +6,7 @@ import Notification from '@/components/ui/Notification';
 import toast from '@/components/ui/toast';
 import Spinner from '@/components/ui/Spinner';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import PageForm from '../PageForm'; 
+import PageForm from '../PageForm';
 import {
     apiGetPageBySlug,
     apiUpdatePage,
@@ -16,10 +16,12 @@ import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import appConfig from '@/configs/app.config';
+import { useAuth } from '@/auth'; // Impor useAuth
 
 const PageEdit = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth(); // Ambil user dari context autentikasi
 
     const { data: pageData, isLoading: isLoadingPage, error: pageError, mutate } = useSWR(
         slug ? ['/pages/slug', slug] : null,
@@ -50,10 +52,11 @@ const PageEdit = () => {
                 excerpt: pageData.excerpt || '',
                 content: pageData.content || '',
                 featured_image: pageData.featured_image
-                    ? { 
-                        id: 'existing-featured', 
-                        img: `${appConfig.backendBaseUrl}${pageData.featured_image}`, 
-                        name: 'featured_image' }
+                    ? {
+                        id: 'existing-featured',
+                        img: `${appConfig.backendBaseUrl}${pageData.featured_image}`,
+                        name: 'featured_image'
+                    }
                     : null,
                 gallery_images: pageData.gallery_images?.map(img => ({
                     id: img.id,
@@ -62,7 +65,7 @@ const PageEdit = () => {
                 })) || [],
                 meta_title: pageData.meta_title || '',
                 meta_description: pageData.meta_description || '',
-                author_id: pageData.author_id || 1, 
+                author_id: pageData.author_id || (user ? user.id : 1), // Gunakan ID pengguna jika tersedia
                 status: pageData.status || 'draft',
                 published_at: pageData.published_at ? new Date(pageData.published_at) : null,
                 clear_featured_image: false,
@@ -71,7 +74,7 @@ const PageEdit = () => {
             };
         }
         return {};
-    }, [pageData]);
+    }, [pageData, user]); // Tambahkan `user` ke dependency array
 
     const handleFormSubmit = async (formData) => {
         setIsSubmitting(true);
@@ -79,10 +82,10 @@ const PageEdit = () => {
             if (!pageData?.id) {
                 throw new Error("Page ID not available for update.");
             }
-            if (!formData.has('author_id')) {
-                formData.append('author_id', pageData.author_id || 1); 
-            }
-
+            // Hapus baris ini karena author_id sudah diatur di form
+            // if (!formData.has('author_id')) {
+            //     formData.append('author_id', pageData.author_id || (user ? user.id : 1));
+            // }
             await apiUpdatePage(pageData.id, formData);
 
             toast.push(
@@ -91,8 +94,8 @@ const PageEdit = () => {
                 </Notification>,
                 { placement: 'top-center' },
             );
-            mutate(); 
-            navigate('/admin/pages'); 
+            mutate();
+            navigate('/admin/pages');
         } catch (error) {
             console.error('Error updating page:', error.response?.data || error.message);
             toast.push(
@@ -115,7 +118,7 @@ const PageEdit = () => {
     };
 
     const handleBack = () => {
-        navigate('/admin/pages'); 
+        navigate('/admin/pages');
     };
 
     const handleConfirmDelete = async () => {
@@ -132,7 +135,7 @@ const PageEdit = () => {
                 </Notification>,
                 { placement: 'top-center' },
             );
-            navigate('/admin/pages'); 
+            navigate('/admin/pages');
         } catch (error) {
             console.error('Error deleting page:', error.response?.data || error.message);
             toast.push(

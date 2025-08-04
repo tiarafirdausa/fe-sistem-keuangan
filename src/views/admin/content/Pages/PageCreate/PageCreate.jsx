@@ -4,15 +4,17 @@ import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
 import Notification from '@/components/ui/Notification';
 import toast from '@/components/ui/toast';
-import PageForm from '../PageForm'; 
+import PageForm from '../PageForm';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import { TbTrash } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 import { apiCreatePage } from '@/services/PageService';
-import { PAGE_DEFAULT_VALUES } from '../PageForm/constants'; 
+import { PAGE_DEFAULT_VALUES } from '../PageForm/constants';
+import { useAuth } from '@/auth'; // Impor useAuth
 
 const PageCreate = () => {
     const navigate = useNavigate();
+    const { user } = useAuth(); // Ambil user dari context autentikasi
 
     const [discardConfirmationOpen, setDiscardConfirmationOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,7 +22,8 @@ const PageCreate = () => {
     const handleFormSubmit = async (formData) => {
         setIsSubmitting(true);
         try {
-            formData.set('author_id', '1'); 
+            // Set author_id dengan ID pengguna yang sedang masuk
+            formData.set('author_id', user.id);
             const responseData = await apiCreatePage(formData);
 
             if (responseData) {
@@ -30,7 +33,7 @@ const PageCreate = () => {
                     </Notification>,
                     { placement: 'top-center' },
                 );
-                navigate('/admin/pages'); 
+                navigate('/admin/pages');
             } else {
                 toast.push(
                     <Notification type="warning" title="Unexpected Response">
