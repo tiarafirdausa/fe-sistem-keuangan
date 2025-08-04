@@ -180,7 +180,7 @@ const contentManagementRoute = [
     {
         key: 'contentManagement.comments',
         path: `${ADMIN_PREFIX_PATH}/comments`,
-        component: lazy(() => import('@/views/admin/content/Comments')),
+        component: lazy(() => import('@/views/admin/content/Comments/CommentList')),
         authority: [ADMIN],
         meta: {
             pageContainerType: 'contained',
