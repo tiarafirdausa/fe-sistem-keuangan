@@ -1,1 +1,6 @@
 @import './assets/styles/app.css';
+
+.tox-tinymce-aux-outer {
+  background-color: transparent !important;
+}
+

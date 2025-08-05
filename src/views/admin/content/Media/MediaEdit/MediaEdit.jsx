@@ -1,3 +1,5 @@
+// src/views/admin/content/Media/MediaEdit/MediaEdit.jsx
+
 import { useState, useMemo } from 'react';
 import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
@@ -44,24 +46,32 @@ const MediaEdit = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const defaultFormValues = useMemo(() => {
-    if (mediaData) {
-        const values = {
-            title: mediaData.title || '',
-            caption: mediaData.caption || '', 
-            media: mediaData.files?.map(file => ({
-                id: file.id,
-                img: `${appConfig.backendBaseUrl}${file.url}`, 
-                name: file.file_name,
-            })) || [],
-            category_id: mediaData.category_id || null,
-            uploaded_by: mediaData.uploaded_by || user?.id || null,
-            clear_media_files: false,
-            delete_media_file_ids: [],
-        };
-        return values;
-    }
-    return {};
-}, [mediaData, user]);
+        if (mediaData) {
+            const values = {
+                title: mediaData.title || '',
+                caption: mediaData.caption || '', 
+                media: mediaData.files?.map(file => {
+                    const url = `${appConfig.backendBaseUrl}${file.url}`;
+                    const fileExtension = file.url.split('.').pop().toLowerCase();
+                    const isVideo = ['mp4', 'mov', 'webm'].includes(fileExtension);
+                    
+                    return{
+                        id: file.id,
+                        url: url,
+                        isVideo: isVideo,
+                        img: url, 
+                        name: file.file_name,
+                    }
+                }) || [],
+                category_id: mediaData.category_id || null,
+                uploaded_by: mediaData.uploaded_by || user?.id || null,
+                clear_media_files: false,
+                delete_media_file_ids: [],
+            };
+            return values;
+        }
+        return {};
+    }, [mediaData, user]);
 
     const handleFormSubmit = async (formData) => {
         setIsSubmitting(true);
