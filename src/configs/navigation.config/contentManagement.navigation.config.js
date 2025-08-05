@@ -70,7 +70,7 @@ const contentManagementNavigationConfig = [
                 path: '', 
                 title: 'Media',
                 translateKey: 'nav.contentManagement.media',
-                icon: '', 
+                icon: 'media', 
                 type: NAV_ITEM_TYPE_COLLAPSE, 
                 authority: ['admin', 'editor'],
                 subMenu: [

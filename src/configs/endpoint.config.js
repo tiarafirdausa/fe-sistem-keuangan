@@ -68,6 +68,7 @@ const endpointConfig = {
     createMenu: '/menus',
     updateMenu: (id) => `/menus/${id}`,
     deleteMenu: (id) => `/menus/${id}`,
+    getMenuWithItem: (slug) => `/menus/with-items/${slug}`,
 
     // Menu Items
     getAllMenuItems: '/menu-items', 

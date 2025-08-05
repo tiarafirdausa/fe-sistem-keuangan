@@ -84,3 +84,11 @@ export async function apiDeleteMenuItem(id) {
         method: 'delete',
     });
 }
+
+
+export async function apiGetMenuWithItemsBySlug(slug) {
+    return ApiService.fetchDataWithAxios({
+        url: endpointConfig.getMenuWithItem(slug),
+        method: 'get',
+    });
+}

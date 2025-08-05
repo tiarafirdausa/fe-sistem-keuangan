@@ -122,6 +122,18 @@ const appearanceRoute = [
             },
         },
     },
+     {
+        key: 'appearance.theme',
+        path: `${ADMIN_PREFIX_PATH}/theme`,
+        component: lazy(() => import('@/views/admin/appearance/Theme')), 
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+            },
+        },
+    },
 ]
 
 export default appearanceRoute;

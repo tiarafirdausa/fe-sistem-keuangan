@@ -45,6 +45,16 @@ const appearanceNavigationConfig = [
                 authority: ['admin'],
                 subMenu: [],
             },
+            {
+                key: 'appearance.theme',
+                path: '/admin/theme',
+                title: 'Theme',
+                translateKey: 'nav.appearance.theme',
+                icon: 'appearance', 
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin'],
+                subMenu: [],
+            },
         ],
     },
 ]
