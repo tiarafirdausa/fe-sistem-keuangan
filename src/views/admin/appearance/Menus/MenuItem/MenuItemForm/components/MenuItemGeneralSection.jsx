@@ -62,8 +62,9 @@ const MenuItemGeneralSection = ({ control, errors, watchedType, menuId }) => {
             return response.categories
         } else if (type === 'page' ) {
             return response.data
+        } else if (type === 'post') {
+            return response.data
         }
-        return response
     }
 
     const { data: referenceOptionsData, isLoading: referenceOptionsLoading } =

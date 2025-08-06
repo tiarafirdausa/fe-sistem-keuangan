@@ -1,8 +1,8 @@
-import NavigationBar from './components/NavigationBar'
+import Navigation from './Navbar/Navigation'
 import useDarkMode from '@/utils/hooks/useDarkMode'
 import { MODE_DARK, MODE_LIGHT } from '@/constants/theme.constant'
 
-const Landing = () => {
+const Public = () => {
     const [isDark, setMode] = useDarkMode()
 
     const mode = isDark ? MODE_DARK : MODE_LIGHT
@@ -13,9 +13,9 @@ const Landing = () => {
 
     return (
         <main className="px-4 lg:px-0 text-base">
-            <NavigationBar toggleMode={toggleMode} mode={mode} />
+            <Navigation toggleMode={toggleMode} mode={mode} />
         </main>
     )
 }
 
-export default Landing
+export default Public
