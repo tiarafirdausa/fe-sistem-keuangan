@@ -91,7 +91,7 @@ const PostEdit = () => {
                 author_name: postData.author_name,
                 status: postData.status || 'draft',
                 published_at: postData.published_at ? new Date(postData.published_at) : null,
-                categories: postData.categories?.map(cat => cat.id) || [],
+                categories: postData.category ? postData.category.id : null, 
                 tags: postData.tags?.map(tag => tag.id) || [],
                 clear_featured_image: false,
                 delete_gallery_image_ids: [],

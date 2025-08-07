@@ -65,11 +65,15 @@ const PostForm = (props) => {
                         formData.append('gallery_images', image.file);
                     }
                 });
-            } else if (key === 'categories' || key === 'tags') {
+            } else if (key === 'tags') {
                 if (Array.isArray(values[key]) && values[key].length > 0) {
                     values[key].forEach((id) => {
                         formData.append(key, id);
                     });
+                }
+            } else if (key === 'categories') {
+                if (values[key] !== null && values[key] !== undefined) {
+                    formData.append('category_id', values[key]);
                 }
             } else if (
                 key === 'delete_gallery_image_ids' ||
@@ -102,7 +106,6 @@ const PostForm = (props) => {
             'clear_gallery_images',
             getValues('clear_gallery_images') ? 'true' : 'false',
         );
-
         onFormSubmit?.(formData);
     };
 

@@ -1,5 +1,4 @@
 // src/views/admin/menus/MenuItemForm.jsx
-
 import { useEffect } from 'react';
 import { Form } from '@/components/ui/Form';
 import Container from '@/components/shared/Container';
@@ -15,7 +14,7 @@ const validationSchema = z.object({
     parent_id: z.number().nullable().optional(), 
     title: z.string().min(1, { message: 'Menu item title required!' }),
     url: z.string().optional().nullable(), 
-    type: z.enum(['custom', 'post', 'category', 'page'], { message: 'Invalid menu item type!' }),
+    type: z.enum(['custom', 'category', 'page', 'post', 'media', 'media_category'], { message: 'Invalid menu item type!' }),
     reference_id: z.number().nullable().optional(),
     target: z.enum(['_self', '_blank'], { message: 'Invalid target value!' }).optional(),
     order: z.number().int().min(0, { message: 'Order must be a non-negative integer!' }).optional(),
@@ -27,7 +26,7 @@ const validationSchema = z.object({
             path: ['url'],
         });
     }
-    if (data.type !== 'custom' && !data.reference_id) {
+    if (['category', 'page', 'media_category'].includes(data.type) && !data.reference_id) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: `Reference ID is required for '${data.type}' menu items.`,

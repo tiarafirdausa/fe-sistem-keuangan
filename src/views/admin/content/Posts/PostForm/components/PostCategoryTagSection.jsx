@@ -30,11 +30,10 @@ const PostCategoryTagSection = ({ control, errors, categories = [], tags = [] })
                         control={control}
                         render={({ field }) => (
                             <Select
-                                isMulti
                                 options={categoryOptions}
-                                value={categoryOptions.filter(option => field.value?.includes(option.value))}
-                                placeholder="Select Categories"
-                                onChange={(selectedOptions) => field.onChange(selectedOptions ? selectedOptions.map(option => option.value) : [])}
+                                value={categoryOptions.find(option => option.value === field.value)}
+                                placeholder="Select a Category"
+                                onChange={(selectedOption) => field.onChange(selectedOption ? selectedOption.value : null)}
                             />
                         )}
                     />

@@ -40,7 +40,7 @@ const endpointConfig = {
 
     // Posts
     getAllPosts: '/posts',
-    getPostById: (id) => `/posts/id/${id}`,
+    getPostById: (id) => `/posts/${id}`,
     getPostBySlug: (slug) => `/posts/${slug}`,
     createPost: '/posts',
     updatePost: (id) => `/posts/id/${id}`,

@@ -14,9 +14,8 @@ import { TbArticle } from 'react-icons/tb';
 import appConfig from '@/configs/app.config';
 
 const PostColumn = ({ row }) => {
-    const { title, status, categories, featured_image } = row; 
+    const { title, status, category, featured_image } = row; 
 
-    const primaryCategory = categories && categories.length > 0 ? categories[0] : null;
     const featuredImageUrl = featured_image ? `${appConfig.backendBaseUrl}${featured_image}` : null;
 
     return (
@@ -38,7 +37,7 @@ const PostColumn = ({ row }) => {
             <div>
                 <div className="font-bold heading-text mb-1">{title}</div>
                 <Tag className="bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100">
-                    Category: {primaryCategory?.name || 'N/A'}
+                    Category: {category?.name || 'N/A'}
                 </Tag>
                 {status === 'published' && (
                     <Tag className="bg-emerald-100 text-emerald-800 dark:bg-emerald-700 dark:text-emerald-100 ml-1">
