@@ -1,3 +1,4 @@
+// PageListTable.jsx or PageListTable.js
 import { useMemo, useState } from 'react';
 import Avatar from '@/components/ui/Avatar';
 import Tooltip from '@/components/ui/Tooltip';
@@ -6,18 +7,16 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import usePageList from '../hooks/usePageList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom';
-import { TbPencil, TbTrash, TbEye } from 'react-icons/tb';
+import { TbPencil, TbTrash } from 'react-icons/tb';
 import { HiOutlineDocumentText } from 'react-icons/hi';
 import { apiDeletePage } from '@/services/PageService';
-import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
 import appConfig from '@/configs/app.config';
 
-const PageColumn = ({ row }) => { 
-    const { title, status, featured_image } = row; 
+const PageColumn = ({ row }) => {
+    const { title, featured_image } = row;
 
-        const featuredImageUrl = featured_image ? `${appConfig.backendBaseUrl}${featured_image}` : null;
-
+    const featuredImageUrl = featured_image ? `${appConfig.backendBaseUrl}${featured_image}` : null;
 
     return (
         <div className="flex items-center gap-2">
@@ -37,38 +36,14 @@ const PageColumn = ({ row }) => {
             )}
             <div>
                 <div className="font-bold heading-text mb-1">{title}</div>
-                {status === 'published' && (
-                    <Tag className="bg-emerald-100 text-emerald-800 dark:bg-emerald-700 dark:text-emerald-100 ml-1">
-                        Published
-                    </Tag>
-                )}
-                {status === 'draft' && (
-                    <Tag className="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100 ml-1">
-                        Draft
-                    </Tag>
-                )}
-                {status === 'archived' && (
-                    <Tag className="bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100 ml-1">
-                        Archived
-                    </Tag>
-                )}
             </div>
         </div>
     );
 };
 
-const ActionColumn = ({ onEdit, onDelete, onViewDetail }) => {
+const ActionColumn = ({ onEdit, onDelete }) => {
     return (
         <div className="flex items-center justify-end gap-3">
-            <Tooltip title="View Detail">
-                <div
-                    className={`text-xl cursor-pointer select-none font-semibold`}
-                    role="button"
-                    onClick={onViewDetail}
-                >
-                    <TbEye />
-                </div>
-            </Tooltip>
             <Tooltip title="Edit">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -91,7 +66,7 @@ const ActionColumn = ({ onEdit, onDelete, onViewDetail }) => {
     );
 };
 
-const PageListTable = () => { 
+const PageListTable = () => {
     const navigate = useNavigate();
 
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
@@ -101,24 +76,19 @@ const PageListTable = () => {
         setDeleteConfirmationOpen(false);
     };
 
-    const handleDelete = (page) => { 
+    const handleDelete = (page) => {
         setDeleteConfirmationOpen(true);
         setToDeleteId(page.id);
     };
 
-    const handleEdit = (page) => { 
-        navigate(`/admin/pages/edit/${page.slug}`); 
-    };
-
-    const handleViewDetail = (page) => { 
-        navigate(`/admin/pages/details/${page.slug}`); 
+    const handleEdit = (page) => {
+        navigate(`/admin/pages/edit/${page.slug}`);
     };
 
     const handleConfirmDelete = async () => {
         setDeleteConfirmationOpen(false);
         try {
-            await apiDeletePage(toDeleteId); 
-
+            await apiDeletePage(toDeleteId);
             mutate();
             setSelectAllPages([]);
             setToDeleteId('');
@@ -133,7 +103,7 @@ const PageListTable = () => {
                 </div>
             );
         } catch (error) {
-            console.error("Failed to delete page:", error); 
+            console.error("Failed to delete page:", error);
             toast.push(
                 <div className="flex items-center">
                     <Avatar
@@ -149,16 +119,16 @@ const PageListTable = () => {
     };
 
     const {
-        pageList, 
-        pageListTotal, 
-        pageTableData, 
+        pageList,
+        pageListTotal,
+        pageTableData,
         isLoading,
-        setPageTableData, 
-        setSelectAllPages, 
-        selectedPages, 
+        setPageTableData,
+        setSelectAllPages,
+        selectedPages,
         setSelectedPages,
         mutate,
-    } = usePageList(); 
+    } = usePageList();
 
     const columns = useMemo(
         () => [
@@ -167,7 +137,7 @@ const PageListTable = () => {
                 accessorKey: 'title',
                 cell: (props) => {
                     const row = props.row.original;
-                    return <PageColumn row={row} />; 
+                    return <PageColumn row={row} />;
                 },
             },
             {
@@ -179,19 +149,19 @@ const PageListTable = () => {
                 },
             },
             {
-                header: 'Published At',
-                accessorKey: 'published_at',
+                header: 'Created At',
+                accessorKey: 'created_at',
                 cell: (props) => {
-                    const { published_at } = props.row.original;
+                    const { created_at } = props.row.original;
                     return (
                         <span>
-                            {published_at ? new Date(published_at).toLocaleString('en-US', {
+                            {new Date(created_at).toLocaleString('en-US', {
                                 year: 'numeric',
                                 month: 'short',
                                 day: 'numeric',
                                 hour: '2-digit',
                                 minute: '2-digit',
-                            }) : 'N/A'}
+                            })}
                         </span>
                     );
                 },
@@ -219,7 +189,6 @@ const PageListTable = () => {
                 id: 'action',
                 cell: (props) => (
                     <ActionColumn
-                        onViewDetail={() => handleViewDetail(props.row.original)}
                         onEdit={() => handleEdit(props.row.original)}
                         onDelete={() => handleDelete(props.row.original)}
                     />
@@ -227,45 +196,45 @@ const PageListTable = () => {
             },
         ],
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [selectedPages], 
+        [selectedPages],
     );
 
     const handleSetTableData = (data) => {
-        setPageTableData(data); 
+        setPageTableData(data);
         if (selectedPages.length > 0) {
             setSelectAllPages([]);
         }
     };
 
     const handlePaginationChange = (page) => {
-        const newTableData = cloneDeep(pageTableData); 
+        const newTableData = cloneDeep(pageTableData);
         newTableData.pageIndex = page;
         handleSetTableData(newTableData);
     };
 
     const handleSelectChange = (value) => {
-        const newTableData = cloneDeep(pageTableData); 
+        const newTableData = cloneDeep(pageTableData);
         newTableData.pageSize = Number(value);
         newTableData.pageIndex = 1;
         handleSetTableData(newTableData);
     };
 
     const handleSort = (sort) => {
-        const newTableData = cloneDeep(pageTableData); 
+        const newTableData = cloneDeep(pageTableData);
         newTableData.sort = sort;
         handleSetTableData(newTableData);
     };
 
     const handleRowSelect = (checked, row) => {
-        setSelectedPages(checked, row); 
+        setSelectedPages(checked, row);
     };
 
     const handleAllRowSelect = (checked, rows) => {
         if (checked) {
             const originalRows = rows.map((row) => row.original);
-            setSelectAllPages(originalRows); 
+            setSelectAllPages(originalRows);
         } else {
-            setSelectAllPages([]); 
+            setSelectAllPages([]);
         }
     };
 
@@ -274,18 +243,18 @@ const PageListTable = () => {
             <DataTable
                 selectable
                 columns={columns}
-                data={pageList} 
-                noData={!isLoading && pageList.length === 0} 
+                data={pageList}
+                noData={!isLoading && pageList.length === 0}
                 skeletonAvatarColumns={[0]}
                 skeletonAvatarProps={{ width: 30, height: 30 }}
                 loading={isLoading}
                 pagingData={{
-                    total: pageListTotal, 
-                    pageIndex: pageTableData.pageIndex, 
-                    pageSize: pageTableData.pageSize, 
+                    total: pageListTotal,
+                    pageIndex: pageTableData.pageIndex,
+                    pageSize: pageTableData.pageSize,
                 }}
                 checkboxChecked={(row) =>
-                    selectedPages.some((selected) => selected.id === row.id) 
+                    selectedPages.some((selected) => selected.id === row.id)
                 }
                 onPaginationChange={handlePaginationChange}
                 onSelectChange={handleSelectChange}
@@ -296,7 +265,7 @@ const PageListTable = () => {
             <ConfirmDialog
                 isOpen={deleteConfirmationOpen}
                 type="danger"
-                title="Remove Page" 
+                title="Remove Page"
                 onClose={handleCancel}
                 onRequestClose={handleCancel}
                 onCancel={handleCancel}

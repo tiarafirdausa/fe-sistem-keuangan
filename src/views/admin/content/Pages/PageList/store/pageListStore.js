@@ -13,7 +13,6 @@ export const initialPageTableData = {
 
 export const initialPageFilterData = {
     search: '',
-    status: '',
     author_id: '',
 };
 

@@ -16,12 +16,12 @@ import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import appConfig from '@/configs/app.config';
-import { useAuth } from '@/auth'; // Impor useAuth
+import { useAuth } from '@/auth';
 
 const PageEdit = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
-    const { user } = useAuth(); // Ambil user dari context autentikasi
+    const { user } = useAuth();
 
     const { data: pageData, isLoading: isLoadingPage, error: pageError, mutate } = useSWR(
         slug ? ['/pages/slug', slug] : null,
@@ -65,16 +65,14 @@ const PageEdit = () => {
                 })) || [],
                 meta_title: pageData.meta_title || '',
                 meta_description: pageData.meta_description || '',
-                author_id: pageData.author_id || (user ? user.id : 1), // Gunakan ID pengguna jika tersedia
-                status: pageData.status || 'draft',
-                published_at: pageData.published_at ? new Date(pageData.published_at) : null,
+                author_id: pageData.author_id || (user ? user.id : 1),
                 clear_featured_image: false,
                 delete_gallery_image_ids: [],
                 clear_gallery_images: false,
             };
         }
         return {};
-    }, [pageData, user]); // Tambahkan `user` ke dependency array
+    }, [pageData, user]);
 
     const handleFormSubmit = async (formData) => {
         setIsSubmitting(true);
@@ -82,10 +80,6 @@ const PageEdit = () => {
             if (!pageData?.id) {
                 throw new Error("Page ID not available for update.");
             }
-            // Hapus baris ini karena author_id sudah diatur di form
-            // if (!formData.has('author_id')) {
-            //     formData.append('author_id', pageData.author_id || (user ? user.id : 1));
-            // }
             await apiUpdatePage(pageData.id, formData);
 
             toast.push(

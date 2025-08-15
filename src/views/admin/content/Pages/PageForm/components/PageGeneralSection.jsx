@@ -1,3 +1,4 @@
+// src/views/admin/content/Pages/PageGeneralSection/index.jsx (Updated)
 import { useRef } from 'react'
 import Card from '@/components/ui/Card'
 import Input from '@/components/ui/Input'
@@ -207,20 +208,15 @@ const PageGeneralSection = ({ control, errors }) => {
                                         'removeformat | help',
                                     content_style:
                                         'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-
                                     automatic_uploads: true,
                                     file_picker_types: 'image media',
                                     images_upload_handler:
                                         handleEditorImageUpload,
                                     media_upload_handler:
                                         handleEditorVideoUpload,
-
-                                    // Callback ini sekarang menangani upload gambar dan media
                                     file_picker_callback: handleFilePicker,
-
                                     relative_urls: false,
                                     remove_script_host: false,
-
                                     image_title: true,
                                     media_filter_html: false,
                                     extended_valid_elements:

@@ -1,5 +1,5 @@
 // src/views/admin/content/Pages/PageCreate/PageCreate.jsx
-import { useState} from 'react';
+import { useState } from 'react';
 import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
 import Notification from '@/components/ui/Notification';
@@ -10,11 +10,11 @@ import { TbTrash } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 import { apiCreatePage } from '@/services/PageService';
 import { PAGE_DEFAULT_VALUES } from '../PageForm/constants';
-import { useAuth } from '@/auth'; // Impor useAuth
+import { useAuth } from '@/auth';
 
 const PageCreate = () => {
     const navigate = useNavigate();
-    const { user } = useAuth(); // Ambil user dari context autentikasi
+    const { user } = useAuth();
 
     const [discardConfirmationOpen, setDiscardConfirmationOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,7 +22,6 @@ const PageCreate = () => {
     const handleFormSubmit = async (formData) => {
         setIsSubmitting(true);
         try {
-            // Set author_id dengan ID pengguna yang sedang masuk
             formData.set('author_id', user.id);
             const responseData = await apiCreatePage(formData);
 

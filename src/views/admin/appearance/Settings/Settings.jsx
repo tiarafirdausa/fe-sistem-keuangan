@@ -5,7 +5,7 @@ import Notification from '@/components/ui/Notification';
 import toast from '@/components/ui/toast';
 import SettingsForm from './SettingsForm';
 import Container from '@/components/shared/Container';
-import ConfirmDialog from '@/components/shared/ConfirmDialog'; // Import ConfirmDialog
+import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import * as Yup from 'yup';
 import appConfig from '@/configs/app.config';
 
@@ -29,6 +29,12 @@ const Settings = () => {
         smtp_username: '',
         smtp_password: '',
         clear_logo: false,
+        maps_url: '',
+        address: '',
+        phone: '',
+        power: '',
+        power_url: '',
+        short_title: '',
     });
 
     const [newLogoFile, setNewLogoFile] = useState(null);
@@ -47,6 +53,12 @@ const Settings = () => {
         smtp_username: Yup.string().nullable(),
         smtp_password: Yup.string().nullable(),
         clear_logo: Yup.boolean(),
+        maps_url: Yup.string().nullable(),
+        address: Yup.string(),
+        phone: Yup.string(),
+        power: Yup.string(),
+        power_url: Yup.string().nullable(),
+        short_title: Yup.string(),
     });
 
     const [formErrors, setFormErrors] = useState({});
@@ -69,6 +81,12 @@ const Settings = () => {
                 smtp_username: settings.email?.smtp_username || '',
                 smtp_password: settings.email?.smtp_password || '',
                 clear_logo: false,
+                maps_url: settings.general?.maps_url || '',
+                address: settings.general?.address || '',
+                phone: settings.general?.phone || '',
+                power: settings.general?.power || '',
+                power_url: settings.general?.power_url || '',
+                short_title: settings.general?.short_title || '',
             });
             setNewLogoFile(null);
             setFormErrors({});
@@ -202,13 +220,13 @@ const Settings = () => {
     }, []);
 
     const handleConfirmDiscard = useCallback(() => {
-        setDiscardConfirmationOpen(false); 
+        setDiscardConfirmationOpen(false);
         if (settings) {
             setFormData({
                 site_title: settings.general?.site_title || '',
                 site_description: settings.general?.site_description || '',
                 maintenance_mode: settings.general?.maintenance_mode || false,
-                logo:  settings.appearance?.logo 
+                logo: settings.appearance?.logo 
                 ? `${appConfig.backendBaseUrl}${settings.appearance.logo}` 
                 : null,
                 meta_keywords: settings.seo?.meta_keywords || '',
@@ -220,6 +238,13 @@ const Settings = () => {
                 smtp_username: settings.email?.smtp_username || '',
                 smtp_password: settings.email?.smtp_password || '',
                 clear_logo: false,
+                // Mengatur ulang ke nilai awal dari API
+                maps_url: settings.general?.maps_url || '',
+                address: settings.general?.address || '',
+                phone: settings.general?.phone || '',
+                power: settings.general?.power || '',
+                power_url: settings.general?.power_url || '',
+                short_title: settings.general?.short_title || '',
             });
             setNewLogoFile(null);
             setFormErrors({});

@@ -1,3 +1,4 @@
+// src/views/admin/content/Pages/PageForm/index.jsx (Updated)
 import { useEffect } from 'react'
 import { Form } from '@/components/ui/Form'
 import Container from '@/components/shared/Container'
@@ -5,7 +6,6 @@ import BottomStickyBar from '@/components/template/BottomStickyBar'
 import PageGeneralSection from './components/PageGeneralSection'
 import PageImageSection from './components/PageImageSection'
 import PageSeoSection from './components/PageSeoSection'
-import PageDetailsSection from './components/PageDetailsSection'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import isEmpty from 'lodash/isEmpty'
@@ -34,8 +34,7 @@ const PageForm = (props) => {
         if (!isEmpty(defaultValues)) {
             reset(defaultValues)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [defaultValues])
+    }, [defaultValues, reset])
 
     const onSubmit = (values) => {
         const formData = new FormData()
@@ -118,10 +117,6 @@ const PageForm = (props) => {
                     </div>
                     <div className="xl:flex-col xl:w-[320px] lg:w-full">
                         <div className="flex flex-col gap-4">
-                            <PageDetailsSection
-                                control={control}
-                                errors={errors}
-                            />
                             <PageSeoSection control={control} errors={errors} />
                         </div>
                     </div>

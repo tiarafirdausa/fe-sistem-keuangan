@@ -14,12 +14,61 @@ const GeneralSettingsSection = ({ formData, handleChange, handleImageFileChange,
                     onChange={handleChange}
                 />
             </FormItem>
+            <FormItem label="Short Title" invalid={!!errors.short_title} errorMessage={errors.short_title}>
+                <Input
+                    name="short_title"
+                    placeholder="Short Title"
+                    value={formData.short_title || ''}
+                    onChange={handleChange}
+                />
+            </FormItem>
             <FormItem label="Site Description" invalid={!!errors.site_description} errorMessage={errors.site_description}>
                 <Input
                     textArea
                     name="site_description"
                     placeholder="A short description of your website"
                     value={formData.site_description || ''}
+                    onChange={handleChange}
+                />
+            </FormItem>
+            <FormItem label="Address" invalid={!!errors.address} errorMessage={errors.address}>
+                <Input
+                    textArea
+                    name="address"
+                    placeholder="Your Company Address"
+                    value={formData.address || ''}
+                    onChange={handleChange}
+                />
+            </FormItem>
+            <FormItem label="Phone" invalid={!!errors.phone} errorMessage={errors.phone}>
+                <Input
+                    name="phone"
+                    placeholder="Phone Number"
+                    value={formData.phone || ''}
+                    onChange={handleChange}
+                />
+            </FormItem>
+            <FormItem label="Maps URL" invalid={!!errors.maps_url} errorMessage={errors.maps_url}>
+                <Input
+                    name="maps_url"
+                    placeholder="Google Maps URL"
+                    value={formData.maps_url || ''}
+                    onChange={handleChange}
+                />
+            </FormItem>
+            <FormItem label="Power" invalid={!!errors.power} errorMessage={errors.power}>
+                <Input
+                    name="power"
+                    placeholder="Powered by..."
+                    value={formData.power || ''}
+                    onChange={handleChange}
+                />
+            </FormItem>
+            <FormItem label="Power URL" invalid={!!errors.power_url} errorMessage={errors.power_url}>
+                <Input
+                    name="power_url"
+                    placeholder="Powered by URL"
+                    value={formData.power_url || ''}
                     onChange={handleChange}
                 />
             </FormItem>

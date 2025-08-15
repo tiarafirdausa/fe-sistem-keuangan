@@ -5,15 +5,14 @@ export const PAGE_DEFAULT_VALUES = {
     title: '',
     slug: '',
     content: '',
-    featured_image: null, // Ubah dari string kosong menjadi null
+    featured_image: null,
     gallery_images: [],
     meta_title: '',
     meta_description: '',
-    status: 'published',
     clear_featured_image: false,
     delete_gallery_image_ids: [],
     clear_gallery_images: false,
-    author_id: '', // Tambahkan author_id ke default values
+    author_id: '',
 };
 
 export const PAGE_VALIDATION_SCHEMA = z.object({
@@ -23,9 +22,9 @@ export const PAGE_VALIDATION_SCHEMA = z.object({
     featured_image: z.object({
         id: z.union([z.string(), z.number()]).optional(),
         name: z.string().optional(),
-        img: z.string(), // Ubah dari optional() menjadi required() jika ada
+        img: z.string(),
         file: z.instanceof(File).optional(),
-    }).nullable(), // Izinkan null jika tidak ada gambar
+    }).nullable(),
     gallery_images: z.array(z.object({
         id: z.union([z.string(), z.number()]).optional(),
         name: z.string().optional(),
@@ -34,9 +33,8 @@ export const PAGE_VALIDATION_SCHEMA = z.object({
     })).optional(),
     meta_title: z.string().optional(),
     meta_description: z.string().optional(),
-    status: z.enum(['draft', 'published', 'archived']),
     clear_featured_image: z.boolean().optional(),
     delete_gallery_image_ids: z.array(z.number()).optional(),
     clear_gallery_images: z.boolean().optional(),
-    author_id: z.union([z.string(), z.number()]).optional(), // Izinkan string atau number
+    author_id: z.union([z.string(), z.number()]).optional(),
 });
