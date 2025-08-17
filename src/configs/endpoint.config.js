@@ -96,6 +96,13 @@ const endpointConfig = {
     updateTag: (id) => `/tags/${id}`,
     deleteTag: (id) => `/tags/${id}`,
 
+    // Modul
+    getAllModuls: '/moduls',
+    getModulById: (id) => `/moduls/${id}`,
+    createModul: '/moduls',
+    updateModul: (id) => `/moduls/${id}`,
+    deleteModul: (id) => `/moduls/${id}`,
+
     uploadTinyMCEImage: '/upload/tinymce-image',
     uploadTinyMCEVideo: '/upload/tinymce-video',
 

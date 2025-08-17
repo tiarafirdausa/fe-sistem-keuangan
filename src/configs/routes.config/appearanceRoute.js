@@ -4,6 +4,41 @@ import { ADMIN } from '@/constants/roles.constant'
 
 const appearanceRoute = [
     {
+        key: 'appearance.moduls',
+        path: `${ADMIN_PREFIX_PATH}/moduls`,
+        component: lazy(() => import('@/views/admin/appearance/Moduls/ModulList')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+        },
+    },
+    {
+        key: 'appearance.moduls.new',
+        path: `${ADMIN_PREFIX_PATH}/moduls/new`,
+        component: lazy(() => import('@/views/admin/appearance/Moduls/ModulCreate')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Modul',
+            },
+        },
+    },
+    {
+        key: 'appearance.moduls.edit',
+        path: `${ADMIN_PREFIX_PATH}/moduls/edit/:id`,
+        component: lazy(() => import('@/views/admin/appearance/Moduls/ModulEdit')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Modul',
+            },
+        },
+    },
+    {
         key: 'appearance.menus.items',
         path: `${ADMIN_PREFIX_PATH}/menus/:menuId/items`,
         component: lazy(() => import('@/views/admin/appearance/Menus/MenuItem/MenuItemList')),
