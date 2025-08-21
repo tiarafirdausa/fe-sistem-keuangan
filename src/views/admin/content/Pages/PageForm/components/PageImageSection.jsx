@@ -1,3 +1,4 @@
+// src/views/pages/PageForm/components/PageImageSection.jsx
 import { useState } from 'react';
 import Card from '@/components/ui/Card';
 import Upload from '@/components/ui/Upload';

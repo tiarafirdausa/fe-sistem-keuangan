@@ -49,7 +49,6 @@ const PageEdit = () => {
             return {
                 title: pageData.title || '',
                 slug: pageData.slug || '',
-                excerpt: pageData.excerpt || '',
                 content: pageData.content || '',
                 featured_image: pageData.featured_image
                     ? {

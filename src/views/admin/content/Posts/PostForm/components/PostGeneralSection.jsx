@@ -7,31 +7,76 @@ import { Controller } from 'react-hook-form';
 import { Editor } from '@tinymce/tinymce-react';
 import { VITE_TINYMCE_API_KEY } from '@/constants/app.constant';
 import { apiUploadTinyMCEImage, apiUploadTinyMCEVideo } from '@/services/UploadService';
+import getCroppedImg from '@/utils/cropImage';
 
 const PostGeneralSection = ({ control, errors }) => {
     const editorRef = useRef(null);
 
-    const handleEditorImageUpload = async (blobInfo) => {
-        return new Promise((resolve, reject) => {
-            const file = blobInfo.blob();
-            const formData = new FormData();
-            formData.append('image', file, blobInfo.filename());
+    const handleEditorImageUploadAndCrop = async (blobInfo) => {
+        const file = blobInfo.blob();
+        const imageSrc = URL.createObjectURL(file);
 
-            apiUploadTinyMCEImage(formData)
-                .then((response) => {
-                    const location = response && response.location; 
-                    if (location) {
-                        resolve(location);
-                    } else {
-                        reject('Image upload failed: No location in response.');
-                    }
-                })
-                .catch((error) => {
-                    console.error('TinyMCE image upload failed:', error);
-                    const errorMessage = error.response?.data?.error || error.message;
-                    reject(`Image upload failed: ${errorMessage}`);
-                });
-        });
+        const targetWidth = 560;
+        const targetHeight = 350;
+        const aspectRatio = targetWidth / targetHeight;
+
+        try {
+            const image = await new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = imageSrc;
+            });
+
+            const originalWidth = image.naturalWidth;
+            const originalHeight = image.naturalHeight;
+
+            let newWidth = originalWidth;
+            let newHeight = originalHeight;
+            let startX = 0;
+            let startY = 0;
+
+            if (originalWidth / originalHeight > aspectRatio) {
+                newWidth = originalHeight * aspectRatio;
+                startX = (originalWidth - newWidth) / 2;
+            } else {
+                newHeight = originalWidth / aspectRatio;
+                startY = (originalHeight - newHeight) / 2;
+            }
+
+            const pixelCrop = {
+                x: startX,
+                y: startY,
+                width: newWidth,
+                height: newHeight,
+            };
+
+            const croppedImageBlob = await getCroppedImg(imageSrc, pixelCrop);
+            const croppedFile = new File(
+                [croppedImageBlob],
+                blobInfo.filename(),
+                { type: croppedImageBlob.type },
+            );
+
+            const formData = new FormData();
+            formData.append('image', croppedFile, blobInfo.filename());
+
+            const response = await apiUploadTinyMCEImage(formData);
+            const location = response?.location;
+
+            if (location) {
+                URL.revokeObjectURL(imageSrc);
+                return location;
+            } else {
+                URL.revokeObjectURL(imageSrc);
+                throw new Error('Image upload failed: No location in response.');
+            }
+        } catch (error) {
+            URL.revokeObjectURL(imageSrc);
+            console.error('TinyMCE image upload and crop failed:', error);
+            const errorMessage = error.response?.data?.error || error.message;
+            throw new Error(`Image upload failed: ${errorMessage}`);
+        }
     };
 
     const handleEditorVideoUpload = async (blobInfo) => {
@@ -42,7 +87,7 @@ const PostGeneralSection = ({ control, errors }) => {
 
             apiUploadTinyMCEVideo(formData)
                 .then((response) => {
-                    const location = response && response.location; 
+                    const location = response && response.location;
                     if (location) {
                         resolve(location);
                     } else {
@@ -63,31 +108,87 @@ const PostGeneralSection = ({ control, errors }) => {
             input.setAttribute('type', 'file');
             input.setAttribute('accept', 'image/*');
 
-            input.onchange = function() {
+            input.onchange = async function () {
                 const file = this.files[0];
-                const formData = new FormData();
-                formData.append('image', file, file.name);
+                if (!file) {
+                    return;
+                }
 
-                apiUploadTinyMCEImage(formData)
-                    .then(response => {
-                        const location = response?.location;
-                        if (location) {
-                            callback(location, { title: file.name });
-                        } else {
-                            console.error('Image upload failed: No location in response.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('TinyMCE file picker image upload failed:', error);
+                const imageSrc = URL.createObjectURL(file);
+                const targetWidth = 560;
+                const targetHeight = 350;
+                const aspectRatio = targetWidth / targetHeight;
+
+                try {
+                    const image = await new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.onload = () => resolve(img);
+                        img.onerror = reject;
+                        img.src = imageSrc;
                     });
+
+                    const originalWidth = image.naturalWidth;
+                    const originalHeight = image.naturalHeight;
+
+                    let newWidth = originalWidth;
+                    let newHeight = originalHeight;
+                    let startX = 0;
+                    let startY = 0;
+
+                    if (originalWidth / originalHeight > aspectRatio) {
+                        newWidth = originalHeight * aspectRatio;
+                        startX = (originalWidth - newWidth) / 2;
+                    } else {
+                        newHeight = originalWidth / aspectRatio;
+                        startY = (originalHeight - newHeight) / 2;
+                    }
+
+                    const pixelCrop = {
+                        x: startX,
+                        y: startY,
+                        width: newWidth,
+                        height: newHeight,
+                    };
+
+                    const croppedImageBlob = await getCroppedImg(
+                        imageSrc,
+                        pixelCrop,
+                    );
+                    const croppedFile = new File(
+                        [croppedImageBlob],
+                        file.name,
+                        { type: croppedImageBlob.type },
+                    );
+
+                    const formData = new FormData();
+                    formData.append('image', croppedFile, file.name);
+
+                    const response = await apiUploadTinyMCEImage(formData);
+                    const location = response?.location;
+
+                    if (location) {
+                        callback(location, { title: file.name });
+                    } else {
+                        console.error(
+                            'Image upload failed: No location in response.',
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        'TinyMCE file picker image upload failed:',
+                        error,
+                    );
+                } finally {
+                    URL.revokeObjectURL(imageSrc);
+                }
             };
             input.click();
         } else if (meta.filetype === 'media') {
             const input = document.createElement('input');
             input.setAttribute('type', 'file');
-            input.setAttribute('accept', 'video/*'); 
+            input.setAttribute('accept', 'video/*');
 
-            input.onchange = function() {
+            input.onchange = function () {
                 const file = this.files[0];
                 const formData = new FormData();
                 formData.append('video', file, file.name);
@@ -197,19 +298,18 @@ const PostGeneralSection = ({ control, errors }) => {
                                         'image media table | ' +
                                         'removeformat | help',
                                     content_style:
-                                        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                                    
+                                        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }' +
+                                        'img, iframe, video { width: 100%; height: auto; aspect-ratio: 560 / 350; }',
+
                                     automatic_uploads: true,
                                     file_picker_types: 'image media',
-                                    images_upload_handler: handleEditorImageUpload,
+                                    images_upload_handler: handleEditorImageUploadAndCrop,
                                     media_upload_handler: handleEditorVideoUpload,
-                                    
-                                    // Callback ini sekarang menangani upload gambar dan media
                                     file_picker_callback: handleFilePicker,
 
                                     relative_urls: false,
                                     remove_script_host: false,
-                                    
+
                                     image_title: true,
                                     media_filter_html: false,
                                     extended_valid_elements:

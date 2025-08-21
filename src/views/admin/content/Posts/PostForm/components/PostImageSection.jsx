@@ -10,10 +10,11 @@ import { Controller } from 'react-hook-form';
 import { HiEye, HiTrash, HiOutlinePlus } from 'react-icons/hi';
 import cloneDeep from 'lodash/cloneDeep';
 import { PiImagesThin } from 'react-icons/pi';
+import getCroppedImg from '@/utils/cropImage'; // Assuming you have this file now
 
+// The ImageList component is the same as the previous code.
 const ImageList = (props) => {
     const { imgList, onImageDelete, fieldName } = props; 
-
     const [selectedImg, setSelectedImg] = useState({});
     const [viewOpen, setViewOpen] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
@@ -101,11 +102,10 @@ const ImageList = (props) => {
 };
 
 const PostImageSection = ({ control, errors, setValue, getValues }) => {
-
     const beforeUpload = (file) => {
         let valid = true;
         const allowedFileType = ['image/jpeg', 'image/png'];
-        const maxFileSize = 500000; 
+        const maxFileSize = 500000;
 
         if (file) {
             for (const f of file) {
@@ -120,42 +120,153 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
         return valid;
     };
 
-    const handleFeaturedImageUpload = (onChange, files) => {
-        if (files && files.length > 0) {
-            const file = files[0];
+    // Fungsi untuk upload dan crop otomatis gambar utama
+    const handleFeaturedImageUpload = async (onChange, files) => {
+        if (!files || files.length === 0) return;
+
+        const file = files[0];
+        const imageSrc = URL.createObjectURL(file);
+
+        const targetWidth = 960;
+        const targetHeight = 600;
+
+        try {
+            const image = await new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = imageSrc;
+            });
+
+            const originalWidth = image.naturalWidth;
+            const originalHeight = image.naturalHeight;
+
+            const aspectRatio = targetWidth / targetHeight;
+            let newWidth = originalWidth;
+            let newHeight = originalHeight;
+            let startX = 0;
+            let startY = 0;
+
+            if (originalWidth / originalHeight > aspectRatio) {
+                newWidth = originalHeight * aspectRatio;
+                startX = (originalWidth - newWidth) / 2;
+            } else {
+                newHeight = originalWidth / aspectRatio;
+                startY = (originalHeight - newHeight) / 2;
+            }
+            
+            const pixelCrop = {
+                x: startX,
+                y: startY,
+                width: newWidth,
+                height: newHeight,
+            };
+
+            const croppedImageBlob = await getCroppedImg(imageSrc, pixelCrop);
+            const croppedFile = new File([croppedImageBlob], file.name, { type: croppedImageBlob.type });
+
             const newImage = {
-                id: `featured-${Date.now()}`, 
+                id: `featured-${Date.now()}`,
                 name: file.name,
-                img: URL.createObjectURL(file),
-                file: file 
+                img: URL.createObjectURL(croppedFile),
+                file: croppedFile,
+                original_img: imageSrc,
             };
             onChange(newImage);
+        } catch (error) {
+            console.error('Failed to crop the featured image:', error);
+            URL.revokeObjectURL(imageSrc);
         }
     };
 
+    // Fungsi untuk menghapus gambar utama
     const handleFeaturedImageDelete = (onChange) => {
+        const currentImage = getValues('featured_image');
+        if (currentImage && currentImage.original_img) {
+            URL.revokeObjectURL(currentImage.original_img);
+        }
+        if (currentImage && currentImage.img) {
+            URL.revokeObjectURL(currentImage.img);
+        }
         onChange(null);
         setValue('clear_featured_image', true);
     };
 
-    const handleGalleryImageUpload = (onChange, originalImageList = [], files) => {
-        const newImages = files.map((file, index) => ({
-            id: `gallery-${Date.now()}-${index}`,
-            name: file.name,
-            img: URL.createObjectURL(file),
-            file: file
-        }));
+    // Fungsi untuk upload dan crop otomatis gambar galeri
+    const handleGalleryImageUpload = async (onChange, originalImageList = [], files) => {
+        if (!files || files.length === 0) return;
+
+        const newImages = [];
+
+        const targetWidth = 560;
+        const targetHeight = 350;
+        const aspectRatio = targetWidth / targetHeight;
+
+        for (const file of files) {
+            const imageSrc = URL.createObjectURL(file);
+
+            try {
+                const image = await new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                    img.src = imageSrc;
+                });
+
+                const originalWidth = image.naturalWidth;
+                const originalHeight = image.naturalHeight;
+                
+                let newWidth = originalWidth;
+                let newHeight = originalHeight;
+                let startX = 0;
+                let startY = 0;
+
+                if (originalWidth / originalHeight > aspectRatio) {
+                    newWidth = originalHeight * aspectRatio;
+                    startX = (originalWidth - newWidth) / 2;
+                } else {
+                    newHeight = originalWidth / aspectRatio;
+                    startY = (originalHeight - newHeight) / 2;
+                }
+
+                const pixelCrop = {
+                    x: startX,
+                    y: startY,
+                    width: newWidth,
+                    height: newHeight,
+                };
+                
+                const croppedImageBlob = await getCroppedImg(imageSrc, pixelCrop);
+                const croppedFile = new File([croppedImageBlob], file.name, { type: croppedImageBlob.type });
+
+                newImages.push({
+                    id: `gallery-${Date.now()}-${newImages.length}`,
+                    name: file.name,
+                    img: URL.createObjectURL(croppedFile),
+                    file: croppedFile,
+                    original_img: imageSrc,
+                });
+            } catch (error) {
+                console.error('Failed to crop a gallery image:', error);
+            }
+        }
+
         const updatedList = [...originalImageList, ...newImages];
         onChange(updatedList);
     };
 
     const handleGalleryImageDelete = (onChange, originalImageList = [], deletedImg) => {
         let imgList = cloneDeep(originalImageList);
+        if (deletedImg.original_img) {
+            URL.revokeObjectURL(deletedImg.original_img);
+        }
+        if (deletedImg.img) {
+            URL.revokeObjectURL(deletedImg.img);
+        }
         if (deletedImg.id && typeof deletedImg.id === 'number') { 
             const currentDeletedIds = getValues('delete_gallery_image_ids') || [];
             setValue('delete_gallery_image_ids', [...currentDeletedIds, deletedImg.id]);
         }
-
         imgList = imgList.filter((img) => img.id !== deletedImg.id);
         onChange(imgList);
     };
@@ -166,7 +277,7 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
             <div className="mb-6">
                 <h5 className="mb-2">Featured Image</h5>
                 <p className="mb-4 text-xs">
-                    This will be the main image for your post. (Formats: .jpg, .jpeg, .png, max 500kb)
+                    This will be the main image for your post. (Formats: .jpg, .jpeg, .png, max 500kb, will be automatically cropped to 2400x1697)
                 </p>
                 <FormItem
                     invalid={Boolean(errors.featured_image)}
@@ -177,7 +288,7 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                         control={control}
                         render={({ field }) => (
                             <>
-                                {field.value && field.value.img  ?(
+                                {field.value && field.value.img ? (
                                     <div className="grid grid-cols-1 gap-2">
                                         <ImageList
                                             imgList={[field.value]}
@@ -217,7 +328,7 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
             <div>
                 <h5 className="mb-2">Gallery Images</h5>
                 <p className="mb-4 text-xs">
-                    Add additional images for your post. (Formats: .jpg, .jpeg, .png, max 500kb per image)
+                    Add additional images for your post. (Formats: .jpg, .jpeg, .png, max 500kb per image, will be automatically cropped to 560x350)
                 </p>
                 <FormItem
                     invalid={Boolean(errors.gallery_images)}
