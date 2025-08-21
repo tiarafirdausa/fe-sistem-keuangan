@@ -18,7 +18,6 @@ const useModulList = () => {
         // eslint-disable-next-line no-unused-vars
         async ([_, params]) => {
             const response = await apiGetAllModuls(params)
-            console.log(response)
             return response
         },
         {

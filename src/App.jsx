@@ -6,6 +6,7 @@ import Views from '@/views'
 import appConfig from './configs/app.config'
 import { useEffect } from 'react';
 import { fetchCsrfToken } from './services/axios/csrfService'
+import 'react-image-crop/dist/ReactCrop.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 if (appConfig.enableMock) {

@@ -11,10 +11,50 @@ import { Controller } from 'react-hook-form'
 import { HiEye, HiTrash, HiOutlinePlus } from 'react-icons/hi'
 import cloneDeep from 'lodash/cloneDeep'
 import { PiImagesThin } from 'react-icons/pi'
+import { makeAspectCrop, centerCrop } from 'react-image-crop'
+import 'react-image-crop/dist/ReactCrop.css'
+
+const getCroppedImg = (image, crop) => {
+  const canvas = document.createElement('canvas')
+  const scaleX = image.naturalWidth / image.width
+  const scaleY = image.naturalHeight / image.height
+  const ctx = canvas.getContext('2d')
+
+  const pixelRatio = window.devicePixelRatio
+  canvas.width = crop.width * pixelRatio
+  canvas.height = crop.height * pixelRatio
+  ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+  ctx.imageSmoothingQuality = 'high'
+
+  ctx.drawImage(
+    image,
+    crop.x * scaleX,
+    crop.y * scaleY,
+    crop.width * scaleX,
+    crop.height * scaleY,
+    0,
+    0,
+    crop.width,
+    crop.height
+  )
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error('Canvas is empty'))
+          return
+        }
+        resolve(blob)
+      },
+      'image/jpeg',
+      1
+    )
+  })
+}
 
 const FileList = (props) => {
     const { fileList, onFileDelete } = props
-
     const [selectedFile, setSelectedFile] = useState({})
     const [viewOpen, setViewOpen] = useState(false)
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false)
@@ -66,7 +106,6 @@ const FileList = (props) => {
                             alt={file.name}
                         />
                     )}
-
                     <div className="absolute inset-2 bg-[#000000ba] group-hover:flex hidden text-xl items-center justify-center">
                         <span
                             className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
@@ -120,7 +159,7 @@ const FileList = (props) => {
 }
 
 const MediaImageSection = ({ control, errors, setValue, getValues }) => {
-    // Validasi file: sudah benar
+
     const beforeUpload = (file) => {
         let valid = true
         const allowedFileType = [
@@ -130,7 +169,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
             'audio/mp3',
             'video/quicktime',
             'video/webm',
-        ] 
+        ]
         const maxFileSize = 5000000
         if (file) {
             for (const f of file) {
@@ -145,20 +184,82 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
         return valid
     }
 
-    const handleMediaUpload = (onChange, originalMediaList = [], files) => {
-        const newMedia = files.map((file, index) => {
+    const handleMediaUpload = async (onChange, originalMediaList = [], files) => {
+        const newMediaList = []
+        
+        for (const file of files) {
             const isVideo = file.type.startsWith('video/')
-            return {
-                id: `media-${Date.now()}-${index}`,
-                name: file.name,
-                img: URL.createObjectURL(file),
-                url: URL.createObjectURL(file),
-                file: file,
-                isVideo: isVideo,
+            const isImage = file.type.startsWith('image/')
+            const currentTotalMedia = originalMediaList.length + newMediaList.length
+
+            if (currentTotalMedia < 10) {
+                if (isImage && currentTotalMedia === 0) {
+                    try {
+                        const img = await new Promise((resolve, reject) => {
+                            const reader = new FileReader()
+                            reader.onload = (e) => {
+                                const image = new Image()
+                                image.src = e.target.result
+                                image.onload = () => resolve(image)
+                                image.onerror = reject
+                            }
+                            reader.readAsDataURL(file)
+                        })
+
+                        const crop = centerCrop(
+                            makeAspectCrop(
+                                {
+                                    unit: 'px',
+                                    width: 410,
+                                    height: 440,
+                                },
+                                410 / 440,
+                                img.width,
+                                img.height
+                            ),
+                            img.width,
+                            img.height
+                        )
+
+                        const croppedImageBlob = await getCroppedImg(img, crop)
+                        
+                        const croppedFile = new File([croppedImageBlob], file.name, {
+                            type: 'image/jpeg',
+                        })
+
+                        newMediaList.push({
+                            id: `media-${Date.now()}-${Math.random()}`,
+                            name: file.name,
+                            img: URL.createObjectURL(file),
+                            url: URL.createObjectURL(file),
+                            file: file,
+                            croppedFile: croppedFile,
+                            isVideo: false,
+                        })
+                    } catch (error) {
+                        console.error("Error cropping image:", error)
+                        newMediaList.push({
+                            id: `media-${Date.now()}-${Math.random()}`,
+                            name: file.name,
+                            img: URL.createObjectURL(file),
+                            url: URL.createObjectURL(file),
+                            file: file,
+                            isVideo: isVideo,
+                        })
+                    }
+                } else {
+                    newMediaList.push({
+                        id: `media-${Date.now()}-${Math.random()}`,
+                        name: file.name,
+                        img: URL.createObjectURL(file),
+                        url: URL.createObjectURL(file),
+                        file: file,
+                        isVideo: isVideo,
+                    })
+                }
             }
-        })
-        const updatedList = [...originalMediaList, ...newMedia]
-        onChange(updatedList)
+        }
+        onChange([...originalMediaList, ...newMediaList])
     }
 
     const handleMediaDelete = (
@@ -174,7 +275,6 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                 deletedMedia.id,
             ])
         }
-
         mediaList = mediaList.filter((media) => media.id !== deletedMedia.id)
         onChange(mediaList)
     }

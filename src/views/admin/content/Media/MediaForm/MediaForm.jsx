@@ -1,14 +1,15 @@
 // src/views/admin/content/Media/MediaForm/MediaForm.jsx
-import { useEffect } from 'react';
-import { Form } from '@/components/ui/Form';
-import Container from '@/components/shared/Container';
-import BottomStickyBar from '@/components/template/BottomStickyBar';
-import MediaGeneralSection from './components/MediaGeneralSection';
-import MediaImageSection from './components/MediaImageSection';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import isEmpty from 'lodash/isEmpty';
-import { MEDIA_DEFAULT_VALUES, MEDIA_VALIDATION_SCHEMA } from './constants';
+
+import { useEffect } from 'react'
+import { Form } from '@/components/ui/Form'
+import Container from '@/components/shared/Container'
+import BottomStickyBar from '@/components/template/BottomStickyBar'
+import MediaGeneralSection from './components/MediaGeneralSection'
+import MediaImageSection from './components/MediaImageSection'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import isEmpty from 'lodash/isEmpty'
+import { MEDIA_DEFAULT_VALUES, MEDIA_VALIDATION_SCHEMA } from './constants'
 
 const MediaForm = (props) => {
     const {
@@ -69,12 +70,16 @@ const MediaForm = (props) => {
             }
         }
 
-        values.media.forEach((file) => {
+        // eslint-disable-next-line no-unused-vars
+        values.media.forEach((file, index) => {
             if (file.file instanceof File) {
-                formData.append('media', file.file);
+                formData.append('media', file.file)
+
+                if (file.croppedFile instanceof File) {
+                    formData.append('media_cropped', file.croppedFile)
+                }
             }
         });
-        
         formData.append(
             'clear_media_files',
             getValues('clear_media_files') ? 'true' : 'false',

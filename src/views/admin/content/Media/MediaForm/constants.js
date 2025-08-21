@@ -23,6 +23,7 @@ export const MEDIA_VALIDATION_SCHEMA = z.object({
         name: z.string().optional(),
         url: z.string().optional(),
         file: z.instanceof(File).optional(),
+        croppedFile: z.instanceof(File).optional(),
     })).min(1, { message: 'At least one media file is required!' }),
     meta_title: z.string().optional(),
     meta_description: z.string().optional(),
