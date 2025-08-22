@@ -8,16 +8,19 @@ import useSWR from 'swr'
 import { apiGetAllMenuItems } from '@/services/MenuService'
 import { apiGetAllCategories } from '@/services/CategoryService'
 import { apiGetAllPages } from '@/services/PageService'
-import { apiGetAllPosts } from '@/services/PostService' 
-import { apiGetAllMediaCollections, apiGetAllMediaCategories } from '@/services/MediaService' 
+import { apiGetAllPosts } from '@/services/PostService'
+import {
+    apiGetAllMediaCollections,
+    apiGetAllMediaCategories,
+} from '@/services/MediaService'
 
 const menuItemTypeOptions = [
     { label: 'Custom URL', value: 'custom' },
-    { label: 'Category', value: 'category' },
-    { label: 'Post', value: 'post' }, 
     { label: 'Page', value: 'page' },
-    { label: 'Media', value: 'media' }, 
-    { label: 'Media Category', value: 'media_category' }, 
+    { label: 'Category', value: 'category' },
+    { label: 'Post', value: 'post' },
+    { label: 'Media', value: 'media' },
+    { label: 'Media Category', value: 'media_category' },
 ]
 
 const menuItemTargetOptions = [
@@ -69,16 +72,19 @@ const MenuItemGeneralSection = ({ control, errors, watchedType, menuId }) => {
         if (response.categories) {
             return response.categories
         }
+        if (response.mediaCategories) {
+            return response.mediaCategories
+        }
         return []
     }
 
     const { data: referenceOptionsData, isLoading: referenceOptionsLoading } =
         useSWR(
-           ['post', 'media'].includes(watchedType)
-                ? null 
+            ['post', 'media'].includes(watchedType)
+                ? null
                 : watchedType !== 'custom'
-                ? ['/reference-data', watchedType]
-                : null,
+                  ? ['/reference-data', watchedType]
+                  : null,
             referenceDataFetcher,
             { revalidateOnFocus: false },
         )
@@ -198,26 +204,21 @@ const MenuItemGeneralSection = ({ control, errors, watchedType, menuId }) => {
                     />
                 </FormItem>
 
-                
                 {/* Reference ID (conditionally rendered) */}
-                {watchedType !== 'custom' && (
+                {['category', 'page', 'media_category'].includes(
+                    watchedType,
+                ) && (
                     <FormItem
                         label={`Reference ID (${watchedType})`}
                         invalid={Boolean(errors.reference_id)}
                         errorMessage={errors.reference_id?.message}
                     >
-                        {/* Tambahkan penjelasan UX yang lebih baik di sini */}
-                        {['post', 'media'].includes(watchedType) && (
-                             <p className="text-sm text-gray-500 mb-2">
-                                 (Kosongkan jika ingin menautkan ke halaman daftar)
-                             </p>
-                        )}
                         <Controller
                             name="reference_id"
                             control={control}
                             render={({ field }) => (
                                 <Select
-                                    isClearable // Izinkan nilai dikosongkan untuk 'post'/'media'
+                                    isClearable
                                     isSearchable
                                     placeholder={
                                         referenceOptionsLoading

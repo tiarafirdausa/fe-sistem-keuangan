@@ -6,7 +6,7 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useModulList from '../hooks/useModulList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom';
-import { TbPencil, TbTrash, TbTags, TbCheck, TbX } from 'react-icons/tb'; // <-- pastikan icon TbCheck dan TbX sudah diimpor
+import { TbPencil, TbTrash, TbTags, TbCheck, TbX } from 'react-icons/tb';
 import { FaBook } from 'react-icons/fa';
 import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
@@ -140,16 +140,6 @@ const ModulListTable = () => {
                     const row = props.row.original;
                     return <ModulColumn row={row} />;
                 },
-            },
-            {
-                header: 'Menu',
-                accessorKey: 'menu',
-                cell: (props) => <StatusIcon value={props.row.original.menu} />,
-            },
-            {
-                header: 'Konten',
-                accessorKey: 'konten',
-                cell: (props) => <StatusIcon value={props.row.original.konten} />,
             },
             {
                 header: 'Widget',

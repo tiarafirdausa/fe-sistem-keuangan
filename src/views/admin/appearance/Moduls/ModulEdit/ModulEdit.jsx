@@ -34,12 +34,10 @@ const ModulEdit = () => {
 
     const getDefaultValues = () => {
         if (modulData) {
-            const { judul, folder, menu, konten, widget, home, aktif } = modulData;
+            const { judul, folder, widget, home, aktif } = modulData;
             return {
                 judul,
                 folder,
-                menu: Boolean(menu),
-                konten: Boolean(konten),
                 widget: Boolean(widget),
                 home: Boolean(home),
                 aktif: Boolean(aktif),

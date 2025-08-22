@@ -12,17 +12,15 @@ const validationSchema = z
     .object({
         judul: z.string().min(1, { message: 'Judul modul wajib diisi!' }),
         folder: z.string().min(1, { message: 'Folder wajib diisi!' }),
-        menu: z.boolean(),
-        konten: z.boolean(),
         widget: z.boolean(),
         home: z.boolean(),
         aktif: z.boolean(),
     })
     .refine(
-        (data) => data.menu || data.konten || data.widget || data.home,
+        (data) => data.widget || data.home,
         {
-            message: 'Setidaknya satu dari Menu, Konten, Widget, atau Home harus dipilih.',
-            path: ['menu'], 
+            message: 'Setidaknya satu dari Widget atau Home harus dipilih.',
+            path: ['widget'], 
         },
     );
 
@@ -32,8 +30,6 @@ const ModulForm = (props) => {
         defaultValues = {
             judul: '',
             folder: '',
-            menu: false,
-            konten: false,
             widget: false,
             home: false,
             aktif: true,

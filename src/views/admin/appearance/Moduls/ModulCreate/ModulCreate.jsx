@@ -78,8 +78,6 @@ const ModulCreate = () => {
                 defaultValues={{
                     judul: '',
                     folder: '',
-                    menu: false,
-                    konten: false,
                     widget: false,
                     home: false,
                     aktif: true,

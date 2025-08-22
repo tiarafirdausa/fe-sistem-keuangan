@@ -50,34 +50,6 @@ const ModulGeneralSection = ({ control, errors }) => {
 
                 <div className="flex flex-wrap gap-4 mb-4">
                     <div className="flex items-start gap-1">
-                        <label className="text-sm font-semibold">Menu:</label>
-                        <Controller
-                            name="menu"
-                            control={control}
-                            render={({ field }) => (
-                                <Checkbox
-                                    checked={field.value}
-                                    onChange={field.onChange}
-                                />
-                            )}
-                        />
-                    </div>
-
-                    <div className="flex items-start gap-1">
-                        <label className="text-sm font-semibold">Konten:</label>
-                        <Controller
-                            name="konten"
-                            control={control}
-                            render={({ field }) => (
-                                <Checkbox
-                                    checked={field.value}
-                                    onChange={field.onChange}
-                                />
-                            )}
-                        />
-                    </div>
-
-                    <div className="flex items-start gap-1">
                         <label className="text-sm font-semibold">Widget:</label>
                         <Controller
                             name="widget"

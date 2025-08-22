@@ -25,14 +25,19 @@ export const POST_VALIDATION_SCHEMA = z.object({
     slug: z.string().optional(),
     excerpt: z.string().optional(),
     content: z.string().min(1, { message: 'Post content is required!' }),
-    // Memperbarui skema untuk featured_image
     featured_image: z.object({
         id: z.union([z.string(), z.number()]).optional(),
         name: z.string().optional(),
         img: z.string().optional(),
         file: z.instanceof(File).optional(),
-    }).nullable().optional(),
-    // Memperbarui skema untuk gallery_images
+    }).nullable().refine(
+        (value) => {
+            return value !== null && (value.id || value.file);
+        },
+        {
+            message: 'Featured image is required!',
+        }
+    ),
     gallery_images: z.array(z.object({
         id: z.union([z.string(), z.number()]).optional(),
         name: z.string().optional(),

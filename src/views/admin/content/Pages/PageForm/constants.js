@@ -22,9 +22,16 @@ export const PAGE_VALIDATION_SCHEMA = z.object({
     featured_image: z.object({
         id: z.union([z.string(), z.number()]).optional(),
         name: z.string().optional(),
-        img: z.string(),
+        img: z.string().optional(),
         file: z.instanceof(File).optional(),
-    }).nullable(),
+    }).nullable().refine(
+        (value) => {
+            return value !== null && (value.id || value.file);
+        },
+        {
+            message: 'Featured image is required!',
+        }
+    ),
     gallery_images: z.array(z.object({
         id: z.union([z.string(), z.number()]).optional(),
         name: z.string().optional(),

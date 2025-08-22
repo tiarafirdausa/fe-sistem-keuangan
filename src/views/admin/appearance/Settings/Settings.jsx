@@ -35,6 +35,7 @@ const Settings = () => {
         power: '',
         power_url: '',
         short_title: '',
+        email: '',
     });
 
     const [newLogoFile, setNewLogoFile] = useState(null);
@@ -59,6 +60,7 @@ const Settings = () => {
         power: Yup.string(),
         power_url: Yup.string().nullable(),
         short_title: Yup.string(),
+        email: Yup.string().email('Invalid email address!').nullable(),
     });
 
     const [formErrors, setFormErrors] = useState({});
@@ -70,8 +72,8 @@ const Settings = () => {
                 site_description: settings.general?.site_description || '',
                 maintenance_mode: settings.general?.maintenance_mode || false,
                 logo: settings.appearance?.logo 
-                ? `${appConfig.backendBaseUrl}${settings.appearance.logo}` 
-                : null,
+                    ? `${appConfig.backendBaseUrl}${settings.appearance.logo}` 
+                    : null,
                 meta_keywords: settings.seo?.meta_keywords || '',
                 meta_description: settings.seo?.meta_description || '',
                 mail_from_address: settings.email?.mail_from_address || '',
@@ -87,6 +89,7 @@ const Settings = () => {
                 power: settings.general?.power || '',
                 power_url: settings.general?.power_url || '',
                 short_title: settings.general?.short_title || '',
+                email: settings.general?.email || '',
             });
             setNewLogoFile(null);
             setFormErrors({});
@@ -227,8 +230,8 @@ const Settings = () => {
                 site_description: settings.general?.site_description || '',
                 maintenance_mode: settings.general?.maintenance_mode || false,
                 logo: settings.appearance?.logo 
-                ? `${appConfig.backendBaseUrl}${settings.appearance.logo}` 
-                : null,
+                    ? `${appConfig.backendBaseUrl}${settings.appearance.logo}` 
+                    : null,
                 meta_keywords: settings.seo?.meta_keywords || '',
                 meta_description: settings.seo?.meta_description || '',
                 mail_from_address: settings.email?.mail_from_address || '',
@@ -238,13 +241,13 @@ const Settings = () => {
                 smtp_username: settings.email?.smtp_username || '',
                 smtp_password: settings.email?.smtp_password || '',
                 clear_logo: false,
-                // Mengatur ulang ke nilai awal dari API
                 maps_url: settings.general?.maps_url || '',
                 address: settings.general?.address || '',
                 phone: settings.general?.phone || '',
                 power: settings.general?.power || '',
                 power_url: settings.general?.power_url || '',
                 short_title: settings.general?.short_title || '',
+                email: settings.general?.email || '',
             });
             setNewLogoFile(null);
             setFormErrors({});
