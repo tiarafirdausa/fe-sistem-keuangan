@@ -65,6 +65,16 @@ const contentManagementNavigationConfig = [
                 authority: ['admin', 'editor'],
                 subMenu: [],
             },
+             {
+                key: 'contentManagement.banners',
+                path: '/admin/banners',
+                title: 'Banners',
+                translateKey: 'nav.contentManagement.banners',
+                icon: 'banner', 
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: ['admin', 'editor'],
+                subMenu: [],
+            },
             {
                 key: 'contentManagement.media',
                 path: '', 

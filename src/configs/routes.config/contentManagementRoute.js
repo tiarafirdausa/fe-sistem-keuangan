@@ -268,6 +268,42 @@ const contentManagementRoute = [
             },
         },
     },
-]
+     {
+        key: 'contentManagement.banners',
+        path: `${ADMIN_PREFIX_PATH}/banners`,
+        component: lazy(() => import('@/views/admin/content/Banners/BannerList')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+        },
+    },
+    {
+        key: 'contentManagement.banners.new',
+        path: `${ADMIN_PREFIX_PATH}/banners/new`,
+        component: lazy(() => import('@/views/admin/content/Banners/BannerCreate')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Banner',
+            },
+        },
+    },
+    {
+        key: 'contentManagement.banners.edit',
+        path: `${ADMIN_PREFIX_PATH}/banners/edit/:id`,
+        component: lazy(() => import('@/views/admin/content/Banners/BannerEdit')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Banner',
+            },
+        },
+    },
+];
+
 
 export default contentManagementRoute

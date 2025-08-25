@@ -96,6 +96,13 @@ const endpointConfig = {
     updateTag: (id) => `/tags/${id}`,
     deleteTag: (id) => `/tags/${id}`,
 
+    // Banners
+    getAllBanners: '/banners',
+    getBannerById: (id) => `/banners/${id}`,
+    createBanner: '/banners',
+    updateBanner: (id) => `/banners/${id}`,
+    deleteBanner: (id) => `/banners/${id}`,
+
     // Modul
     getAllModuls: '/moduls',
     getModulById: (id) => `/moduls/${id}`,
