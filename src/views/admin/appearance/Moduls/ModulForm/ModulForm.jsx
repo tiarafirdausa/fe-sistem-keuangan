@@ -15,6 +15,7 @@ const validationSchema = z
         widget: z.boolean(),
         home: z.boolean(),
         aktif: z.boolean(),
+        order: z.number().int().min(0, { message: 'Urutan harus berupa angka positif atau 0.' }),
     })
     .refine(
         (data) => data.widget || data.home,
@@ -33,6 +34,7 @@ const ModulForm = (props) => {
             widget: false,
             home: false,
             aktif: true,
+            order: 0,
         },
         children,
     } = props;

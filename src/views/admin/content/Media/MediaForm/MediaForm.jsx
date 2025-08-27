@@ -1,5 +1,3 @@
-// src/views/admin/content/Media/MediaForm/MediaForm.jsx
-
 import { useEffect } from 'react'
 import { Form } from '@/components/ui/Form'
 import Container from '@/components/shared/Container'
@@ -70,16 +68,18 @@ const MediaForm = (props) => {
             }
         }
 
-        // eslint-disable-next-line no-unused-vars
-        values.media.forEach((file, index) => {
+        for (let i = 0; i < values.media.length; i++) {
+            const file = values.media[i]
             if (file.file instanceof File) {
-                formData.append('media', file.file)
-
-                if (file.croppedFile instanceof File) {
-                    formData.append('media_cropped', file.croppedFile)
-                }
+                formData.append('media', file.file, file.file.name)
             }
-        });
+            if (file.croppedFile instanceof File) {
+                formData.append('media_cropped', file.croppedFile, file.croppedFile.name)
+            } else if (file.videoThumbnail instanceof File) {
+                formData.append('media_cropped', file.videoThumbnail, file.videoThumbnail.name)
+            }
+        }
+        
         formData.append(
             'clear_media_files',
             getValues('clear_media_files') ? 'true' : 'false',

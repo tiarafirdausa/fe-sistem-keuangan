@@ -142,6 +142,10 @@ const ModulListTable = () => {
                 },
             },
             {
+                header: 'Urutan',
+                accessorKey: 'order',
+            },
+            {
                 header: 'Widget',
                 accessorKey: 'widget',
                 cell: (props) => <StatusIcon value={props.row.original.widget} />,

@@ -1,5 +1,3 @@
-// src/views/admin/content/Media/MediaForm/components/MediaImageSection.jsx
-
 import { useState } from 'react'
 import Card from '@/components/ui/Card'
 import Upload from '@/components/ui/Upload'
@@ -15,42 +13,102 @@ import { makeAspectCrop, centerCrop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 
 const getCroppedImg = (image, crop) => {
-  const canvas = document.createElement('canvas')
-  const scaleX = image.naturalWidth / image.width
-  const scaleY = image.naturalHeight / image.height
-  const ctx = canvas.getContext('2d')
+    const canvas = document.createElement('canvas')
+    const scaleX = image.naturalWidth / image.width
+    const scaleY = image.naturalHeight / image.height
+    const ctx = canvas.getContext('2d')
 
-  const pixelRatio = window.devicePixelRatio
-  canvas.width = crop.width * pixelRatio
-  canvas.height = crop.height * pixelRatio
-  ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-  ctx.imageSmoothingQuality = 'high'
+    const pixelRatio = window.devicePixelRatio
+    canvas.width = crop.width * pixelRatio
+    canvas.height = crop.height * pixelRatio
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+    ctx.imageSmoothingQuality = 'high'
 
-  ctx.drawImage(
-    image,
-    crop.x * scaleX,
-    crop.y * scaleY,
-    crop.width * scaleX,
-    crop.height * scaleY,
-    0,
-    0,
-    crop.width,
-    crop.height
-  )
-
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          reject(new Error('Canvas is empty'))
-          return
-        }
-        resolve(blob)
-      },
-      'image/jpeg',
-      1
+    ctx.drawImage(
+        image,
+        crop.x * scaleX,
+        crop.y * scaleY,
+        crop.width * scaleX,
+        crop.height * scaleY,
+        0,
+        0,
+        crop.width,
+        crop.height,
     )
-  })
+
+    return new Promise((resolve, reject) => {
+        canvas.toBlob(
+            (blob) => {
+                if (!blob) {
+                    reject(new Error('Canvas is empty'))
+                    return
+                }
+                resolve(blob)
+            },
+            'image/jpeg',
+            1,
+        )
+    })
+}
+
+const getVideoThumbnail = (file) => {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video')
+        video.preload = 'metadata'
+        video.crossOrigin = 'anonymous'
+
+        video.onloadedmetadata = () => {
+            video.currentTime = 0.1
+        }
+
+        video.onseeked = () => {
+            const canvas = document.createElement('canvas')
+            const targetWidth = 410
+            const targetHeight = 440
+
+            let sourceWidth = video.videoWidth
+            let sourceHeight = video.videoHeight
+            let ratio = Math.min(
+                targetWidth / sourceWidth,
+                targetHeight / sourceHeight,
+            )
+            let newWidth = sourceWidth * ratio
+            let newHeight = sourceHeight * ratio
+
+            canvas.width = targetWidth
+            canvas.height = targetHeight
+            const ctx = canvas.getContext('2d')
+            ctx.fillStyle = '#000000'
+            ctx.fillRect(0, 0, targetWidth, targetHeight)
+            ctx.drawImage(
+                video,
+                (targetWidth - newWidth) / 2,
+                (targetHeight - newHeight) / 2,
+                newWidth,
+                newHeight,
+            )
+
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    reject(new Error('Canvas is empty'))
+                    return
+                }
+                const thumbnailFile = new File(
+                    [blob],
+                    `${file.name.split('.')[0]}.jpeg`,
+                    { type: 'image/jpeg' },
+                )
+                URL.revokeObjectURL(video.src)
+                resolve(thumbnailFile)
+            }, 'image/jpeg')
+        }
+
+        video.onerror = (e) => {
+            URL.revokeObjectURL(video.src)
+            reject(new Error('Failed to load video metadata: ' + e))
+        }
+        video.src = URL.createObjectURL(file)
+    })
 }
 
 const FileList = (props) => {
@@ -95,14 +153,17 @@ const FileList = (props) => {
                 >
                     {file.isVideo ? (
                         <video
-                            muted
+                            controls
                             className="rounded-lg max-h-[140px] mx-auto max-w-full dark:bg-transparent"
-                            src={file.img || file.url}
-                        />
+                            src={file.url}
+                            poster={file.img}
+                        >
+                            Browser Anda tidak mendukung tag video.
+                        </video>
                     ) : (
                         <img
                             className="rounded-lg max-h-[140px] mx-auto max-w-full dark:bg-transparent"
-                            src={file.img}
+                            src={file.url}
                             alt={file.name}
                         />
                     )}
@@ -132,13 +193,13 @@ const FileList = (props) => {
                     <video
                         controls
                         className="w-full"
-                        src={selectedFile.img || selectedFile.url}
+                        src={selectedFile.url}
                         alt={selectedFile.name}
                     />
                 ) : (
                     <img
                         className="w-full"
-                        src={selectedFile.img}
+                        src={selectedFile.url}
                         alt={selectedFile.name}
                     />
                 )}
@@ -159,7 +220,6 @@ const FileList = (props) => {
 }
 
 const MediaImageSection = ({ control, errors, setValue, getValues }) => {
-
     const beforeUpload = (file) => {
         let valid = true
         const allowedFileType = [
@@ -184,15 +244,23 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
         return valid
     }
 
-    const handleMediaUpload = async (onChange, originalMediaList = [], files) => {
+    const handleMediaUpload = async (
+        onChange,
+        originalMediaList = [],
+        files,
+    ) => {
         const newMediaList = []
-        
+
         for (const file of files) {
             const isVideo = file.type.startsWith('video/')
             const isImage = file.type.startsWith('image/')
-            const currentTotalMedia = originalMediaList.length + newMediaList.length
+            const currentTotalMedia =
+                originalMediaList.length + newMediaList.length
 
             if (currentTotalMedia < 10) {
+                let thumbnailFile = null
+                let croppedFile = null
+
                 if (isImage && currentTotalMedia === 0) {
                     try {
                         const img = await new Promise((resolve, reject) => {
@@ -215,48 +283,50 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                 },
                                 410 / 440,
                                 img.width,
-                                img.height
+                                img.height,
                             ),
                             img.width,
-                            img.height
+                            img.height,
                         )
 
                         const croppedImageBlob = await getCroppedImg(img, crop)
-                        
-                        const croppedFile = new File([croppedImageBlob], file.name, {
-                            type: 'image/jpeg',
-                        })
 
-                        newMediaList.push({
-                            id: `media-${Date.now()}-${Math.random()}`,
-                            name: file.name,
-                            img: URL.createObjectURL(file),
-                            url: URL.createObjectURL(file),
-                            file: file,
-                            croppedFile: croppedFile,
-                            isVideo: false,
-                        })
+                        croppedFile = new File(
+                            [croppedImageBlob],
+                            `cropped-${file.name}`,
+                            {
+                                type: 'image/jpeg',
+                            },
+                        )
+                        thumbnailFile = croppedFile
                     } catch (error) {
-                        console.error("Error cropping image:", error)
-                        newMediaList.push({
-                            id: `media-${Date.now()}-${Math.random()}`,
-                            name: file.name,
-                            img: URL.createObjectURL(file),
-                            url: URL.createObjectURL(file),
-                            file: file,
-                            isVideo: isVideo,
-                        })
+                        console.error('Error cropping image:', error)
+                        thumbnailFile = file 
+                    }
+                } else if (isVideo) {
+                    try {
+                        thumbnailFile = await getVideoThumbnail(file)
+                    } catch (error) {
+                        console.error(
+                            'Error generating video thumbnail:',
+                            error,
+                        )
+                        thumbnailFile = file
                     }
                 } else {
-                    newMediaList.push({
-                        id: `media-${Date.now()}-${Math.random()}`,
-                        name: file.name,
-                        img: URL.createObjectURL(file),
-                        url: URL.createObjectURL(file),
-                        file: file,
-                        isVideo: isVideo,
-                    })
+                    thumbnailFile = file
                 }
+
+                newMediaList.push({
+                    id: `media-${Date.now()}-${Math.random()}`,
+                    name: file.name,
+                    img: URL.createObjectURL(thumbnailFile),
+                    url: URL.createObjectURL(file),
+                    file: file,
+                    croppedFile: isImage ? croppedFile : null,
+                    videoThumbnail: isVideo ? thumbnailFile : null,
+                    isVideo: isVideo,
+                })
             }
         }
         onChange([...originalMediaList, ...newMediaList])
