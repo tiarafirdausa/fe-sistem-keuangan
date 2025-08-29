@@ -13,6 +13,7 @@ import {
     apiGetAllMediaCollections,
     apiGetAllMediaCategories,
 } from '@/services/MediaService'
+import { apiGetAllLinks } from '@/services/LinkService'
 
 const menuItemTypeOptions = [
     { label: 'Custom URL', value: 'custom' },
@@ -21,6 +22,7 @@ const menuItemTypeOptions = [
     { label: 'Post', value: 'post' },
     { label: 'Media', value: 'media' },
     { label: 'Media Category', value: 'media_category' },
+    { label: 'Link', value: 'link' },
 ]
 
 const menuItemTargetOptions = [
@@ -34,6 +36,7 @@ const referenceIdFetchers = {
     post: apiGetAllPosts,
     media_category: apiGetAllMediaCategories,
     media: apiGetAllMediaCollections,
+    link: apiGetAllLinks,
 }
 
 const MenuItemGeneralSection = ({ control, errors, watchedType, menuId }) => {
@@ -80,7 +83,7 @@ const MenuItemGeneralSection = ({ control, errors, watchedType, menuId }) => {
 
     const { data: referenceOptionsData, isLoading: referenceOptionsLoading } =
         useSWR(
-            ['post', 'media'].includes(watchedType)
+            ['post', 'media', 'link'].includes(watchedType)
                 ? null
                 : watchedType !== 'custom'
                   ? ['/reference-data', watchedType]
@@ -205,7 +208,11 @@ const MenuItemGeneralSection = ({ control, errors, watchedType, menuId }) => {
                 </FormItem>
 
                 {/* Reference ID (conditionally rendered) */}
-                {['category', 'page', 'media_category'].includes(
+                {[
+                    'category',
+                    'page',
+                    'media_category',
+                ].includes(
                     watchedType,
                 ) && (
                     <FormItem
