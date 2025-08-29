@@ -11,6 +11,7 @@ const folderOptions = [
     { label: 'Post Terbaru', value: 'recent-post' },
     { label: 'Media', value: 'media' },
     { label: 'Profil', value: 'profile' },
+    { label: 'Link', value: 'link' },
 ]
 
 const ModulGeneralSection = ({ control, errors }) => {

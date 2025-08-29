@@ -303,7 +303,41 @@ const contentManagementRoute = [
             },
         },
     },
+    {
+        key: 'contentManagement.links',
+        path: `${ADMIN_PREFIX_PATH}/links`,
+        component: lazy(() => import('@/views/admin/content/Links/LinkList/LinkList')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+        },
+    },
+    {
+        key: 'contentManagement.links.new',
+        path: `${ADMIN_PREFIX_PATH}/links/new`,
+        component: lazy(() => import('@/views/admin/content/Links/LinkCreate')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Create New Link',
+            },
+        },
+    },
+    {
+        key: 'contentManagement.links.edit',
+        path: `${ADMIN_PREFIX_PATH}/links/edit/:id`,
+        component: lazy(() => import('@/views/admin/content/Links/LinkEdit')),
+        authority: [ADMIN],
+        meta: {
+            pageContainerType: 'contained',
+            header: {
+                contained: true,
+                title: 'Edit Link',
+            },
+        },
+    },
 ];
 
-
-export default contentManagementRoute
+export default contentManagementRoute;

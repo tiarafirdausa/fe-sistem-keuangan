@@ -110,13 +110,20 @@ const endpointConfig = {
     updateModul: (id) => `/moduls/${id}`,
     deleteModul: (id) => `/moduls/${id}`,
 
+     // Links
+    getAllLinks: '/links',
+    getLinkById: (id) => `/links/${id}`,
+    createLink: '/links',
+    updateLink: (id) => `/links/${id}`,
+    deleteLink: (id) => `/links/${id}`,
+
     uploadTinyMCEImage: '/upload/tinymce-image',
     uploadTinyMCEVideo: '/upload/tinymce-video',
 
     // Dashboard
-    getDashboardSummary: '/dashboard/summary', // Endpoint untuk ringkasan
-    getRecentPosts: '/posts?limit=5&sort=desc', // Contoh: untuk postingan terbaru
-    getRecentComments: '/comments?limit=5&sort=desc', // Contoh: untuk komentar terbaru
+    getDashboardSummary: '/dashboard/summary',
+    getRecentPosts: '/posts?limit=5&sort=desc', 
+    getRecentComments: '/comments?limit=5&sort=desc', 
     getAnalyticsData: '/dashboard/analytics', 
 
 };
