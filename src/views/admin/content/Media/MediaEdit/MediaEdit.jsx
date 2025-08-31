@@ -49,7 +49,8 @@ const MediaEdit = () => {
             const featuredImage = mediaData.featured_image 
                 ? {
                       id: mediaData.id,
-                      url: `${appConfig.backendBaseUrl}${mediaData.featured_image}`,
+                      url: `${appConfig.backendBaseUrl}${mediaData.original_featured_image || mediaData.featured_image}`,
+                      originalUrl: mediaData.original_featured_image ? `${appConfig.backendBaseUrl}${mediaData.original_featured_image}` : null,
                       name: mediaData.featured_image.split('/').pop(), 
                   }
                 : null;

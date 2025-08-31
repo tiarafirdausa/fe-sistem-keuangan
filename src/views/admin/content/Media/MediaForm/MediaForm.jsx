@@ -49,56 +49,61 @@ const MediaForm = (props) => {
     }, [defaultValues]);
 
     const onSubmit = (values) => {
-        const formData = new FormData();
+    const formData = new FormData();
 
-        for (const key in values) {
-            if (
-                key === 'media' ||
-                key === 'featured_image' ||
-                key === 'delete_media_file_ids' ||
-                key === 'clear_media_files' ||
-                key === 'clear_featured_image'
-            ) {
-                continue;
-            }
-
-            if (values[key] !== undefined && values[key] !== null) {
-                if (values[key] instanceof Date) {
-                    formData.append(key, values[key].toISOString());
-                } else if (typeof values[key] === 'boolean') {
-                    formData.append(key, values[key] ? 'true' : 'false');
-                } else {
-                    formData.append(key, values[key]);
-                }
-            }
-        }
-        
-        // Append featured image file if it's a new file
-        if (values.featured_image && values.featured_image.file instanceof File) {
-            formData.append('featured_image', values.featured_image.file, values.featured_image.file.name);
+    for (const key in values) {
+        if (
+            key === 'media' ||
+            key === 'featured_image' ||
+            key === 'delete_media_file_ids' ||
+            key === 'clear_media_files' ||
+            key === 'clear_featured_image'
+        ) {
+            continue;
         }
 
-        // Append 'clear_featured_image' field
-        if (getValues('clear_featured_image')) {
-            formData.append('clear_featured_image', 'true');
-        } else {
-            formData.append('clear_featured_image', 'false');
-        }
-
-        for (let i = 0; i < values.media.length; i++) {
-            const file = values.media[i]
-            if (file.file instanceof File) {
-                formData.append('media', file.file, file.file.name)
+        if (values[key] !== undefined && values[key] !== null) {
+            if (values[key] instanceof Date) {
+                formData.append(key, values[key].toISOString());
+            } else if (typeof values[key] === 'boolean') {
+                formData.append(key, values[key] ? 'true' : 'false');
+            } else {
+                formData.append(key, values[key]);
             }
         }
-        
-        formData.append('clear_media_files', getValues('clear_media_files') ? 'true' : 'false');
-        if (getValues('delete_media_file_ids')?.length > 0) {
-            formData.append('delete_media_file_ids', JSON.stringify(getValues('delete_media_file_ids')));
-        }
+    }
+    
+    // Append cropped featured image file
+    if (values.featured_image && values.featured_image.file instanceof File) {
+        formData.append('featured_image', values.featured_image.file, values.featured_image.file.name);
+    }
+    
+    // Append the original featured image file if it exists 👈 NEW
+    if (values.featured_image && values.featured_image.originalFile instanceof File) {
+        formData.append('original_featured_image', values.featured_image.originalFile, values.featured_image.originalFile.name);
+    }
+    
+    // Append 'clear_featured_image' field
+    if (getValues('clear_featured_image')) {
+        formData.append('clear_featured_image', 'true');
+    } else {
+        formData.append('clear_featured_image', 'false');
+    }
 
-        onFormSubmit?.(formData);
-    };
+    for (let i = 0; i < values.media.length; i++) {
+        const file = values.media[i]
+        if (file.file instanceof File) {
+            formData.append('media', file.file, file.file.name)
+        }
+    }
+    
+    formData.append('clear_media_files', getValues('clear_media_files') ? 'true' : 'false');
+    if (getValues('delete_media_file_ids')?.length > 0) {
+        formData.append('delete_media_file_ids', JSON.stringify(getValues('delete_media_file_ids')));
+    }
+
+    onFormSubmit?.(formData);
+};
 
     return (
         <Form

@@ -163,7 +163,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
     // Function to handle featured image upload
     const handleFeaturedImageUpload = async (files, onChange) => {
         if (!files || files.length === 0) return
-        const file = files[0]
+        const file = files[0] // This is the original file
         const imageSrc = URL.createObjectURL(file)
 
         // Set target dimensions for the featured image
@@ -205,15 +205,16 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
             }
 
             const croppedImageBlob = await getCroppedImg(imageSrc, pixelCrop)
-            const croppedFile = new File([croppedImageBlob], file.name, {
+            const croppedFile = new File([croppedImageBlob], `cropped-${file.name}`, {
                 type: croppedImageBlob.type,
             })
 
             const newImage = {
                 id: `featured-${Date.now()}`,
                 name: file.name,
-                url: URL.createObjectURL(croppedFile),
-                file: croppedFile,
+                url: URL.createObjectURL(file),
+                file: croppedFile, 
+                originalFile: file,
             }
             onChange(newImage)
         } catch (error) {
