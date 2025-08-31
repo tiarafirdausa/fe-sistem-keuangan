@@ -1,3 +1,4 @@
+//src\utils\cropImage.js
 const createImage = (url) =>
     new Promise((resolve, reject) => {
         const image = new Image()
@@ -7,7 +8,6 @@ const createImage = (url) =>
         image.src = url
     })
 
-// Mengubah fungsi ini agar menerima pixelCrop sebagai parameter kedua
 const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc)
     const canvas = document.createElement('canvas')
@@ -19,7 +19,7 @@ const getCroppedImg = async (imageSrc, pixelCrop) => {
     const dX = pixelCrop.x * scaleX
     const dY = pixelCrop.y * scaleY
     const dWidth = pixelCrop.width * scaleX
-    const dHeight = pixelCrop.height * scaleY // Mengatur ukuran canvas agar sesuai dengan hasil crop yang diinginkan
+    const dHeight = pixelCrop.height * scaleY 
 
     canvas.width = dWidth
     canvas.height = dHeight

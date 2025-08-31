@@ -1,4 +1,3 @@
-// src/views/pages/PageForm/components/MediaImageSection.jsx
 import { useState } from 'react'
 import Card from '@/components/ui/Card'
 import Upload from '@/components/ui/Upload'
@@ -10,9 +9,10 @@ import { Controller } from 'react-hook-form'
 import { HiEye, HiTrash, HiOutlinePlus } from 'react-icons/hi'
 import cloneDeep from 'lodash/cloneDeep'
 import { PiImagesThin } from 'react-icons/pi'
+import getCroppedImg from '@/utils/cropImage' // Make sure to import this
 
 const FileList = (props) => {
-    const { fileList, onFileDelete, fieldName } = props // Added fieldName
+    const { fileList, onFileDelete, fieldName } = props
     const [selectedFile, setSelectedFile] = useState({})
     const [viewOpen, setViewOpen] = useState(false)
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false)
@@ -119,7 +119,6 @@ const FileList = (props) => {
 }
 
 const MediaImageSection = ({ control, errors, setValue, getValues }) => {
-    // Validation function for all media files
     const beforeUpload = (file) => {
         let valid = true
         const allowedFileType = [
@@ -144,7 +143,6 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
         return valid
     }
 
-    // Validation function for featured image only
     const beforeFeaturedImageUpload = (file) => {
         let valid = true
         const allowedFileType = ['image/jpeg', 'image/png']
@@ -163,16 +161,65 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
     }
 
     // Function to handle featured image upload
-    const handleFeaturedImageUpload = (files, onChange) => {
+    const handleFeaturedImageUpload = async (files, onChange) => {
         if (!files || files.length === 0) return
         const file = files[0]
-        const newImage = {
-            id: `featured-${Date.now()}`,
-            name: file.name,
-            url: URL.createObjectURL(file),
-            file: file,
+        const imageSrc = URL.createObjectURL(file)
+
+        // Set target dimensions for the featured image
+        const targetWidth = 410
+        const targetHeight = 440
+
+        try {
+            const image = await new Promise((resolve, reject) => {
+                const img = new Image()
+                img.onload = () => resolve(img)
+                img.onerror = reject
+                img.src = imageSrc
+            })
+
+            const originalWidth = image.naturalWidth
+            const originalHeight = image.naturalHeight
+
+            const aspectRatio = targetWidth / targetHeight
+            let newWidth = originalWidth
+            let newHeight = originalHeight
+            let startX = 0
+            let startY = 0
+
+            if (originalWidth / originalHeight > aspectRatio) {
+                // Image is wider than the target aspect ratio
+                newWidth = originalHeight * aspectRatio
+                startX = (originalWidth - newWidth) / 2
+            } else {
+                // Image is taller than the target aspect ratio
+                newHeight = originalWidth / aspectRatio
+                startY = (originalHeight - newHeight) / 2
+            }
+
+            const pixelCrop = {
+                x: startX,
+                y: startY,
+                width: newWidth,
+                height: newHeight,
+            }
+
+            const croppedImageBlob = await getCroppedImg(imageSrc, pixelCrop)
+            const croppedFile = new File([croppedImageBlob], file.name, {
+                type: croppedImageBlob.type,
+            })
+
+            const newImage = {
+                id: `featured-${Date.now()}`,
+                name: file.name,
+                url: URL.createObjectURL(croppedFile),
+                file: croppedFile,
+            }
+            onChange(newImage)
+        } catch (error) {
+            console.error('Failed to crop the featured image:', error)
+            URL.revokeObjectURL(imageSrc)
         }
-        onChange(newImage)
     }
 
     // Function to handle featured image deletion
@@ -183,7 +230,6 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
         onChange(null)
     }
 
-    // Function to handle gallery media upload
     const handleMediaUpload = async (
         onChange,
         originalMediaList = [],
@@ -208,7 +254,6 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
         onChange([...originalMediaList, ...newMediaList])
     }
 
-    // Function to handle gallery media deletion
     const handleMediaDelete = (
         onChange,
         originalMediaList = [],
@@ -237,7 +282,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
             <div className="mb-6">
                 <h5 className="mb-2">Featured Image</h5>
                 <p className="mb-4 text-xs">
-                    This will be the main image for your page. (Formats: .jpg, .jpeg, .png, max 500kb)
+                    This will be the main image for your page. (Formats: .jpg, .jpeg, .png, max 500kb, will be automatically cropped to 410x440)
                 </p>
                 <FormItem invalid={Boolean(errors.featured_image)} errorMessage={errors.featured_image?.message}>
                     <Controller

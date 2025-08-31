@@ -15,7 +15,7 @@ export const MEDIA_DEFAULT_VALUES = {
 export const MEDIA_VALIDATION_SCHEMA = z.object({
     title: z.string().min(1, { message: 'Media title is required!' }),
     caption: z.string().min(1, { message: 'Media caption is required!' }),
-    category_id: z.number().min(1, { message: 'Media category is required!' }).nullable(false),
+    category_id: z.coerce.number().min(1, { message: 'Media category is required!' }),
     media: z.array(z.any()).min(1, { message: 'At least one media file is required!' }),
     featured_image: z.any().nullable().refine(value => value !== null, {
         message: 'Featured image is required!',
