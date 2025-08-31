@@ -1,5 +1,4 @@
 // src/views/admin/content/Media/MediaEdit/MediaEdit.jsx
-
 import { useState, useMemo } from 'react';
 import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
@@ -47,6 +46,14 @@ const MediaEdit = () => {
 
     const defaultFormValues = useMemo(() => {
         if (mediaData) {
+            const featuredImage = mediaData.featured_image 
+                ? {
+                      id: mediaData.id,
+                      url: `${appConfig.backendBaseUrl}${mediaData.featured_image}`,
+                      name: mediaData.featured_image.split('/').pop(), 
+                  }
+                : null;
+
             const values = {
                 title: mediaData.title || '',
                 caption: mediaData.caption || '', 
@@ -64,6 +71,9 @@ const MediaEdit = () => {
                     }
                 }) || [],
                 category_id: mediaData.category_id || null,
+                featured_image: featuredImage,
+                meta_title: mediaData.meta_title || '',
+                meta_description: mediaData.meta_description || '',
                 uploaded_by: mediaData.uploaded_by || user?.id || null,
                 clear_media_files: false,
                 delete_media_file_ids: [],

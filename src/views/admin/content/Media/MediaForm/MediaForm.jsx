@@ -1,3 +1,4 @@
+// src/components/media/MediaForm/index.js
 import { useEffect } from 'react'
 import { Form } from '@/components/ui/Form'
 import Container from '@/components/shared/Container'
@@ -38,6 +39,8 @@ const MediaForm = (props) => {
             reset({
                 ...MEDIA_DEFAULT_VALUES,
                 media: [],
+                featured_image: null,
+                clear_featured_image: false,
                 clear_media_files: false,
                 delete_media_file_ids: [],
             });
@@ -51,8 +54,10 @@ const MediaForm = (props) => {
         for (const key in values) {
             if (
                 key === 'media' ||
+                key === 'featured_image' ||
                 key === 'delete_media_file_ids' ||
-                key === 'clear_media_files'
+                key === 'clear_media_files' ||
+                key === 'clear_featured_image'
             ) {
                 continue;
             }
@@ -67,29 +72,29 @@ const MediaForm = (props) => {
                 }
             }
         }
+        
+        // Append featured image file if it's a new file
+        if (values.featured_image && values.featured_image.file instanceof File) {
+            formData.append('featured_image', values.featured_image.file, values.featured_image.file.name);
+        }
+
+        // Append 'clear_featured_image' field
+        if (getValues('clear_featured_image')) {
+            formData.append('clear_featured_image', 'true');
+        } else {
+            formData.append('clear_featured_image', 'false');
+        }
 
         for (let i = 0; i < values.media.length; i++) {
             const file = values.media[i]
             if (file.file instanceof File) {
                 formData.append('media', file.file, file.file.name)
             }
-            if (file.croppedFile instanceof File) {
-                formData.append('media_cropped', file.croppedFile, file.croppedFile.name)
-            } else if (file.videoThumbnail instanceof File) {
-                formData.append('media_cropped', file.videoThumbnail, file.videoThumbnail.name)
-            }
         }
         
-        formData.append(
-            'clear_media_files',
-            getValues('clear_media_files') ? 'true' : 'false',
-        );
-
+        formData.append('clear_media_files', getValues('clear_media_files') ? 'true' : 'false');
         if (getValues('delete_media_file_ids')?.length > 0) {
-            formData.append(
-                'delete_media_file_ids',
-                JSON.stringify(getValues('delete_media_file_ids')),
-            );
+            formData.append('delete_media_file_ids', JSON.stringify(getValues('delete_media_file_ids')));
         }
 
         onFormSubmit?.(formData);

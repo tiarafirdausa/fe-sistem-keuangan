@@ -1,3 +1,4 @@
+// src/views/pages/PageForm/components/MediaImageSection.jsx
 import { useState } from 'react'
 import Card from '@/components/ui/Card'
 import Upload from '@/components/ui/Upload'
@@ -9,110 +10,9 @@ import { Controller } from 'react-hook-form'
 import { HiEye, HiTrash, HiOutlinePlus } from 'react-icons/hi'
 import cloneDeep from 'lodash/cloneDeep'
 import { PiImagesThin } from 'react-icons/pi'
-import { makeAspectCrop, centerCrop } from 'react-image-crop'
-import 'react-image-crop/dist/ReactCrop.css'
-
-const getCroppedImg = (image, crop) => {
-    const canvas = document.createElement('canvas')
-    const scaleX = image.naturalWidth / image.width
-    const scaleY = image.naturalHeight / image.height
-    const ctx = canvas.getContext('2d')
-
-    const pixelRatio = window.devicePixelRatio
-    canvas.width = crop.width * pixelRatio
-    canvas.height = crop.height * pixelRatio
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-    ctx.imageSmoothingQuality = 'high'
-
-    ctx.drawImage(
-        image,
-        crop.x * scaleX,
-        crop.y * scaleY,
-        crop.width * scaleX,
-        crop.height * scaleY,
-        0,
-        0,
-        crop.width,
-        crop.height,
-    )
-
-    return new Promise((resolve, reject) => {
-        canvas.toBlob(
-            (blob) => {
-                if (!blob) {
-                    reject(new Error('Canvas is empty'))
-                    return
-                }
-                resolve(blob)
-            },
-            'image/jpeg',
-            1,
-        )
-    })
-}
-
-const getVideoThumbnail = (file) => {
-    return new Promise((resolve, reject) => {
-        const video = document.createElement('video')
-        video.preload = 'metadata'
-        video.crossOrigin = 'anonymous'
-
-        video.onloadedmetadata = () => {
-            video.currentTime = 0.1
-        }
-
-        video.onseeked = () => {
-            const canvas = document.createElement('canvas')
-            const targetWidth = 410
-            const targetHeight = 440
-
-            let sourceWidth = video.videoWidth
-            let sourceHeight = video.videoHeight
-            let ratio = Math.min(
-                targetWidth / sourceWidth,
-                targetHeight / sourceHeight,
-            )
-            let newWidth = sourceWidth * ratio
-            let newHeight = sourceHeight * ratio
-
-            canvas.width = targetWidth
-            canvas.height = targetHeight
-            const ctx = canvas.getContext('2d')
-            ctx.fillStyle = '#000000'
-            ctx.fillRect(0, 0, targetWidth, targetHeight)
-            ctx.drawImage(
-                video,
-                (targetWidth - newWidth) / 2,
-                (targetHeight - newHeight) / 2,
-                newWidth,
-                newHeight,
-            )
-
-            canvas.toBlob((blob) => {
-                if (!blob) {
-                    reject(new Error('Canvas is empty'))
-                    return
-                }
-                const thumbnailFile = new File(
-                    [blob],
-                    `${file.name.split('.')[0]}.jpeg`,
-                    { type: 'image/jpeg' },
-                )
-                URL.revokeObjectURL(video.src)
-                resolve(thumbnailFile)
-            }, 'image/jpeg')
-        }
-
-        video.onerror = (e) => {
-            URL.revokeObjectURL(video.src)
-            reject(new Error('Failed to load video metadata: ' + e))
-        }
-        video.src = URL.createObjectURL(file)
-    })
-}
 
 const FileList = (props) => {
-    const { fileList, onFileDelete } = props
+    const { fileList, onFileDelete, fieldName } = props // Added fieldName
     const [selectedFile, setSelectedFile] = useState({})
     const [viewOpen, setViewOpen] = useState(false)
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false)
@@ -156,7 +56,6 @@ const FileList = (props) => {
                             controls
                             className="rounded-lg max-h-[140px] mx-auto max-w-full dark:bg-transparent"
                             src={file.url}
-                            poster={file.img}
                         >
                             Browser Anda tidak mendukung tag video.
                         </video>
@@ -207,19 +106,20 @@ const FileList = (props) => {
             <ConfirmDialog
                 isOpen={deleteConfirmationOpen}
                 type="danger"
-                title={`Remove Media`}
+                title={`Remove ${fieldName === 'featured_image' ? 'Featured Image' : 'Media File'}`}
                 onClose={onDeleteConfirmationClose}
                 onRequestClose={onDeleteConfirmationClose}
                 onCancel={onDeleteConfirmationClose}
                 onConfirm={onDelete}
             >
-                <p>Are you sure you want to remove this media file?</p>
+                <p>Are you sure you want to remove this {fieldName === 'featured_image' ? 'featured image' : 'media file'}?</p>
             </ConfirmDialog>
         </>
     )
 }
 
 const MediaImageSection = ({ control, errors, setValue, getValues }) => {
+    // Validation function for all media files
     const beforeUpload = (file) => {
         let valid = true
         const allowedFileType = [
@@ -230,7 +130,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
             'video/quicktime',
             'video/webm',
         ]
-        const maxFileSize = 5000000
+        const maxFileSize = 5000000 // 5MB
         if (file) {
             for (const f of file) {
                 if (!allowedFileType.includes(f.type)) {
@@ -244,87 +144,63 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
         return valid
     }
 
+    // Validation function for featured image only
+    const beforeFeaturedImageUpload = (file) => {
+        let valid = true
+        const allowedFileType = ['image/jpeg', 'image/png']
+        const maxFileSize = 500000 // 500kb
+        if (file) {
+            for (const f of file) {
+                if (!allowedFileType.includes(f.type)) {
+                    return 'Please upload a .jpeg or .png file!'
+                }
+                if (f.size >= maxFileSize) {
+                    return 'Upload image cannot be more than 500kb!'
+                }
+            }
+        }
+        return valid
+    }
+
+    // Function to handle featured image upload
+    const handleFeaturedImageUpload = (files, onChange) => {
+        if (!files || files.length === 0) return
+        const file = files[0]
+        const newImage = {
+            id: `featured-${Date.now()}`,
+            name: file.name,
+            url: URL.createObjectURL(file),
+            file: file,
+        }
+        onChange(newImage)
+    }
+
+    // Function to handle featured image deletion
+    const handleFeaturedImageDelete = (onChange, deletedFile) => {
+        if (deletedFile && deletedFile.url) {
+            URL.revokeObjectURL(deletedFile.url)
+        }
+        onChange(null)
+    }
+
+    // Function to handle gallery media upload
     const handleMediaUpload = async (
         onChange,
         originalMediaList = [],
         files,
     ) => {
         const newMediaList = []
-
         for (const file of files) {
             const isVideo = file.type.startsWith('video/')
-            const isImage = file.type.startsWith('image/')
             const currentTotalMedia =
                 originalMediaList.length + newMediaList.length
 
             if (currentTotalMedia < 10) {
-                let thumbnailFile = null
-                let croppedFile = null
-
-                if (isImage && currentTotalMedia === 0) {
-                    try {
-                        const img = await new Promise((resolve, reject) => {
-                            const reader = new FileReader()
-                            reader.onload = (e) => {
-                                const image = new Image()
-                                image.src = e.target.result
-                                image.onload = () => resolve(image)
-                                image.onerror = reject
-                            }
-                            reader.readAsDataURL(file)
-                        })
-
-                        const crop = centerCrop(
-                            makeAspectCrop(
-                                {
-                                    unit: 'px',
-                                    width: 410,
-                                    height: 440,
-                                },
-                                410 / 440,
-                                img.width,
-                                img.height,
-                            ),
-                            img.width,
-                            img.height,
-                        )
-
-                        const croppedImageBlob = await getCroppedImg(img, crop)
-
-                        croppedFile = new File(
-                            [croppedImageBlob],
-                            `cropped-${file.name}`,
-                            {
-                                type: 'image/jpeg',
-                            },
-                        )
-                        thumbnailFile = croppedFile
-                    } catch (error) {
-                        console.error('Error cropping image:', error)
-                        thumbnailFile = file 
-                    }
-                } else if (isVideo) {
-                    try {
-                        thumbnailFile = await getVideoThumbnail(file)
-                    } catch (error) {
-                        console.error(
-                            'Error generating video thumbnail:',
-                            error,
-                        )
-                        thumbnailFile = file
-                    }
-                } else {
-                    thumbnailFile = file
-                }
-
                 newMediaList.push({
                     id: `media-${Date.now()}-${Math.random()}`,
                     name: file.name,
-                    img: URL.createObjectURL(thumbnailFile),
                     url: URL.createObjectURL(file),
                     file: file,
-                    croppedFile: isImage ? croppedFile : null,
-                    videoThumbnail: isVideo ? thumbnailFile : null,
                     isVideo: isVideo,
                 })
             }
@@ -332,12 +208,16 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
         onChange([...originalMediaList, ...newMediaList])
     }
 
+    // Function to handle gallery media deletion
     const handleMediaDelete = (
         onChange,
         originalMediaList = [],
         deletedMedia,
     ) => {
         let mediaList = cloneDeep(originalMediaList)
+        if (deletedMedia.url) {
+            URL.revokeObjectURL(deletedMedia.url)
+        }
         if (deletedMedia.id && typeof deletedMedia.id === 'number') {
             const currentDeletedIds = getValues('delete_media_file_ids') || []
             setValue('delete_media_file_ids', [
@@ -352,16 +232,63 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
     return (
         <Card>
             <h4 className="mb-6">Media Files</h4>
-            <div>
+
+            {/* Featured Image Section */}
+            <div className="mb-6">
+                <h5 className="mb-2">Featured Image</h5>
                 <p className="mb-4 text-xs">
-                    Add media files (images, videos, audio) for this entry.
-                    (Formats: .jpg, .jpeg, .png, .mp4, .mov, .webm, .mp3, max
-                    5MB per file)
+                    This will be the main image for your page. (Formats: .jpg, .jpeg, .png, max 500kb)
                 </p>
-                <FormItem
-                    invalid={Boolean(errors.media)}
-                    errorMessage={errors.media?.message}
-                >
+                <FormItem invalid={Boolean(errors.featured_image)} errorMessage={errors.featured_image?.message}>
+                    <Controller
+                        name="featured_image"
+                        control={control}
+                        render={({ field }) => (
+                            <>
+                                {field.value && field.value.url ? (
+                                    <div className="grid grid-cols-1 gap-2">
+                                        <FileList
+                                            fileList={[field.value]}
+                                            fieldName="featured_image"
+                                            onFileDelete={(file) => handleFeaturedImageDelete(field.onChange, file)}
+                                        />
+                                    </div>
+                                ) : (
+                                    <Upload
+                                        draggable
+                                        className="min-h-fit"
+                                        beforeUpload={beforeFeaturedImageUpload}
+                                        showList={false}
+                                        onChange={(files) => handleFeaturedImageUpload(files, field.onChange)}
+                                    >
+                                        <div className="max-w-full flex flex-col px-4 py-8 justify-center items-center">
+                                            <div className="text-[60px]">
+                                                <PiImagesThin />
+                                            </div>
+                                            <p className="flex flex-col items-center mt-2">
+                                                <span className="text-gray-800 dark:text-white">
+                                                    Drop your featured image here, or{' '}
+                                                </span>
+                                                <span className="text-primary">
+                                                    Click to browse
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </Upload>
+                                )}
+                            </>
+                        )}
+                    />
+                </FormItem>
+            </div>
+
+            {/* General Media Files Section */}
+            <div>
+                <h5 className="mb-2">Gallery Media</h5>
+                <p className="mb-4 text-xs">
+                    Add additional media files for your page. (Formats: .jpg, .jpeg, .png, .mp4, .mov, .webm, .mp3, max 5MB per file)
+                </p>
+                <FormItem invalid={Boolean(errors.media)} errorMessage={errors.media?.message}>
                     <Controller
                         name="media"
                         control={control}
@@ -372,11 +299,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                         <FileList
                                             fileList={field.value}
                                             onFileDelete={(file) =>
-                                                handleMediaDelete(
-                                                    field.onChange,
-                                                    field.value,
-                                                    file,
-                                                )
+                                                handleMediaDelete(field.onChange, field.value, file)
                                             }
                                         />
                                         <Upload
@@ -386,11 +309,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                             beforeUpload={beforeUpload}
                                             showList={false}
                                             onChange={(files) =>
-                                                handleMediaUpload(
-                                                    field.onChange,
-                                                    field.value,
-                                                    files,
-                                                )
+                                                handleMediaUpload(field.onChange, field.value, files)
                                             }
                                         >
                                             <div className="max-w-full flex flex-col px-4 py-2 justify-center items-center min-h-[130px]">
@@ -416,11 +335,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                         beforeUpload={beforeUpload}
                                         showList={false}
                                         onChange={(files) =>
-                                            handleMediaUpload(
-                                                field.onChange,
-                                                field.value,
-                                                files,
-                                            )
+                                            handleMediaUpload(field.onChange, field.value, files)
                                         }
                                     >
                                         <div className="max-w-full flex flex-col px-4 py-8 justify-center items-center">
@@ -429,8 +344,7 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                             </div>
                                             <p className="flex flex-col items-center mt-2">
                                                 <span className="text-gray-800 dark:text-white">
-                                                    Drop your media files here,
-                                                    or{' '}
+                                                    Drop your media files here, or{' '}
                                                 </span>
                                                 <span className="text-primary">
                                                     Click to browse
