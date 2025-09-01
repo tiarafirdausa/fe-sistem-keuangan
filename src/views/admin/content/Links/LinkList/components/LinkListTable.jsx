@@ -1,38 +1,29 @@
-import { useMemo, useState } from 'react';
-import Avatar from '@/components/ui/Avatar';
-import Tooltip from '@/components/ui/Tooltip';
-import DataTable from '@/components/shared/DataTable';
-import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import useLinkList from '../hooks/useLinkList';
-import cloneDeep from 'lodash/cloneDeep';
-import { useNavigate } from 'react-router-dom';
-import { TbPencil, TbTrash } from 'react-icons/tb';
-import { HiOutlineLink } from 'react-icons/hi';
-import { apiDeleteLink } from '@/services/LinkService';
-import { toast } from '@/components/ui/toast';
-import { Tag } from '@/components/ui'; 
+import { useMemo, useState } from 'react'
+import Avatar from '@/components/ui/Avatar'
+import Tooltip from '@/components/ui/Tooltip'
+import DataTable from '@/components/shared/DataTable'
+import ConfirmDialog from '@/components/shared/ConfirmDialog'
+import useLinkList from '../hooks/useLinkList'
+import cloneDeep from 'lodash/cloneDeep'
+import { useNavigate } from 'react-router-dom'
+import { TbPencil, TbTrash } from 'react-icons/tb'
+import { HiOutlineLink } from 'react-icons/hi'
+import { apiDeleteLink } from '@/services/LinkService'
+import { toast } from '@/components/ui/toast'
+import { Tag } from '@/components/ui'
 
-import appConfig from '@/configs/app.config';
+import appConfig from '@/configs/app.config'
 
 const LinkColumn = ({ row }) => {
-    const { judul, gambar } = row; 
-    const gambarUrl = gambar ? `${appConfig.backendBaseUrl}${gambar}` : null; // <-- Variabel 'iconUrl' diganti 'gambarUrl'
+    const { judul, gambar } = row
+    const gambarUrl = gambar ? `${appConfig.backendBaseUrl}${gambar}` : null // <-- Variabel 'iconUrl' diganti 'gambarUrl'
 
     return (
         <div className="flex items-center gap-2">
             {gambarUrl ? (
-                <Avatar
-                    shape="round"
-                    size={60}
-                    src={gambarUrl}
-                    alt={judul}
-                />
+                <Avatar shape="round" size={60} src={gambarUrl} alt={judul} />
             ) : (
-                <Avatar
-                    shape="round"
-                    size={60}
-                    icon={<HiOutlineLink />}
-                />
+                <Avatar shape="round" size={60} icon={<HiOutlineLink />} />
             )}
             <div>
                 <div className="font-bold heading-text mb-1">{judul}</div>
@@ -41,8 +32,8 @@ const LinkColumn = ({ row }) => {
                 </Tag>
             </div>
         </div>
-    );
-};
+    )
+}
 
 const ActionColumn = ({ onEdit, onDelete }) => {
     return (
@@ -66,35 +57,35 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                 </div>
             </Tooltip>
         </div>
-    );
-};
+    )
+}
 
 const LinkListTable = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-    const [toDeleteId, setToDeleteId] = useState('');
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false)
+    const [toDeleteId, setToDeleteId] = useState('')
 
     const handleCancel = () => {
-        setDeleteConfirmationOpen(false);
-    };
+        setDeleteConfirmationOpen(false)
+    }
 
     const handleDelete = (link) => {
-        setDeleteConfirmationOpen(true);
-        setToDeleteId(link.id);
-    };
+        setDeleteConfirmationOpen(true)
+        setToDeleteId(link.id)
+    }
 
     const handleEdit = (link) => {
-        navigate(`/admin/links/edit/${link.id}`);
-    };
+        navigate(`/admin/links/edit/${link.id}`)
+    }
 
     const handleConfirmDelete = async () => {
-        setDeleteConfirmationOpen(false);
+        setDeleteConfirmationOpen(false)
         try {
-            await apiDeleteLink(toDeleteId);
-            mutate();
-            setSelectedLinks([]);
-            setToDeleteId('');
+            await apiDeleteLink(toDeleteId)
+            mutate()
+            setSelectAllLinks([])
+            setToDeleteId('')
             toast.push(
                 <div className="flex items-center">
                     <Avatar
@@ -104,9 +95,9 @@ const LinkListTable = () => {
                     />
                     <span>Link deleted successfully.</span>
                 </div>,
-            );
+            )
         } catch (error) {
-            console.error('Failed to delete link:', error);
+            console.error('Failed to delete link:', error)
             toast.push(
                 <div className="flex items-center">
                     <Avatar
@@ -116,10 +107,10 @@ const LinkListTable = () => {
                     />
                     <span>Failed to delete link. Please try again.</span>
                 </div>,
-            );
-            setDeleteConfirmationOpen(false);
+            )
+            setDeleteConfirmationOpen(false)
         }
-    };
+    }
 
     const {
         linkList,
@@ -127,10 +118,11 @@ const LinkListTable = () => {
         linkTableData,
         isLoading,
         setLinkTableData,
-        setSelectedLinks, // <-- Variabel ini diperbaiki
+        setSelectedLinks,
+        setSelectAllLinks,
         selectedLinks,
         mutate,
-    } = useLinkList();
+    } = useLinkList()
 
     const columns = useMemo(
         () => [
@@ -138,27 +130,31 @@ const LinkListTable = () => {
                 header: 'Title',
                 accessorKey: 'judul',
                 cell: (props) => {
-                    const row = props.row.original;
-                    return <LinkColumn row={row} />;
+                    const row = props.row.original
+                    return <LinkColumn row={row} />
                 },
             },
             {
                 header: 'URL',
                 accessorKey: 'link', // <-- Diperbaiki dari 'url' menjadi 'link'
                 cell: (props) => {
-                    const { link } = props.row.original; // <-- Diperbaiki dari 'url' menjadi 'link'
+                    const { link } = props.row.original // <-- Diperbaiki dari 'url' menjadi 'link'
                     return (
-                        <a href={link} target="_blank" rel="noopener noreferrer">
+                        <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
                             {link}
                         </a>
-                    );
+                    )
                 },
             },
             {
                 header: 'Created At',
                 accessorKey: 'created_at',
                 cell: (props) => {
-                    const { created_at } = props.row.original;
+                    const { created_at } = props.row.original
                     return (
                         <span>
                             {new Date(created_at).toLocaleString('en-US', {
@@ -169,14 +165,14 @@ const LinkListTable = () => {
                                 minute: '2-digit',
                             })}
                         </span>
-                    );
+                    )
                 },
             },
             {
                 header: 'Last Modified',
                 accessorKey: 'updated_at',
                 cell: (props) => {
-                    const { updated_at } = props.row.original;
+                    const { updated_at } = props.row.original
                     return (
                         <span>
                             {new Date(updated_at).toLocaleString('en-US', {
@@ -187,7 +183,7 @@ const LinkListTable = () => {
                                 minute: '2-digit',
                             })}
                         </span>
-                    );
+                    )
                 },
             },
             {
@@ -202,47 +198,47 @@ const LinkListTable = () => {
             },
         ],
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [selectedLinks],
-    );
+        [],
+    )
 
     const handleSetTableData = (data) => {
-        setLinkTableData(data);
+        setLinkTableData(data)
         if (selectedLinks.length > 0) {
-            setSelectedLinks([]); // <-- Variabel ini diperbaiki
+            setSelectAllLinks([])
         }
-    };
+    }
 
     const handlePaginationChange = (page) => {
-        const newTableData = cloneDeep(linkTableData);
-        newTableData.pageIndex = page;
-        handleSetTableData(newTableData);
-    };
+        const newTableData = cloneDeep(linkTableData)
+        newTableData.pageIndex = page
+        handleSetTableData(newTableData)
+    }
 
     const handleSelectChange = (value) => {
-        const newTableData = cloneDeep(linkTableData);
-        newTableData.pageSize = Number(value);
-        newTableData.pageIndex = 1;
-        handleSetTableData(newTableData);
-    };
+        const newTableData = cloneDeep(linkTableData)
+        newTableData.pageSize = Number(value)
+        newTableData.pageIndex = 1
+        handleSetTableData(newTableData)
+    }
 
     const handleSort = (sort) => {
-        const newTableData = cloneDeep(linkTableData);
-        newTableData.sort = sort;
-        handleSetTableData(newTableData);
-    };
+        const newTableData = cloneDeep(linkTableData)
+        newTableData.sort = sort
+        handleSetTableData(newTableData)
+    }
 
     const handleRowSelect = (checked, row) => {
-        setSelectedLinks(checked, row);
-    };
+        setSelectedLinks(checked, row)
+    }
 
     const handleAllRowSelect = (checked, rows) => {
         if (checked) {
-            const originalRows = rows.map((row) => row.original);
-            setSelectedLinks(originalRows); // <-- Variabel ini diperbaiki
+            const originalRows = rows.map((row) => row)
+            setSelectAllLinks(originalRows) 
         } else {
-            setSelectedLinks([]); // <-- Variabel ini diperbaiki
+            setSelectAllLinks([]) 
         }
-    };
+    }
 
     return (
         <>
@@ -283,7 +279,7 @@ const LinkListTable = () => {
                 </p>
             </ConfirmDialog>
         </>
-    );
-};
+    )
+}
 
-export default LinkListTable;
+export default LinkListTable
