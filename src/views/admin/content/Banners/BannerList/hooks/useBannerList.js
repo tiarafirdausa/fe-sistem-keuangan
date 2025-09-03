@@ -18,7 +18,6 @@ const useBannerList = () => {
     // eslint-disable-next-line no-unused-vars
     async ([_, params]) => {
       const response = await apiGetAllBanners(params);
-      console.log(response)
       return response;
     },
     {
@@ -28,7 +27,6 @@ const useBannerList = () => {
   );
 
   const bannerList = data?.data || [];
-  console.log(bannerList)
   const bannerListTotal = data?.pagination?.totalItems || 0;
 
   return {

@@ -53,7 +53,7 @@ const validationSchema = z.object({
     status: z.string().optional(), 
     categoryId: z.array(z.number()).optional(),
     tagId: z.array(z.number()).optional(),
-    authorId: z.number().optional(),
+    authorId: z.string().optional(),
 })
 
 const PostTableFilter = () => {
@@ -89,7 +89,7 @@ const PostTableFilter = () => {
     );
 
     const authorOptions = useMemo(() => {
-        return authorsData?.map(author => ({ value: author.id, label: author.name })) || [];
+        return authorsData?.map(author => ({ value: author.id.toString(), label: author.name })) || [];
     }, [authorsData]);
 
     const categoryOptions = useMemo(() => {
@@ -106,7 +106,7 @@ const PostTableFilter = () => {
             status: postFilterData.status || '',
             categoryId: postFilterData.categoryId || [],
             tagId: postFilterData.tagId || [],
-            authorId: postFilterData.authorId || null,
+            authorId: postFilterData.authorId || '',
         },
         resolver: zodResolver(validationSchema),
     })
@@ -140,8 +140,9 @@ const PostTableFilter = () => {
             status: '',
             categoryId: [],
             tagId: [],
-            authorId: null,
+            authorId: '',
         });
+
         setPostFilterData({
             ...postFilterData,
             status: '',
