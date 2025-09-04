@@ -4,7 +4,7 @@ import Container from '@/components/shared/Container';
 import Button from '@/components/ui/Button';
 import Notification from '@/components/ui/Notification';
 import toast from '@/components/ui/toast';
-import CategoryForm from '../CategoryForm/CaregoryForm';
+import CategoryForm from '../CategoryForm/CategoryForm';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import { TbTrash } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';

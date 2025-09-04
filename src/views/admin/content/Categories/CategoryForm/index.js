@@ -1,3 +1,3 @@
-import CategoryForm from "./CaregoryForm";
+import CategoryForm from "./CategoryForm";
 
 export default CategoryForm

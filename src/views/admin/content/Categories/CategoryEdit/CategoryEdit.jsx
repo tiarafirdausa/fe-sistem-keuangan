@@ -5,7 +5,7 @@ import Button from '@/components/ui/Button';
 import Notification from '@/components/ui/Notification';
 import toast from '@/components/ui/toast';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import CategoryForm from '../CategoryForm/CaregoryForm';
+import CategoryForm from '../CategoryForm/CategoryForm';
 import { apiGetCategoryBySlug, apiUpdateCategory, apiDeleteCategory } from '@/services/CategoryService';
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';

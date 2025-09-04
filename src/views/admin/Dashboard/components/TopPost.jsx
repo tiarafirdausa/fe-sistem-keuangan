@@ -4,6 +4,7 @@ import classNames from '@/utils/classNames'
 import isLastChild from '@/utils/isLastChild'
 import { AiFillEye } from 'react-icons/ai'
 import { NumericFormat } from 'react-number-format'
+import appConfig from '@/configs/app.config'
 
 const TopPost = ({ data }) => {
     return (
@@ -24,7 +25,7 @@ const TopPost = ({ data }) => {
                             <Avatar
                                 className="bg-white"
                                 size={50}
-                                src={post.featured_image}
+                                src={`${appConfig.backendBaseUrl}${post.featured_image}`}
                                 shape="round"
                             />
                             <div>
