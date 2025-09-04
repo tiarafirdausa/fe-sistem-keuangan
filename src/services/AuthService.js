@@ -38,3 +38,10 @@ export async function apiGetMe() {
         method: 'get',
     })
 }
+
+export async function apiRefreshToken() {
+    return ApiService.fetchDataWithAxios({
+        url: endpointConfig.refreshToken,
+        method: 'post',
+    });
+}

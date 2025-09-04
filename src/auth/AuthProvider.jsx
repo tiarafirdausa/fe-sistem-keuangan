@@ -1,9 +1,8 @@
-// src/auth/AuthProvider.jsx (Versi revisi final dari diskusi kita)
 import { useRef, useImperativeHandle, useState, useEffect, useCallback } from 'react'
 import AuthContext from './AuthContext'
 import appConfig from '@/configs/app.config'
 import { useSessionUser } from '@/store/authStore'
-import { apiSignIn, apiSignOut, apiGetMe } from '@/services/AuthService'
+import { apiSignIn, apiSignOut, apiGetMe, apiRefreshToken } from '@/services/AuthService'
 import { REDIRECT_URL_KEY } from '@/constants/app.constant'
 import { useNavigate } from 'react-router-dom'
 
@@ -12,6 +11,17 @@ const IsolatedNavigator = ({ ref }) => {
     useImperativeHandle(ref, () => ({ navigate }), [navigate])
     return <></>
 }
+
+const convertExpiresInToMs = (expiresIn) => {
+    const value = parseInt(expiresIn);
+    if (expiresIn.endsWith("h")) return value * 60 * 60 * 1000;
+    if (expiresIn.endsWith("m")) return value * 60 * 1000;
+    if (expiresIn.endsWith("d")) return value * 24 * 60 * 60 * 1000;
+    return value * 1000;
+};
+
+const JWT_EXPIRES_IN = '1h'; 
+const REFRESH_INTERVAL_MS = convertExpiresInToMs(JWT_EXPIRES_IN) * 0.5;
 
 function AuthProvider({ children }) {
     const setUser = useSessionUser((state) => state.setUser)
@@ -22,6 +32,7 @@ function AuthProvider({ children }) {
     const [loadingAuth, setLoadingAuth] = useState(true);
 
     const navigatorRef = useRef(null)
+    const refreshTimer = useRef(null);
 
     const redirect = useCallback(() => {
         const search = window.location.search
@@ -46,6 +57,29 @@ function AuthProvider({ children }) {
         setAuthenticated(false);
     }, [setSessionSignedIn, setUser]);
 
+    const startRefreshTokenTimer = useCallback(() => {
+        if (refreshTimer.current) {
+            clearTimeout(refreshTimer.current);
+        }
+
+        refreshTimer.current = setTimeout(async () => {
+            try {
+                await apiRefreshToken();
+                console.log("Token berhasil diperbarui secara otomatis.");
+                startRefreshTokenTimer();
+            } catch (error) {
+                console.error("Gagal memperbarui token. Sesi berakhir.", error.response?.data?.error || error.message);
+                handleSignOut();
+            }
+        }, REFRESH_INTERVAL_MS);
+    }, [handleSignOut]);
+
+    const handleActivity = useCallback(() => {
+        if (authenticated) {
+            startRefreshTokenTimer();
+        }
+    }, [authenticated, startRefreshTokenTimer]);
+    
     useEffect(() => {
         const verifyAuthStatus = async () => {
             try {
@@ -56,16 +90,33 @@ function AuthProvider({ children }) {
                     handleSignOut();
                 }
             } catch (error) {
-                console.error("Error verifying logged-in user status via /me endpoint:", error.response?.data?.error || error.message);
+                console.error("Gagal memverifikasi status login:", error.response?.data?.error || error.message);
                 handleSignOut();
             } finally {
                 setLoadingAuth(false);
             }
         };
-
         verifyAuthStatus();
     }, [handleSignIn, handleSignOut]);
 
+    useEffect(() => {
+        if (authenticated) {
+            startRefreshTokenTimer();
+            const eventListeners = ['mousemove', 'keydown', 'click', 'scroll'];
+            eventListeners.forEach(event => {
+                window.addEventListener(event, handleActivity);
+            });
+
+            return () => {
+                eventListeners.forEach(event => {
+                    window.removeEventListener(event, handleActivity);
+                });
+                if (refreshTimer.current) {
+                    clearTimeout(refreshTimer.current);
+                }
+            };
+        }
+    }, [authenticated, handleActivity, startRefreshTokenTimer]);
 
     const signIn = async (values) => {
         try {
@@ -73,10 +124,7 @@ function AuthProvider({ children }) {
             if (resp && resp.user) {
                 handleSignIn(resp.user)
                 redirect()
-                return {
-                    status: 'success',
-                    message: '',
-                }
+                return { status: 'success', message: '' }
             }
             return {
                 status: 'failed',
@@ -93,9 +141,9 @@ function AuthProvider({ children }) {
 
     const signOut = async () => {
         try {
-            await apiSignOut() // Ini memicu backend untuk menghapus HttpOnly cookie
+            await apiSignOut() 
         } finally {
-            handleSignOut() // Bersihkan state frontend
+            handleSignOut() 
             navigatorRef.current?.navigate('/', { replace: true })
         }
     }
@@ -115,7 +163,6 @@ function AuthProvider({ children }) {
                 user: userZustand,
                 signIn,
                 signOut,
-                // oAuthSignIn, // Jika ada
             }}
         >
             {children}

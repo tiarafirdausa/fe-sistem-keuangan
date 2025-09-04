@@ -35,7 +35,7 @@ const endpointConfig = {
     getCategoryById: (id) => `/categories/id/${id}`,
     getCategoryBySlug: (slug) => `/categories/${slug}`,
     createCategory: '/categories',
-    updateCategory: (id) => `/categories/${id}`,
+    updateCategory: (id) => `/categories/id/${id}`,
     deleteCategory: (id) => `/categories/${id}`,
 
     // Posts
