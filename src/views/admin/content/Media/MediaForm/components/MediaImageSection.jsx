@@ -112,7 +112,13 @@ const FileList = (props) => {
                 onCancel={onDeleteConfirmationClose}
                 onConfirm={onDelete}
             >
-                <p>Are you sure you want to remove this {fieldName === 'featured_image' ? 'featured image' : 'media file'}?</p>
+                <p>
+                    Are you sure you want to remove this{' '}
+                    {fieldName === 'featured_image'
+                        ? 'featured image'
+                        : 'media file'}
+                    ?
+                </p>
             </ConfirmDialog>
         </>
     )
@@ -205,15 +211,19 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
             }
 
             const croppedImageBlob = await getCroppedImg(imageSrc, pixelCrop)
-            const croppedFile = new File([croppedImageBlob], `cropped-${file.name}`, {
-                type: croppedImageBlob.type,
-            })
+            const croppedFile = new File(
+                [croppedImageBlob],
+                `cropped-${file.name}`,
+                {
+                    type: croppedImageBlob.type,
+                },
+            )
 
             const newImage = {
                 id: `featured-${Date.now()}`,
                 name: file.name,
                 url: URL.createObjectURL(file),
-                file: croppedFile, 
+                file: croppedFile,
                 originalFile: file,
             }
             onChange(newImage)
@@ -283,9 +293,14 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
             <div className="mb-6">
                 <h5 className="mb-2">Featured Image</h5>
                 <p className="mb-4 text-xs">
-                    This will be the main image for your page. (Formats: .jpg, .jpeg, .png, max 500kb, will be automatically cropped to 410x440)
+                    This will be the main image for your page. (Formats: .jpg,
+                    .jpeg, .png, max 500kb, will be automatically cropped to
+                    410x440)
                 </p>
-                <FormItem invalid={Boolean(errors.featured_image)} errorMessage={errors.featured_image?.message}>
+                <FormItem
+                    invalid={Boolean(errors.featured_image)}
+                    errorMessage={errors.featured_image?.message}
+                >
                     <Controller
                         name="featured_image"
                         control={control}
@@ -296,7 +311,12 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                         <FileList
                                             fileList={[field.value]}
                                             fieldName="featured_image"
-                                            onFileDelete={(file) => handleFeaturedImageDelete(field.onChange, file)}
+                                            onFileDelete={(file) =>
+                                                handleFeaturedImageDelete(
+                                                    field.onChange,
+                                                    file,
+                                                )
+                                            }
                                         />
                                     </div>
                                 ) : (
@@ -305,7 +325,12 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                         className="min-h-fit"
                                         beforeUpload={beforeFeaturedImageUpload}
                                         showList={false}
-                                        onChange={(files) => handleFeaturedImageUpload(files, field.onChange)}
+                                        onChange={(files) =>
+                                            handleFeaturedImageUpload(
+                                                files,
+                                                field.onChange,
+                                            )
+                                        }
                                     >
                                         <div className="max-w-full flex flex-col px-4 py-8 justify-center items-center">
                                             <div className="text-[60px]">
@@ -313,7 +338,8 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                             </div>
                                             <p className="flex flex-col items-center mt-2">
                                                 <span className="text-gray-800 dark:text-white">
-                                                    Drop your featured image here, or{' '}
+                                                    Drop your featured image
+                                                    here, or{' '}
                                                 </span>
                                                 <span className="text-primary">
                                                     Click to browse
@@ -332,9 +358,13 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
             <div>
                 <h5 className="mb-2">Gallery Media</h5>
                 <p className="mb-4 text-xs">
-                    Add additional media files for your page. (Formats: .jpg, .jpeg, .png, .mp4, .mov, .webm, .mp3, max 5MB per file)
+                    Add additional media files for your page. (Formats: .jpg,
+                    .jpeg, .png, .mp4, .mov, .webm, .mp3, max 5MB per file)
                 </p>
-                <FormItem invalid={Boolean(errors.media)} errorMessage={errors.media?.message}>
+                <FormItem
+                    invalid={Boolean(errors.media)}
+                    errorMessage={errors.media?.message}
+                >
                     <Controller
                         name="media"
                         control={control}
@@ -345,7 +375,11 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                         <FileList
                                             fileList={field.value}
                                             onFileDelete={(file) =>
-                                                handleMediaDelete(field.onChange, field.value, file)
+                                                handleMediaDelete(
+                                                    field.onChange,
+                                                    field.value,
+                                                    file,
+                                                )
                                             }
                                         />
                                         <Upload
@@ -355,7 +389,11 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                             beforeUpload={beforeUpload}
                                             showList={false}
                                             onChange={(files) =>
-                                                handleMediaUpload(field.onChange, field.value, files)
+                                                handleMediaUpload(
+                                                    field.onChange,
+                                                    field.value,
+                                                    files,
+                                                )
                                             }
                                         >
                                             <div className="max-w-full flex flex-col px-4 py-2 justify-center items-center min-h-[130px]">
@@ -381,7 +419,11 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                         beforeUpload={beforeUpload}
                                         showList={false}
                                         onChange={(files) =>
-                                            handleMediaUpload(field.onChange, field.value, files)
+                                            handleMediaUpload(
+                                                field.onChange,
+                                                field.value,
+                                                files,
+                                            )
                                         }
                                     >
                                         <div className="max-w-full flex flex-col px-4 py-8 justify-center items-center">
@@ -390,7 +432,8 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                                             </div>
                                             <p className="flex flex-col items-center mt-2">
                                                 <span className="text-gray-800 dark:text-white">
-                                                    Drop your media files here, or{' '}
+                                                    Drop your media files here,
+                                                    or{' '}
                                                 </span>
                                                 <span className="text-primary">
                                                     Click to browse
@@ -418,7 +461,10 @@ const MediaImageSection = ({ control, errors, setValue, getValues }) => {
                             setValue('media', [])
                         }}
                     >
-                        <HiTrash className="mr-2" /> Clear All Media Files
+                        <div className="flex items-center">
+                            <HiTrash className="mr-2" />
+                            <span>Clear All</span>
+                        </div>
                     </Button>
                 )}
             </div>

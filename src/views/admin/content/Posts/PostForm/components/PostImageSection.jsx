@@ -1,56 +1,56 @@
 // src/views/post/PostForm/components/PostImageSection.jsx
-import { useState } from 'react';
-import Card from '@/components/ui/Card';
-import Upload from '@/components/ui/Upload';
-import { FormItem } from '@/components/ui/Form';
-import Dialog from '@/components/ui/Dialog';
-import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import Button from '@/components/ui/Button'; 
-import { Controller } from 'react-hook-form';
-import { HiEye, HiTrash, HiOutlinePlus } from 'react-icons/hi';
-import cloneDeep from 'lodash/cloneDeep';
-import { PiImagesThin } from 'react-icons/pi';
-import getCroppedImg from '@/utils/cropImage'; // Assuming you have this file now
+import { useState } from 'react'
+import Card from '@/components/ui/Card'
+import Upload from '@/components/ui/Upload'
+import { FormItem } from '@/components/ui/Form'
+import Dialog from '@/components/ui/Dialog'
+import ConfirmDialog from '@/components/shared/ConfirmDialog'
+import Button from '@/components/ui/Button'
+import { Controller } from 'react-hook-form'
+import { HiEye, HiTrash, HiOutlinePlus } from 'react-icons/hi'
+import cloneDeep from 'lodash/cloneDeep'
+import { PiImagesThin } from 'react-icons/pi'
+import getCroppedImg from '@/utils/cropImage' // Assuming you have this file now
 
 // The ImageList component is the same as the previous code.
 const ImageList = (props) => {
-    const { imgList, onImageDelete, fieldName } = props; 
-    const [selectedImg, setSelectedImg] = useState({});
-    const [viewOpen, setViewOpen] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+    const { imgList, onImageDelete, fieldName } = props
+    const [selectedImg, setSelectedImg] = useState({})
+    const [viewOpen, setViewOpen] = useState(false)
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false)
 
     const onViewOpen = (img) => {
-        setSelectedImg(img);
-        setViewOpen(true);
-    };
+        setSelectedImg(img)
+        setViewOpen(true)
+    }
 
     const onDialogClose = () => {
-        setViewOpen(false);
+        setViewOpen(false)
         setTimeout(() => {
-            setSelectedImg({});
-        }, 300);
-    };
+            setSelectedImg({})
+        }, 300)
+    }
 
     const onDeleteConfirmation = (img) => {
-        setSelectedImg(img);
-        setDeleteConfirmationOpen(true);
-    };
+        setSelectedImg(img)
+        setDeleteConfirmationOpen(true)
+    }
 
     const onDeleteConfirmationClose = () => {
-        setSelectedImg({});
-        setDeleteConfirmationOpen(false);
-    };
+        setSelectedImg({})
+        setDeleteConfirmationOpen(false)
+    }
 
     const onDelete = () => {
-        onImageDelete?.(selectedImg);
-        setDeleteConfirmationOpen(false);
-    };
+        onImageDelete?.(selectedImg)
+        setDeleteConfirmationOpen(false)
+    }
 
     return (
         <>
             {imgList.map((img) => (
                 <div
-                    key={img.id || img.img} 
+                    key={img.id || img.img}
                     className="group relative rounded-xl border border-gray-200 dark:border-gray-600 p-2 flex"
                 >
                     <img
@@ -95,75 +95,83 @@ const ImageList = (props) => {
                 onCancel={onDeleteConfirmationClose}
                 onConfirm={onDelete}
             >
-                <p>Are you sure you want to remove this {fieldName === 'featured_image' ? 'featured image' : 'image'}?</p>
+                <p>
+                    Are you sure you want to remove this{' '}
+                    {fieldName === 'featured_image'
+                        ? 'featured image'
+                        : 'image'}
+                    ?
+                </p>
             </ConfirmDialog>
         </>
-    );
-};
+    )
+}
 
 const PostImageSection = ({ control, errors, setValue, getValues }) => {
     const beforeUpload = (file) => {
-        let valid = true;
-        const allowedFileType = ['image/jpeg', 'image/png'];
-        const maxFileSize = 500000;
+        let valid = true
+        const allowedFileType = ['image/jpeg', 'image/png']
+        const maxFileSize = 500000
 
         if (file) {
             for (const f of file) {
                 if (!allowedFileType.includes(f.type)) {
-                    return 'Please upload a .jpeg or .png file!';
+                    return 'Please upload a .jpeg or .png file!'
                 }
                 if (f.size >= maxFileSize) {
-                    return 'Upload image cannot be more than 500kb!';
+                    return 'Upload image cannot be more than 500kb!'
                 }
             }
         }
-        return valid;
-    };
+        return valid
+    }
 
     // Fungsi untuk upload dan crop otomatis gambar utama
     const handleFeaturedImageUpload = async (onChange, files) => {
-        if (!files || files.length === 0) return;
+        if (!files || files.length === 0) return
 
-        const file = files[0];
-        const imageSrc = URL.createObjectURL(file);
+        const file = files[0]
+        const imageSrc = URL.createObjectURL(file)
 
-        const targetWidth = 960;
-        const targetHeight = 600;
+        const targetWidth = 960
+        const targetHeight = 600
 
         try {
             const image = await new Promise((resolve, reject) => {
-                const img = new Image();
-                img.onload = () => resolve(img);
-                img.onerror = reject;
-                img.src = imageSrc;
-            });
+                const img = new Image()
+                img.onload = () => resolve(img)
+                img.onerror = reject
+                img.src = imageSrc
+            })
 
-            const originalWidth = image.naturalWidth;
-            const originalHeight = image.naturalHeight;
+            const originalWidth = image.naturalWidth
+            const originalHeight = image.naturalHeight
 
-            const aspectRatio = targetWidth / targetHeight;
-            let newWidth = originalWidth;
-            let newHeight = originalHeight;
-            let startX = 0;
-            let startY = 0;
+            const aspectRatio = targetWidth / targetHeight
+            let newWidth = originalWidth
+            let newHeight = originalHeight
+            let startX = 0
+            let startY = 0
 
             if (originalWidth / originalHeight > aspectRatio) {
-                newWidth = originalHeight * aspectRatio;
-                startX = (originalWidth - newWidth) / 2;
+                newWidth = originalHeight * aspectRatio
+                startX = (originalWidth - newWidth) / 2
             } else {
-                newHeight = originalWidth / aspectRatio;
-                startY = (originalHeight - newHeight) / 2;
+                newHeight = originalWidth / aspectRatio
+                startY = (originalHeight - newHeight) / 2
             }
-            
+
             const pixelCrop = {
                 x: startX,
                 y: startY,
                 width: newWidth,
                 height: newHeight,
-            };
+            }
 
-            const croppedImageBlob = await getCroppedImg(imageSrc, pixelCrop);
-            const croppedFile = new File([croppedImageBlob], file.name, { type: croppedImageBlob.type });
+            const croppedImageBlob = await getCroppedImg(imageSrc, pixelCrop)
+            const croppedFile = new File([croppedImageBlob], file.name, {
+                type: croppedImageBlob.type,
+            })
 
             const newImage = {
                 id: `featured-${Date.now()}`,
@@ -171,62 +179,66 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                 img: URL.createObjectURL(croppedFile),
                 file: croppedFile,
                 original_img: imageSrc,
-            };
-            onChange(newImage);
+            }
+            onChange(newImage)
         } catch (error) {
-            console.error('Failed to crop the featured image:', error);
-            URL.revokeObjectURL(imageSrc);
+            console.error('Failed to crop the featured image:', error)
+            URL.revokeObjectURL(imageSrc)
         }
-    };
+    }
 
     // Fungsi untuk menghapus gambar utama
     const handleFeaturedImageDelete = (onChange) => {
-        const currentImage = getValues('featured_image');
+        const currentImage = getValues('featured_image')
         if (currentImage && currentImage.original_img) {
-            URL.revokeObjectURL(currentImage.original_img);
+            URL.revokeObjectURL(currentImage.original_img)
         }
         if (currentImage && currentImage.img) {
-            URL.revokeObjectURL(currentImage.img);
+            URL.revokeObjectURL(currentImage.img)
         }
-        onChange(null);
-        setValue('clear_featured_image', true);
-    };
+        onChange(null)
+        setValue('clear_featured_image', true)
+    }
 
     // Fungsi untuk upload dan crop otomatis gambar galeri
-    const handleGalleryImageUpload = async (onChange, originalImageList = [], files) => {
-        if (!files || files.length === 0) return;
+    const handleGalleryImageUpload = async (
+        onChange,
+        originalImageList = [],
+        files,
+    ) => {
+        if (!files || files.length === 0) return
 
-        const newImages = [];
+        const newImages = []
 
-        const targetWidth = 560;
-        const targetHeight = 350;
-        const aspectRatio = targetWidth / targetHeight;
+        const targetWidth = 560
+        const targetHeight = 350
+        const aspectRatio = targetWidth / targetHeight
 
         for (const file of files) {
-            const imageSrc = URL.createObjectURL(file);
+            const imageSrc = URL.createObjectURL(file)
 
             try {
                 const image = await new Promise((resolve, reject) => {
-                    const img = new Image();
-                    img.onload = () => resolve(img);
-                    img.onerror = reject;
-                    img.src = imageSrc;
-                });
+                    const img = new Image()
+                    img.onload = () => resolve(img)
+                    img.onerror = reject
+                    img.src = imageSrc
+                })
 
-                const originalWidth = image.naturalWidth;
-                const originalHeight = image.naturalHeight;
-                
-                let newWidth = originalWidth;
-                let newHeight = originalHeight;
-                let startX = 0;
-                let startY = 0;
+                const originalWidth = image.naturalWidth
+                const originalHeight = image.naturalHeight
+
+                let newWidth = originalWidth
+                let newHeight = originalHeight
+                let startX = 0
+                let startY = 0
 
                 if (originalWidth / originalHeight > aspectRatio) {
-                    newWidth = originalHeight * aspectRatio;
-                    startX = (originalWidth - newWidth) / 2;
+                    newWidth = originalHeight * aspectRatio
+                    startX = (originalWidth - newWidth) / 2
                 } else {
-                    newHeight = originalWidth / aspectRatio;
-                    startY = (originalHeight - newHeight) / 2;
+                    newHeight = originalWidth / aspectRatio
+                    startY = (originalHeight - newHeight) / 2
                 }
 
                 const pixelCrop = {
@@ -234,10 +246,15 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                     y: startY,
                     width: newWidth,
                     height: newHeight,
-                };
-                
-                const croppedImageBlob = await getCroppedImg(imageSrc, pixelCrop);
-                const croppedFile = new File([croppedImageBlob], file.name, { type: croppedImageBlob.type });
+                }
+
+                const croppedImageBlob = await getCroppedImg(
+                    imageSrc,
+                    pixelCrop,
+                )
+                const croppedFile = new File([croppedImageBlob], file.name, {
+                    type: croppedImageBlob.type,
+                })
 
                 newImages.push({
                     id: `gallery-${Date.now()}-${newImages.length}`,
@@ -245,31 +262,39 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                     img: URL.createObjectURL(croppedFile),
                     file: croppedFile,
                     original_img: imageSrc,
-                });
+                })
             } catch (error) {
-                console.error('Failed to crop a gallery image:', error);
+                console.error('Failed to crop a gallery image:', error)
             }
         }
 
-        const updatedList = [...originalImageList, ...newImages];
-        onChange(updatedList);
-    };
+        const updatedList = [...originalImageList, ...newImages]
+        onChange(updatedList)
+    }
 
-    const handleGalleryImageDelete = (onChange, originalImageList = [], deletedImg) => {
-        let imgList = cloneDeep(originalImageList);
+    const handleGalleryImageDelete = (
+        onChange,
+        originalImageList = [],
+        deletedImg,
+    ) => {
+        let imgList = cloneDeep(originalImageList)
         if (deletedImg.original_img) {
-            URL.revokeObjectURL(deletedImg.original_img);
+            URL.revokeObjectURL(deletedImg.original_img)
         }
         if (deletedImg.img) {
-            URL.revokeObjectURL(deletedImg.img);
+            URL.revokeObjectURL(deletedImg.img)
         }
-        if (deletedImg.id && typeof deletedImg.id === 'number') { 
-            const currentDeletedIds = getValues('delete_gallery_image_ids') || [];
-            setValue('delete_gallery_image_ids', [...currentDeletedIds, deletedImg.id]);
+        if (deletedImg.id && typeof deletedImg.id === 'number') {
+            const currentDeletedIds =
+                getValues('delete_gallery_image_ids') || []
+            setValue('delete_gallery_image_ids', [
+                ...currentDeletedIds,
+                deletedImg.id,
+            ])
         }
-        imgList = imgList.filter((img) => img.id !== deletedImg.id);
-        onChange(imgList);
-    };
+        imgList = imgList.filter((img) => img.id !== deletedImg.id)
+        onChange(imgList)
+    }
 
     return (
         <Card>
@@ -277,7 +302,9 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
             <div className="mb-6">
                 <h5 className="mb-2">Featured Image</h5>
                 <p className="mb-4 text-xs">
-                    This will be the main image for your post. (Formats: .jpg, .jpeg, .png, max 500kb, will be automatically cropped to 2400x1697)
+                    This will be the main image for your post. (Formats: .jpg,
+                    .jpeg, .png, max 500kb, will be automatically cropped to
+                    2400x1697)
                 </p>
                 <FormItem
                     invalid={Boolean(errors.featured_image)}
@@ -293,7 +320,11 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                                         <ImageList
                                             imgList={[field.value]}
                                             fieldName="featured_image"
-                                            onImageDelete={() => handleFeaturedImageDelete(field.onChange)}
+                                            onImageDelete={() =>
+                                                handleFeaturedImageDelete(
+                                                    field.onChange,
+                                                )
+                                            }
                                         />
                                     </div>
                                 ) : (
@@ -302,7 +333,12 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                                         className="min-h-fit"
                                         beforeUpload={beforeUpload}
                                         showList={false}
-                                        onChange={(files) => handleFeaturedImageUpload(field.onChange, files)}
+                                        onChange={(files) =>
+                                            handleFeaturedImageUpload(
+                                                field.onChange,
+                                                files,
+                                            )
+                                        }
                                     >
                                         <div className="max-w-full flex flex-col px-4 py-8 justify-center items-center">
                                             <div className="text-[60px]">
@@ -310,7 +346,8 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                                             </div>
                                             <p className="flex flex-col items-center mt-2">
                                                 <span className="text-gray-800 dark:text-white">
-                                                    Drop your featured image here, or{' '}
+                                                    Drop your featured image
+                                                    here, or{' '}
                                                 </span>
                                                 <span className="text-primary">
                                                     Click to browse
@@ -328,7 +365,9 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
             <div>
                 <h5 className="mb-2">Gallery Images</h5>
                 <p className="mb-4 text-xs">
-                    Add additional images for your post. (Formats: .jpg, .jpeg, .png, max 500kb per image, will be automatically cropped to 560x350)
+                    Add additional images for your post. (Formats: .jpg, .jpeg,
+                    .png, max 500kb per image, will be automatically cropped to
+                    560x350)
                 </p>
                 <FormItem
                     invalid={Boolean(errors.gallery_images)}
@@ -345,7 +384,11 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                                             imgList={field.value}
                                             fieldName="gallery_images"
                                             onImageDelete={(img) =>
-                                                handleGalleryImageDelete(field.onChange, field.value, img)
+                                                handleGalleryImageDelete(
+                                                    field.onChange,
+                                                    field.value,
+                                                    img,
+                                                )
                                             }
                                         />
                                         <Upload
@@ -355,7 +398,11 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                                             beforeUpload={beforeUpload}
                                             showList={false}
                                             onChange={(files) =>
-                                                handleGalleryImageUpload(field.onChange, field.value, files)
+                                                handleGalleryImageUpload(
+                                                    field.onChange,
+                                                    field.value,
+                                                    files,
+                                                )
                                             }
                                         >
                                             <div className="max-w-full flex flex-col px-4 py-2 justify-center items-center min-h-[130px]">
@@ -381,7 +428,11 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                                         beforeUpload={beforeUpload}
                                         showList={false}
                                         onChange={(files) =>
-                                            handleGalleryImageUpload(field.onChange, field.value, files)
+                                            handleGalleryImageUpload(
+                                                field.onChange,
+                                                field.value,
+                                                files,
+                                            )
                                         }
                                     >
                                         <div className="max-w-full flex flex-col px-4 py-8 justify-center items-center">
@@ -390,7 +441,8 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                                             </div>
                                             <p className="flex flex-col items-center mt-2">
                                                 <span className="text-gray-800 dark:text-white">
-                                                    Drop your gallery images here, or{' '}
+                                                    Drop your gallery images
+                                                    here, or{' '}
                                                 </span>
                                                 <span className="text-primary">
                                                     Click to browse
@@ -410,20 +462,28 @@ const PostImageSection = ({ control, errors, setValue, getValues }) => {
                         color="red-600"
                         type="button"
                         onClick={() => {
-                            const currentGalleryImageIds = getValues('gallery_images')
-                                .filter(img => typeof img.id === 'number') 
-                                .map(img => img.id);
-                            setValue('clear_gallery_images', true);
-                            setValue('delete_gallery_image_ids', currentGalleryImageIds);
-                            setValue('gallery_images', []);
+                            const currentGalleryImageIds = getValues(
+                                'gallery_images',
+                            )
+                                .filter((img) => typeof img.id === 'number')
+                                .map((img) => img.id)
+                            setValue('clear_gallery_images', true)
+                            setValue(
+                                'delete_gallery_image_ids',
+                                currentGalleryImageIds,
+                            )
+                            setValue('gallery_images', [])
                         }}
                     >
-                        <HiTrash className="mr-2" /> Clear All Gallery Images
+                        <div className="flex items-center">
+                            <HiTrash className="mr-2" />
+                            <span>Clear All</span>
+                        </div>
                     </Button>
                 )}
             </div>
         </Card>
-    );
-};
+    )
+}
 
-export default PostImageSection;
+export default PostImageSection
