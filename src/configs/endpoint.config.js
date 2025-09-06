@@ -37,6 +37,7 @@ const endpointConfig = {
     createCategory: '/categories',
     updateCategory: (id) => `/categories/id/${id}`,
     deleteCategory: (id) => `/categories/${id}`,
+    apiImportCategories: '/categories/import-excel', 
 
     // Posts
     getAllPosts: '/posts',

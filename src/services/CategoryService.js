@@ -1,27 +1,27 @@
 // src/services/CategoryService.js
-import ApiService from './ApiService';
-import endpointConfig from '@/configs/endpoint.config';
+import ApiService from './ApiService'
+import endpointConfig from '@/configs/endpoint.config'
 
 export async function apiGetAllCategories(params) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.getAllCategories,
         method: 'get',
         params,
-    });
+    })
 }
 
 export async function apiGetCategoryById(id) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.getCategoryById(id),
         method: 'get',
-    });
+    })
 }
 
 export async function apiGetCategoryBySlug(slug) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.getCategoryBySlug(slug),
         method: 'get',
-    });
+    })
 }
 
 export async function apiCreateCategory(data) {
@@ -29,7 +29,7 @@ export async function apiCreateCategory(data) {
         url: endpointConfig.createCategory,
         method: 'post',
         data,
-    });
+    })
 }
 
 export async function apiUpdateCategory(id, data) {
@@ -37,12 +37,26 @@ export async function apiUpdateCategory(id, data) {
         url: endpointConfig.updateCategory(id),
         method: 'put',
         data,
-    });
+    })
 }
 
 export async function apiDeleteCategory(id) {
     return ApiService.fetchDataWithAxios({
         url: endpointConfig.deleteCategory(id),
         method: 'delete',
-    });
+    })
+}
+
+export async function apiImportCategories(file) {
+    const formData = new FormData()
+    formData.append('file', file) 
+
+    return ApiService.fetchDataWithAxios({
+        url: endpointConfig.apiImportCategories,
+        method: 'post',
+        data: formData,
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    })
 }
