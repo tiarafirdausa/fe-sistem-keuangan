@@ -5,6 +5,7 @@ import { FormContainer } from '@/components/ui/Form';
 import GeneralSettingsSection from '../components/GeneralSettingsSection'; 
 import SeoSettingsSection from '../components/SeoSettingsSection';     
 import MailSettingsSection from '../components/MailSettingsSection';   
+import AppearanceSettingsSection from '../components/AppearanceSettingsSection';
 import BottomStickyBar from '@/components/template/BottomStickyBar';
 import { TbTrash } from 'react-icons/tb';
 
@@ -27,6 +28,11 @@ const SettingsForm = ({
                         handleChange={handleChange}
                         handleImageFileChange={handleImageFileChange}
                         handleImageRemove={handleImageRemove}
+                        errors={formErrors}
+                    />
+                    <AppearanceSettingsSection
+                        formData={formData}
+                        handleChange={handleChange}
                         errors={formErrors}
                     />
                     <SeoSettingsSection

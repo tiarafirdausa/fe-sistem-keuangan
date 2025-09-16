@@ -36,6 +36,8 @@ const Settings = () => {
         power_url: '',
         short_title: '',
         email: '',
+        theme_color: '',
+        theme_mode: ''
     });
 
     const [newLogoFile, setNewLogoFile] = useState(null);
@@ -61,6 +63,8 @@ const Settings = () => {
         power_url: Yup.string().nullable(),
         short_title: Yup.string(),
         email: Yup.string().email('Invalid email address!').nullable(),
+        theme_color: Yup.string().nullable(), 
+        theme_mode: Yup.string().nullable(),
     });
 
     const [formErrors, setFormErrors] = useState({});
@@ -90,6 +94,8 @@ const Settings = () => {
                 power_url: settings.general?.power_url || '',
                 short_title: settings.general?.short_title || '',
                 email: settings.general?.email || '',
+                theme_color: settings.appearance?.theme_color || '', 
+                theme_mode: settings.appearance?.theme_mode || '', 
             });
             setNewLogoFile(null);
             setFormErrors({});

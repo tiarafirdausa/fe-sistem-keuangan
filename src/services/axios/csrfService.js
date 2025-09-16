@@ -7,22 +7,13 @@ let csrfToken = null;
 export const getCsrfToken = () => csrfToken;
 
 export const fetchCsrfToken = async () => {
-    try {
-        const response = await axios.get(`${appConfig.backendBaseUrl}/csrf-token`, {
-            withCredentials: true, 
-        });
-        csrfToken = response.data.csrfToken;
-        return csrfToken;
-    } catch (error) {
-        console.error('Error fetching CSRF token:', error);
-        throw error;
-    }
+  const response = await axios.get(`${appConfig.backendBaseUrl}/csrf-token`, {
+    withCredentials: true,
+  });
+  csrfToken = response.data.csrfToken;
+  return csrfToken;
 };
 
-export const addCsrfTokenToConfig = (config) => {
-    const methodsToIncludeCsrf = ['post', 'put', 'delete', 'patch'];
-    if (methodsToIncludeCsrf.includes(config.method) && csrfToken) {
-        config.headers['X-CSRF-Token'] = csrfToken; 
-    }
-    return config;
+export const resetCsrfToken = () => {
+  csrfToken = null;
 };

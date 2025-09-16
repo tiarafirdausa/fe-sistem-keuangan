@@ -9,6 +9,7 @@ import Switcher from '@/components/ui/Switcher/Switcher'
 const folderOptions = [
     { label: 'Post Terpopuler', value: 'popular-post' },
     { label: 'Post Terbaru', value: 'recent-post' },
+    { label: 'Banner', value: 'banner' },
     { label: 'Media', value: 'media' },
     { label: 'Profil', value: 'profile' },
     { label: 'Link', value: 'link' },
