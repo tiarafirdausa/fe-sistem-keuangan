@@ -40,32 +40,7 @@ const contentManagementRoute = [
             },
         },
     },
-    {
-        key: 'contentManagement.posts.details',
-        path: `${ADMIN_PREFIX_PATH}/posts/details/:slug`,
-        component: lazy(
-            () => import('@/views/admin/content/Posts/PostDetails'),
-        ),
-        authority: [ADMIN],
-        meta: {
-            pageContainerType: 'contained',
-            header: {
-                contained: true,
-                title: lazy(
-                    () =>
-                        import(
-                            '@/views/admin/content/Posts/PostDetails/components/PostDetailHeader'
-                        ),
-                ),
-                extraHeader: lazy(
-                    () =>
-                        import(
-                            '@/views/admin/content/Posts/PostDetails/components/PostDetailHeaderExtra'
-                        ),
-                ),
-            },
-        },
-    },
+
     {
         key: 'contentManagement.pages',
         path: `${ADMIN_PREFIX_PATH}/pages`,

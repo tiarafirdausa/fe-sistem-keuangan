@@ -8,7 +8,7 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useMediaList from '../hooks/useMediaList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom';
-import { TbPencil, TbTrash, TbEye } from 'react-icons/tb';
+import { TbPencil, TbTrash } from 'react-icons/tb';
 import { MdOutlinePermMedia } from 'react-icons/md';
 import { apiDeleteMediaCollection } from '@/services/MediaService';
 import { toast } from '@/components/ui/toast';
@@ -43,18 +43,9 @@ const MediaColumn = ({ row }) => {
     );
 };
 
-const ActionColumn = ({ onEdit, onDelete, onViewDetail }) => {
+const ActionColumn = ({ onEdit, onDelete }) => {
     return (
         <div className="flex items-center justify-end gap-3">
-            <Tooltip title="View Detail">
-                <div
-                    className={`text-xl cursor-pointer select-none font-semibold`}
-                    role="button"
-                    onClick={onViewDetail}
-                >
-                    <TbEye />
-                </div>
-            </Tooltip>
             <Tooltip title="Edit">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -93,10 +84,6 @@ const MediaListTable = () => {
 
     const handleEdit = (collection) => {
         navigate(`/admin/media/edit/${collection.id}`);
-    };
-
-    const handleViewDetail = (collection) => {
-        navigate(`/admin/media/details/${collection.id}`);
     };
 
     const handleConfirmDelete = async () => {
@@ -214,7 +201,6 @@ const MediaListTable = () => {
                 id: 'action',
                 cell: (props) => (
                     <ActionColumn
-                        onViewDetail={() => handleViewDetail(props.row.original)}
                         onEdit={() => handleEdit(props.row.original)}
                         onDelete={() => handleDelete(props.row.original)}
                     />

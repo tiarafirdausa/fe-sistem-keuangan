@@ -6,7 +6,7 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import usePostList from '../hooks/usePostList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom';
-import { TbPencil, TbTrash, TbEye } from 'react-icons/tb';
+import { TbPencil, TbTrash } from 'react-icons/tb';
 import { apiDeletePost } from '@/services/PostService';
 import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
@@ -14,7 +14,7 @@ import { TbArticle } from 'react-icons/tb';
 import appConfig from '@/configs/app.config';
 
 const PostColumn = ({ row }) => {
-    const { title, status, category, featured_image } = row; 
+    const { title, status, category, featured_image } = row;
 
     const featuredImageUrl = featured_image ? `${appConfig.backendBaseUrl}${featured_image}` : null;
 
@@ -24,14 +24,14 @@ const PostColumn = ({ row }) => {
                 <Avatar
                     shape="round"
                     size={60}
-                    src={featuredImageUrl} 
-                    alt={title} 
+                    src={featuredImageUrl}
+                    alt={title}
                 />
             ) : (
                 <Avatar
                     shape="round"
                     size={60}
-                    icon={<TbArticle />} 
+                    icon={<TbArticle />}
                 />
             )}
             <div>
@@ -59,18 +59,9 @@ const PostColumn = ({ row }) => {
     );
 };
 
-const ActionColumn = ({ onEdit, onDelete, onViewDetail }) => {
+const ActionColumn = ({ onEdit, onDelete }) => {
     return (
         <div className="flex items-center justify-end gap-3">
-            <Tooltip title="View Detail">
-                <div
-                    className={`text-xl cursor-pointer select-none font-semibold`}
-                    role="button"
-                    onClick={onViewDetail}
-                >
-                    <TbEye />
-                </div>
-            </Tooltip>
             <Tooltip title="Edit">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -112,10 +103,6 @@ const PostListTable = () => {
         navigate(`/admin/posts/edit/${post.slug}`);
     };
 
-    const handleViewDetail = (post) => {
-        navigate(`/admin/posts/details/${post.slug}`);
-    };
-
     const handleConfirmDelete = async () => {
         setDeleteConfirmationOpen(false);
         try {
@@ -128,7 +115,7 @@ const PostListTable = () => {
                 <div className="flex items-center">
                     <Avatar
                         shape="circle"
-                        icon={<TbArticle />} 
+                        icon={<TbArticle />}
                         className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 mr-2"
                     />
                     <span>Successfully deleted the post!</span>
@@ -172,7 +159,7 @@ const PostListTable = () => {
                     return <PostColumn row={row} />;
                 },
             },
-             {
+            {
                 header: 'Author',
                 accessorKey: 'author_name',
                 cell: (props) => {
@@ -221,7 +208,6 @@ const PostListTable = () => {
                 id: 'action',
                 cell: (props) => (
                     <ActionColumn
-                        onViewDetail={() => handleViewDetail(props.row.original)}
                         onEdit={() => handleEdit(props.row.original)}
                         onDelete={() => handleDelete(props.row.original)}
                     />

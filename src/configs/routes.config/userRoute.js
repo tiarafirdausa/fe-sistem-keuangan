@@ -38,19 +38,6 @@ const userRoute = [
             },
         },
     },
-    // {
-    //     key: 'userManagement.userDetail',
-    //     path: `${ADMIN_PREFIX_PATH}/users/details/:id`, // Rute untuk melihat detail user
-    //     component: lazy(() => import('@/views/content/Users/UserDetail')), // Asumsi Anda akan membuat komponen UserDetail
-    //     authority: [ADMIN],
-    //     meta: {
-    //         pageContainerType: 'contained',
-    //         header: {
-    //             contained: true,
-    //             title: 'User Details',
-    //         },
-    //     },
-    // },
 ]
 
 export default userRoute

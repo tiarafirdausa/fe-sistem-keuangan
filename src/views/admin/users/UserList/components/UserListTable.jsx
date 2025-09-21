@@ -7,7 +7,7 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useUserList from '../hooks/useUserList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom';
-import { TbPencil, TbTrash, TbEye, TbUser } from 'react-icons/tb';
+import { TbPencil, TbTrash, TbUser } from 'react-icons/tb';
 import { apiDeleteUser } from '@/services/UserService';
 import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
@@ -34,15 +34,15 @@ const formatDate = (dateString) => {
 const UserColumn = ({ row }) => {
     const { name, role, status, foto } = row;
 
-    const imageUrl = foto ? `${appConfig.backendBaseUrl}${foto}` : null; 
+    const imageUrl = foto ? `${appConfig.backendBaseUrl}${foto}` : null;
 
     return (
         <div className="flex items-center gap-2">
-            {imageUrl ? ( 
+            {imageUrl ? (
                 <Avatar
                     shape="circle"
                     size={40}
-                    src={imageUrl} 
+                    src={imageUrl}
                     alt={name}
                 />
             ) : (
@@ -72,18 +72,9 @@ const UserColumn = ({ row }) => {
     );
 };
 
-const ActionColumn = ({ onEdit, onDelete, onViewDetail }) => {
+const ActionColumn = ({ onEdit, onDelete }) => {
     return (
         <div className="flex items-center justify-end gap-3">
-            <Tooltip title="View Detail">
-                <div
-                    className={`text-xl cursor-pointer select-none font-semibold`}
-                    role="button"
-                    onClick={onViewDetail}
-                >
-                    <TbEye />
-                </div>
-            </Tooltip>
             <Tooltip title="Edit">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -123,10 +114,6 @@ const UserListTable = () => {
 
     const handleEdit = (user) => {
         navigate(`/admin/users/edit/${user.id}`);
-    };
-
-    const handleViewDetail = (user) => {
-        navigate(`/admin/users/details/${user.id}`);
     };
 
     const handleConfirmDelete = async () => {
@@ -220,7 +207,6 @@ const UserListTable = () => {
                 id: 'action',
                 cell: (props) => (
                     <ActionColumn
-                        onViewDetail={() => handleViewDetail(props.row.original)}
                         onEdit={() => handleEdit(props.row.original)}
                         onDelete={() => handleDelete(props.row.original)}
                     />
