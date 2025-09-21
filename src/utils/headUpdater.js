@@ -1,6 +1,7 @@
 // src/utils/HeadUpdater.jsx
 import { useEffect } from 'react';
 import { apiGetSettings } from '@/services/SettingService';
+import appConfig from '@/configs/app.config'; 
 
 const HeadUpdater = () => {
   useEffect(() => {
@@ -9,7 +10,7 @@ const HeadUpdater = () => {
         const settings = await apiGetSettings();
         const faviconLink = document.querySelector('link[rel="shortcut icon"]');
         if (faviconLink && settings.appearance && settings.appearance.logo) {
-          faviconLink.href = settings.appearance.logo;
+          faviconLink.href = `${appConfig.backendBaseUrl}${settings.appearance.logo}`;
         }
         const metaDescription = document.querySelector('meta[name="description"]');
         if (metaDescription && settings.seo && settings.seo.meta_description) {
