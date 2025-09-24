@@ -8,6 +8,9 @@ import { HiOutlineDocumentText } from 'react-icons/hi';
 import { apiDeletePage } from '@/services/PageService'; 
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const PageListSelected = () => { 
     const {
@@ -15,7 +18,8 @@ const PageListSelected = () => {
         mutate,
         setSelectAllPages,
     } = usePageList(); 
-
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const handleDelete = () => {
@@ -86,7 +90,7 @@ const PageListSelected = () => {
                                     </span>
                                 )}
                             </span>
-
+                            {canDelete && (
                             <div className="flex items-center">
                                 <Button
                                     size="sm"
@@ -100,6 +104,7 @@ const PageListSelected = () => {
                                     Delete
                                 </Button>
                             </div>
+                            )}
                         </div>
                     </div>
                 </StickyFooter>

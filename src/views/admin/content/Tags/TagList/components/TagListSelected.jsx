@@ -7,6 +7,9 @@ import { TbChecks, TbTag } from 'react-icons/tb';
 import { apiDeleteTag } from '@/services/TagService'; 
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const TagListSelected = () => {
     const {
@@ -14,7 +17,8 @@ const TagListSelected = () => {
         mutate,
         setSelectAllTags,
     } = useTagList();
-
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const handleDelete = () => {
@@ -85,7 +89,7 @@ const TagListSelected = () => {
                                     </span>
                                 )}
                             </span>
-
+                            {canDelete && (
                             <div className="flex items-center">
                                 <Button
                                     size="sm"
@@ -99,6 +103,7 @@ const TagListSelected = () => {
                                     Delete
                                 </Button>
                             </div>
+                            )}
                         </div>
                     </div>
                 </StickyFooter>

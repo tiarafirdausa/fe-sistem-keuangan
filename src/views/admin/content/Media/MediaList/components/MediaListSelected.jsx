@@ -8,6 +8,9 @@ import { MdOutlinePermMedia } from "react-icons/md";
 import { apiDeleteMediaCollection } from '@/services/MediaService';
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const MediaListSelected = () => {
     const {
@@ -15,7 +18,8 @@ const MediaListSelected = () => {
         mutate,
         setSelectAllMediaCollections,
     } = useMediaList();
-
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const handleDelete = () => {
@@ -88,7 +92,7 @@ const MediaListSelected = () => {
                                     </span>
                                 )}
                             </span>
-
+                            {canDelete && (
                             <div className="flex items-center">
                                 <Button
                                     size="sm"
@@ -102,6 +106,7 @@ const MediaListSelected = () => {
                                     Delete
                                 </Button>
                             </div>
+                            )}
                         </div>
                     </div>
                 </StickyFooter>

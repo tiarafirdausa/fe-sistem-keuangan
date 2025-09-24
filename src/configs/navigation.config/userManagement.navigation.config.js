@@ -25,17 +25,6 @@ const userManagementNavigationConfig = [
                 authority: ['admin'],
                 subMenu: [],
             },
-            // You can uncomment and add this later if you have a separate role management feature
-            // {
-            //     key: 'userManagement.roles',
-            //     path: '/admin/roles',
-            //     title: 'Roles & Permissions',
-            //     translateKey: 'nav.userManagement.roles',
-            //     icon: 'role',
-            //     type: NAV_ITEM_TYPE_ITEM,
-            //     authority: ['admin'],
-            //     subMenu: [],
-            // },
         ],
     },
 ]

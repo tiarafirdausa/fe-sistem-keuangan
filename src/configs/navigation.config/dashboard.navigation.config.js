@@ -10,7 +10,7 @@ const dashboardNavigationConfig = [
         translateKey: 'nav.dashboard',
         icon: 'dashboard', 
         type: NAV_ITEM_TYPE_ITEM,
-        authority: ['admin'], 
+        authority: ['admin', 'editor', 'author'],
         subMenu: [],
     },
 ]

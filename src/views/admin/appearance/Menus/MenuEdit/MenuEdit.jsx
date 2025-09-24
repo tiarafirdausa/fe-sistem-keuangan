@@ -9,10 +9,15 @@ import { apiGetMenuById, apiUpdateMenu, apiDeleteMenu } from '@/services/MenuSer
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const MenuEdit = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
 
     const { data: menuData, isLoading, error, mutate } = useSWR(
         id ? ['/menus/id', id] : null,
@@ -143,17 +148,19 @@ const MenuEdit = () => {
                             Back
                         </Button>
                         <div className="flex items-center">
-                            <Button
-                                className="ltr:mr-3 rtl:ml-3"
-                                type="button"
-                                customColorClass={() =>
-                                    'border-error ring-1 ring-error text-error hover:border-error hover:ring-error hover:text-error bg-transparent'
-                                }
-                                icon={<TbTrash />}
-                                onClick={handleDelete}
-                            >
-                                Delete
-                            </Button>
+                            {canDelete && (
+                                <Button
+                                    className="ltr:mr-3 rtl:ml-3"
+                                    type="button"
+                                    customColorClass={() =>
+                                        'border-error ring-1 ring-error text-error hover:border-error hover:ring-error hover:text-error bg-transparent'
+                                    }
+                                    icon={<TbTrash />}
+                                    onClick={handleDelete}
+                                >
+                                    Delete
+                                </Button>
+                            )}
                             <Button
                                 variant="solid"
                                 type="submit"

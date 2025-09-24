@@ -9,6 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import { TbPencil, TbTrash } from 'react-icons/tb';
 import { HiOutlineLink } from 'react-icons/hi';
 import cloneDeep from 'lodash/cloneDeep';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const SocialLinkColumn = ({ row }) => {
     return (
@@ -31,6 +34,8 @@ const SocialLinkColumn = ({ row }) => {
 };
 
 const ActionColumn = ({ onEdit, onDelete }) => {
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     return (
         <div className="flex items-center justify-end gap-3">
             <Tooltip title="Edit">
@@ -42,6 +47,7 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     <TbPencil />
                 </div>
             </Tooltip>
+            {canDelete && (
             <Tooltip title="Delete">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -51,6 +57,7 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     <TbTrash />
                 </div>
             </Tooltip>
+            )}
         </div>
     );
 };

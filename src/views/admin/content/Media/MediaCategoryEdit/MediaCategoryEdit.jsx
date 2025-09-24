@@ -11,10 +11,15 @@ import { apiGetMediaCategoryBySlug, apiUpdateMediaCategory, apiDeleteMediaCatego
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const MediaCategoryEdit = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
 
     const { data: mediaCategoryData, isLoading, error, mutate } = useSWR(
         slug ? ['/media-categories/slug', slug] : null,
@@ -141,6 +146,7 @@ const MediaCategoryEdit = () => {
                             Back
                         </Button>
                         <div className="flex items-center">
+                            {canDelete && (
                             <Button
                                 className="ltr:mr-3 rtl:ml-3"
                                 type="button"
@@ -152,6 +158,7 @@ const MediaCategoryEdit = () => {
                             >
                                 Delete
                             </Button>
+                            )}
                             <Button
                                 variant="solid"
                                 type="submit"

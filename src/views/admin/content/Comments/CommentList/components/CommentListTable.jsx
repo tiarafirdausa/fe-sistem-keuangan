@@ -12,6 +12,9 @@ import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
 import { TbCheck, TbX } from 'react-icons/tb';
 import Notification from '@/components/template/Notification';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const CommentColumn = ({ row }) => { 
     const { author_name, status } = row; 
@@ -48,6 +51,8 @@ const CommentColumn = ({ row }) => {
 const ActionColumn = ({ onDelete, onUpdateStatus, row  }) => {
     const { status } = row;
     const showStatusButtons = status === 'pending';
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
 
     return (
         <div className="flex items-center justify-end gap-3">
@@ -73,6 +78,7 @@ const ActionColumn = ({ onDelete, onUpdateStatus, row  }) => {
                     </Tooltip>
                 </>
             )}
+            {canDelete && (
             <Tooltip title="Delete">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -82,6 +88,7 @@ const ActionColumn = ({ onDelete, onUpdateStatus, row  }) => {
                     <TbTrash />
                 </div>
             </Tooltip>
+            )}
         </div>
     );
 };

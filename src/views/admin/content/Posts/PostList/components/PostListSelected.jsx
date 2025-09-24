@@ -7,6 +7,9 @@ import { TbChecks, TbArticle } from 'react-icons/tb';
 import { apiDeletePost } from '@/services/PostService';
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const PostListSelected = () => {
     const {
@@ -14,7 +17,8 @@ const PostListSelected = () => {
         mutate,
         setSelectAllPosts,
     } = usePostList();
-
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const handleDelete = () => {
@@ -85,7 +89,7 @@ const PostListSelected = () => {
                                     </span>
                                 )}
                             </span>
-
+                            {canDelete && (
                             <div className="flex items-center">
                                 <Button
                                     size="sm"
@@ -99,6 +103,7 @@ const PostListSelected = () => {
                                     Delete
                                 </Button>
                             </div>
+                            )}
                         </div>
                     </div>
                 </StickyFooter>

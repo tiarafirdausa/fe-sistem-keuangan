@@ -15,10 +15,15 @@ import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import appConfig from '@/configs/app.config';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const LinkEdit = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
 
     const { data: linkData, isLoading: isLoadingLink, error: linkError, mutate } = useSWR(
         id ? ['/links/id', id] : null,
@@ -167,6 +172,7 @@ const LinkEdit = () => {
                             Back
                         </Button>
                         <div className="flex items-center">
+                            {canDelete && (
                             <Button
                                 className="ltr:mr-3 rtl:ml-3"
                                 type="button"
@@ -178,6 +184,7 @@ const LinkEdit = () => {
                             >
                                 Delete
                             </Button>
+                            )}
                             <Button
                                 variant="solid"
                                 type="submit"

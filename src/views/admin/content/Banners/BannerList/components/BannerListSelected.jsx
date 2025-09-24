@@ -5,17 +5,21 @@ import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import useBannerList from '../hooks/useBannerList';
 import { TbChecks } from 'react-icons/tb';
 import { HiOutlineDocumentText } from 'react-icons/hi';
-import { apiDeleteBanner } from '@/services/BannerService'; // Sesuaikan service
+import { apiDeleteBanner } from '@/services/BannerService'; 
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const BannerListSelected = () => {
     const {
-        selectedBanners, // Menggunakan selectedBanners
+        selectedBanners, 
         mutate,
-        setSelectAllBanners, // Menggunakan setSelectAllBanners
+        setSelectAllBanners,
     } = useBannerList();
-
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const handleDelete = () => {
@@ -86,7 +90,7 @@ const BannerListSelected = () => {
                                     </span>
                                 )}
                             </span>
-
+                            {canDelete && (
                             <div className="flex items-center">
                                 <Button
                                     size="sm"
@@ -100,6 +104,7 @@ const BannerListSelected = () => {
                                     Delete
                                 </Button>
                             </div>
+                            )}
                         </div>
                     </div>
                 </StickyFooter>

@@ -19,11 +19,15 @@ import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const PostEdit = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
     const { user: currentUser } = useAuth();
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
 
     const { data: postData, isLoading: isLoadingPost, error: postError, mutate } = useSWR(
         slug ? ['/posts/slug', slug] : null,
@@ -213,6 +217,7 @@ const PostEdit = () => {
                             Back
                         </Button>
                         <div className="flex items-center">
+                            {canDelete && (
                             <Button
                                 className="ltr:mr-3 rtl:ml-3"
                                 type="button"
@@ -224,6 +229,7 @@ const PostEdit = () => {
                             >
                                 Delete
                             </Button>
+                            )}
                             <Button
                                 variant="solid"
                                 type="submit"

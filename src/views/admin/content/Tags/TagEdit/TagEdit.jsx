@@ -10,10 +10,15 @@ import { apiGetTagBySlug, apiUpdateTag, apiDeleteTag } from '@/services/TagServi
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom'; 
 import useSWR from 'swr';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const TagEdit = () => {
     const { slug } = useParams(); 
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
 
     const { data: tagData, isLoading, error, mutate } = useSWR(
         slug ? ['/tags/slug', slug] : null, 
@@ -140,6 +145,7 @@ const TagEdit = () => {
                             Back
                         </Button>
                         <div className="flex items-center">
+                            {canDelete && (
                             <Button
                                 className="ltr:mr-3 rtl:ml-3"
                                 type="button"
@@ -151,6 +157,7 @@ const TagEdit = () => {
                             >
                                 Delete
                             </Button>
+                            )}
                             <Button
                                 variant="solid"
                                 type="submit"

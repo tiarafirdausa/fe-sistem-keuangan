@@ -9,11 +9,15 @@ import { apiGetSocialLinkById, apiUpdateSocialLink, apiDeleteSocialLink } from '
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const SocialLinkEdit = () => {
     const { id } = useParams();
-
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
 
     const { data: socialLinkData, isLoading, error, mutate } = useSWR(
         id ? ['/social-links/id', id] : null,
@@ -146,6 +150,7 @@ const SocialLinkEdit = () => {
                             Back
                         </Button>
                         <div className="flex items-center">
+                            {canDelete && (
                             <Button
                                 className="ltr:mr-3 rtl:ml-3"
                                 type="button"
@@ -157,6 +162,7 @@ const SocialLinkEdit = () => {
                             >
                                 Delete
                             </Button>
+                            )}
                             <Button
                                 variant="solid"
                                 type="submit"

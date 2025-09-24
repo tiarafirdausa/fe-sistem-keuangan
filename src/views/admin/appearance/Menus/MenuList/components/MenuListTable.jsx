@@ -13,6 +13,9 @@ import { apiDeleteMenu } from '@/services/MenuService';
 import { Tag } from '@/components/ui'; 
 import { Button } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const MenuColumn = ({ row }) => {
     return (
@@ -33,6 +36,8 @@ const MenuColumn = ({ row }) => {
 };
 
 const ActionColumn = ({ onEdit, onDelete, onViewItems }) => {
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     return (
         <div className="flex items-center justify-end gap-3">
             <Tooltip title="View Menu Items">
@@ -53,6 +58,7 @@ const ActionColumn = ({ onEdit, onDelete, onViewItems }) => {
                     <TbPencil />
                 </div>
             </Tooltip>
+            {canDelete && (
             <Tooltip title="Delete">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -62,6 +68,7 @@ const ActionColumn = ({ onEdit, onDelete, onViewItems }) => {
                     <TbTrash />
                 </div>
             </Tooltip>
+            )}
         </div>
     );
 };

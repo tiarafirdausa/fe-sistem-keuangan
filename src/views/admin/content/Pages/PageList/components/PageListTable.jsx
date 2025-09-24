@@ -12,6 +12,9 @@ import { HiOutlineDocumentText } from 'react-icons/hi';
 import { apiDeletePage } from '@/services/PageService';
 import { toast } from '@/components/ui/toast';
 import appConfig from '@/configs/app.config';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const PageColumn = ({ row }) => {
     const { title, featured_image } = row;
@@ -42,6 +45,8 @@ const PageColumn = ({ row }) => {
 };
 
 const ActionColumn = ({ onEdit, onDelete }) => {
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     return (
         <div className="flex items-center justify-end gap-3">
             <Tooltip title="Edit">
@@ -53,6 +58,7 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     <TbPencil />
                 </div>
             </Tooltip>
+            {canDelete && (
             <Tooltip title="Delete">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -62,6 +68,7 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     <TbTrash />
                 </div>
             </Tooltip>
+            )}
         </div>
     );
 };

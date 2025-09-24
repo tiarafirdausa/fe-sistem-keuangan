@@ -10,7 +10,7 @@ import appConfig from '@/configs/app.config'
 const dropdownItemList = []
 
 const _UserDropdown = () => {
-    const { foto, name, email } = useSessionUser((state) => state.user)
+    const { foto, name, email, role } = useSessionUser((state) => state.user)
 
     const { signOut } = useAuth()
 
@@ -23,6 +23,8 @@ const _UserDropdown = () => {
     const avatarProps = {
         ...(userPhotoUrl ? { src: userPhotoUrl } : { icon: <PiUserDuotone /> }),
     }
+
+    const capitalize = (s) => (s && s[0].toUpperCase() + s.slice(1)) || ""
 
     return (
         <Dropdown
@@ -45,6 +47,13 @@ const _UserDropdown = () => {
                         <div className="text-xs">
                             {email || 'No email available'}
                         </div>
+                        {role && (
+                            <div className="mt-1">
+                                <span className="text-xs font-semibold capitalize px-2 py-0.5 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 rounded-full inline-block">
+                                    {capitalize(role)}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </Dropdown.Item>

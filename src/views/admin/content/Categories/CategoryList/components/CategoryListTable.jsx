@@ -12,6 +12,9 @@ import { apiDeleteCategory } from '@/services/CategoryService';
 import { toast } from '@/components/ui/toast'; 
 import { Tag } from '@/components/ui'; 
 import { FaShapes } from 'react-icons/fa';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const CategoryColumn = ({ row }) => {
     return (
@@ -32,6 +35,8 @@ const CategoryColumn = ({ row }) => {
 };
 
 const ActionColumn = ({ onEdit, onDelete }) => {
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     return (
         <div className="flex items-center justify-end gap-3">
             <Tooltip title="Edit">
@@ -43,6 +48,7 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     <HiOutlinePencil />
                 </div>
             </Tooltip>
+            {canDelete && (
             <Tooltip title="Delete">
                 <div
                     className={`text-xl cursor-pointer select-none font-semibold`}
@@ -52,6 +58,7 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     <HiOutlineTrash />
                 </div>
             </Tooltip>
+            )}
         </div>
     );
 };

@@ -8,6 +8,9 @@ import { TbChecks } from 'react-icons/tb';
 import { HiOutlineChatAlt2 } from 'react-icons/hi';
 import useCommentList from '../hooks/useCommentList'; 
 import { apiDeleteComment } from '@/services/CommentService';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const CommentListSelected = () => { 
     const {
@@ -15,7 +18,8 @@ const CommentListSelected = () => {
         mutate,
         setSelectAllComments,
     } = useCommentList(); 
-
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const handleDelete = () => {
@@ -87,7 +91,7 @@ const CommentListSelected = () => {
                                     </span>
                                 )}
                             </span>
-
+                            {canDelete && (
                             <div className="flex items-center">
                                 <Button
                                     size="sm"
@@ -101,6 +105,7 @@ const CommentListSelected = () => {
                                     Delete
                                 </Button>
                             </div>
+                            )}
                         </div>
                     </div>
                 </StickyFooter>

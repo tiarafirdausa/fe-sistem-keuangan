@@ -7,6 +7,9 @@ import { TbChecks, TbLink } from 'react-icons/tb';
 import { apiDeleteMenuItem } from '@/services/MenuService'; 
 import { toast } from '@/components/ui/toast';
 import { Avatar } from '@/components/ui/Avatar';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const MenuItemListSelected = ({menuId}) => {
     const {
@@ -14,6 +17,8 @@ const MenuItemListSelected = ({menuId}) => {
         mutate,
         setSelectAllMenuItems, 
     } = useMenuItemList(menuId); 
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
 
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
@@ -87,7 +92,7 @@ const MenuItemListSelected = ({menuId}) => {
                                     </span>
                                 )}
                             </span>
-
+                            {canDelete && (
                             <div className="flex items-center">
                                 <Button
                                     size="sm"
@@ -101,6 +106,7 @@ const MenuItemListSelected = ({menuId}) => {
                                     Delete
                                 </Button>
                             </div>
+                            )}
                         </div>
                     </div>
                 </StickyFooter>

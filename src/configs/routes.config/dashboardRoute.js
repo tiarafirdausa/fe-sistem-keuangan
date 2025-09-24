@@ -2,14 +2,14 @@
 
 import { lazy } from 'react'
 import { DASHBOARDS_PREFIX_PATH } from '@/constants/route.constant'
-import { ADMIN, USER } from '@/constants/roles.constant' 
+import { ADMIN, AUTHOR, EDITOR} from '@/constants/roles.constant' 
 
 const dashboardRoute = [
     {
         key: 'dashboard',
         path: `${DASHBOARDS_PREFIX_PATH}`,
         component: lazy(() => import('@/views/admin/Dashboard')), 
-        authority: [ADMIN, USER], 
+        authority: [ADMIN, AUTHOR, EDITOR], 
         meta: {
             pageContainerType: 'contained',
         },

@@ -12,6 +12,9 @@ import { apiDeleteMediaCategory } from '@/services/MediaService';
 import { Tag } from '@/components/ui';
 import { toast } from '@/components/ui/toast';
 import Button from '@/components/ui/Button';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const MediaCategoryColumn = ({ row }) => {
     return (
@@ -32,6 +35,8 @@ const MediaCategoryColumn = ({ row }) => {
 };
 
 const ActionColumn = ({ onEdit, onDelete }) => {
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
     return (
         <div className="flex items-center justify-end gap-3">
             <Tooltip title="Edit">
@@ -42,6 +47,7 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     onClick={onEdit}
                 />
             </Tooltip>
+            {canDelete && (
             <Tooltip title="Delete">
                 <Button
                     size="sm"
@@ -50,6 +56,7 @@ const ActionColumn = ({ onEdit, onDelete }) => {
                     onClick={onDelete}
                 />
             </Tooltip>
+            )}
         </div>
     );
 };

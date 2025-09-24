@@ -9,10 +9,15 @@ import { apiGetMenuItemById, apiUpdateMenuItem, apiDeleteMenuItem } from '@/serv
 import { TbTrash, TbArrowNarrowLeft } from 'react-icons/tb';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
+import { useAuth } from '@/auth';
+import useAuthority from '@/utils/hooks/useAuthority';
+import { ADMIN } from '@/constants/roles.constant';
 
 const MenuItemEdit = () => {
     const { menuId, id: itemId } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const canDelete = useAuthority(user?.role ? [user.role] : [], [ADMIN]);
 
     const { data: menuItemData, isLoading, error, mutate } = useSWR(
         itemId ? ['/menu-items/id', itemId] : null, 
@@ -149,6 +154,7 @@ const MenuItemEdit = () => {
                             Back
                         </Button>
                         <div className="flex items-center">
+                            {canDelete && (
                             <Button
                                 className="ltr:mr-3 rtl:ml-3"
                                 type="button"
@@ -160,6 +166,7 @@ const MenuItemEdit = () => {
                             >
                                 Delete
                             </Button>
+                            )}
                             <Button
                                 variant="solid"
                                 type="submit"
