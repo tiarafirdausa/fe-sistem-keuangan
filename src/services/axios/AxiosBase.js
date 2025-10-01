@@ -14,6 +14,7 @@ const AxiosBase = axios.create({
 // Request Interceptor
 AxiosBase.interceptors.request.use(
   async (config) => {
+    // inject CSRF token untuk request POST/PUT/DELETE/PATCH
     const methodsToIncludeCsrf = ["post", "put", "delete", "patch"];
     if (methodsToIncludeCsrf.includes(config.method.toLowerCase())) {
       let token = getCsrfToken();
@@ -26,6 +27,13 @@ AxiosBase.interceptors.request.use(
       }
       config.headers["X-CSRF-Token"] = token;
     }
+
+    // inject Authorization jika ada JWT
+    const state = useSessionUser.getState();
+    if (state.user && state.user.token) {
+      config.headers["Authorization"] = `Bearer ${state.user.token}`;
+    }
+
     return config;
   },
   (error) => Promise.reject(error)

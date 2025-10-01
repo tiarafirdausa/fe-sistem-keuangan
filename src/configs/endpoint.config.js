@@ -1,12 +1,12 @@
 // src/configs/endpoint.config.js
 const endpointConfig = {
     // Auth
-    signIn: '/login',
-    signOut: '/logout',
-    forgotPassword: '/forgotpassword',
-    resetPassword: '/resetpassword',
-    refreshToken: '/refresh-token',
-    getMe: '/me',
+    signIn: '/auth/login',
+    signOut: '/auth/logout',
+    forgotPassword: '/auth/forgotpassword',
+    resetPassword: '/auth/resetpassword',
+    refreshToken: '/auth/refresh-token',
+    getMe: '/auth/me',
 
     // User Management
     createUser: '/users', 

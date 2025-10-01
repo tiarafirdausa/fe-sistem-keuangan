@@ -6,7 +6,7 @@ import ForgotPasswordForm from './components/ForgotPasswordForm'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
 import { useNavigate } from 'react-router-dom'
 
-export const ForgotPasswordBase = ({ signInUrl = '/sign-in' }) => {
+export const ForgotPasswordBase = ({ signInUrl = '/login' }) => {
     const [emailSent, setEmailSent] = useState(false)
     const [message, setMessage] = useTimeOutMessage()
 

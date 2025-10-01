@@ -3,7 +3,7 @@ import { lazy } from 'react'
 const authRoute = [
     {
         key: 'signIn',
-        path: `/sign-in`,
+        path: `/login`,
         component: lazy(() => import('@/views/auth/SignIn')),
         authority: [],
     },

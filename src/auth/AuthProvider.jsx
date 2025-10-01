@@ -6,12 +6,6 @@ import { apiSignIn, apiSignOut, apiGetMe, apiRefreshToken } from '@/services/Aut
 import { REDIRECT_URL_KEY } from '@/constants/app.constant'
 import { useNavigate } from 'react-router-dom'
 
-const IsolatedNavigator = ({ ref }) => {
-    const navigate = useNavigate()
-    useImperativeHandle(ref, () => ({ navigate }), [navigate])
-    return <></>
-}
-
 const convertExpiresInToMs = (expiresIn) => {
     const value = parseInt(expiresIn);
     if (expiresIn.endsWith("h")) return value * 60 * 60 * 1000;
@@ -22,6 +16,12 @@ const convertExpiresInToMs = (expiresIn) => {
 
 const JWT_EXPIRES_IN = '1h'; 
 const REFRESH_INTERVAL_MS = convertExpiresInToMs(JWT_EXPIRES_IN) * 0.5;
+
+const IsolatedNavigator = ({ ref }) => {
+    const navigate = useNavigate()
+    useImperativeHandle(ref, () => ({ navigate }), [navigate])
+    return <></>
+}
 
 function AuthProvider({ children }) {
     const setUser = useSessionUser((state) => state.setUser)
@@ -45,9 +45,9 @@ function AuthProvider({ children }) {
         )
     }, []);
 
-    const handleSignIn = useCallback((userData) => {
+    const handleSignIn = useCallback((userData, token) => {
         setSessionSignedIn(true);
-        setUser(userData);
+        setUser({ ...userData, token }); // simpan token di zustand
         setAuthenticated(true);
     }, [setSessionSignedIn, setUser]);
 
@@ -64,15 +64,18 @@ function AuthProvider({ children }) {
 
         refreshTimer.current = setTimeout(async () => {
             try {
-                await apiRefreshToken();
-                console.log("Token berhasil diperbarui secara otomatis.");
-                startRefreshTokenTimer();
+                const resp = await apiRefreshToken();
+                if (resp && resp.token) {
+                    setUser((prev) => ({ ...prev, token: resp.token })); // update token
+                    console.log("Token berhasil diperbarui secara otomatis.");
+                    startRefreshTokenTimer();
+                }
             } catch (error) {
                 console.error("Gagal memperbarui token. Sesi berakhir.", error.response?.data?.error || error.message);
                 handleSignOut();
             }
         }, REFRESH_INTERVAL_MS);
-    }, [handleSignOut]);
+    }, [handleSignOut, setUser]);
 
     const handleActivity = useCallback(() => {
         if (authenticated) {
@@ -85,7 +88,8 @@ function AuthProvider({ children }) {
             try {
                 const resp = await apiGetMe();
                 if (resp && resp.user) {
-                    handleSignIn(resp.user);
+                    // user sudah login → ambil dari backend
+                    handleSignIn(resp.user, userZustand.token);
                 } else {
                     handleSignOut();
                 }
@@ -97,23 +101,17 @@ function AuthProvider({ children }) {
             }
         };
         verifyAuthStatus();
-    }, [handleSignIn, handleSignOut]);
+    }, [handleSignIn, handleSignOut, userZustand.token]);
 
     useEffect(() => {
         if (authenticated) {
             startRefreshTokenTimer();
-            const eventListeners = ['mousemove', 'keydown', 'click', 'scroll'];
-            eventListeners.forEach(event => {
-                window.addEventListener(event, handleActivity);
-            });
+            const events = ['mousemove', 'keydown', 'click', 'scroll'];
+            events.forEach(e => window.addEventListener(e, handleActivity));
 
             return () => {
-                eventListeners.forEach(event => {
-                    window.removeEventListener(event, handleActivity);
-                });
-                if (refreshTimer.current) {
-                    clearTimeout(refreshTimer.current);
-                }
+                events.forEach(e => window.removeEventListener(e, handleActivity));
+                if (refreshTimer.current) clearTimeout(refreshTimer.current);
             };
         }
     }, [authenticated, handleActivity, startRefreshTokenTimer]);
@@ -121,38 +119,28 @@ function AuthProvider({ children }) {
     const signIn = async (values) => {
         try {
             const resp = await apiSignIn(values) 
-            if (resp && resp.user) {
-                handleSignIn(resp.user)
-                redirect()
+            if (resp && resp.user && resp.token) {
+                handleSignIn(resp.user, resp.token);
+                redirect();
                 return { status: 'success', message: '' }
             }
-            return {
-                status: 'failed',
-                message: resp?.error || 'Unable to sign in',
-            }
+            return { status: 'failed', message: resp?.error || 'Unable to sign in' }
         } catch (errors) {
             console.error("SignIn API Error:", errors.response?.data?.error || errors.toString());
-            return {
-                status: 'failed',
-                message: errors?.response?.data?.error || errors.toString(),
-            }
+            return { status: 'failed', message: errors?.response?.data?.error || errors.toString() }
         }
     }
 
     const signOut = async () => {
         try {
-            await apiSignOut() 
+            await apiSignOut();
         } finally {
-            handleSignOut() 
-            navigatorRef.current?.navigate('/', { replace: true })
+            handleSignOut();
+            navigatorRef.current?.navigate('/', { replace: true });
         }
     }
 
-    if (loadingAuth) {
-        return (
-            null
-        );
-    }
+    if (loadingAuth) return null;
 
     return (
         <AuthContext.Provider

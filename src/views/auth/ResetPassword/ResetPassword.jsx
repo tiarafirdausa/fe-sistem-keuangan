@@ -6,7 +6,7 @@ import ResetPasswordForm from './components/ResetPasswordForm'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
-export const ResetPasswordBase = ({ signInUrl = '/sign-in' }) => {
+export const ResetPasswordBase = ({ signInUrl = '/login' }) => {
     const [resetComplete, setResetComplete] = useState(false)
     const [message, setMessage] = useTimeOutMessage()
     const navigate = useNavigate()
